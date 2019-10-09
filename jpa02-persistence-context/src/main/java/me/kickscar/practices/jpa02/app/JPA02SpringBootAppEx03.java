@@ -17,7 +17,7 @@ import javax.persistence.PersistenceUnit;
 @SpringBootApplication
 // 엔티티 클래스 자동스캐닝 베이스 패키지 지정
 @EntityScan( basePackages = { "me.kickscar.practices.jpa02.domain" } )
-public class Ex04SpringBootApp {
+public class JPA02SpringBootAppEx03 {
 
     //엔티티매니저팩토리 주입
     @PersistenceUnit
@@ -35,7 +35,7 @@ public class Ex04SpringBootApp {
                 EntityManager em2 = emf.createEntityManager();
 
                 beforeTest( em1 );
-                updateTest( em2 );
+                deleteTest( em2 );
 
                 em1.close();
                 em2.close();
@@ -59,21 +59,18 @@ public class Ex04SpringBootApp {
                 // [트랜잭션 종료]
             }
 
-            public void updateTest( EntityManager em ){
+            public void deleteTest( EntityManager em ){
                 // 트랜잭션 객체 얻어오기
                 EntityTransaction tx = em.getTransaction();
 
                 // [트랜잭션 시작]
                 tx.begin();
 
-                // 영속 엔티티 조회
+                // 삭제 대상 엔티티 조회
                 Member memberA = em.find( Member.class, "memberA" );
 
-                // 영속 엔티티 데이터 수정
-                memberA.setName( "둘리" );
-
-                // update 메서드는 없다.
-                // em.updte( memberA );
+                // 엔티티 삭제
+                em.remove( memberA );
 
                 tx.commit();
                 // [트랜잭션 종료]
@@ -83,6 +80,6 @@ public class Ex04SpringBootApp {
     }
 
     public static void main(String[] args) {
-        try(ConfigurableApplicationContext c = SpringApplication.run(Ex04SpringBootApp.class, args)){}
+        try(ConfigurableApplicationContext c = SpringApplication.run(JPA02SpringBootAppEx03.class, args)){}
     }
 }
