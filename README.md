@@ -1,4 +1,4 @@
-## JPA 연습: 다양한 매핑 모델 / 객체지향쿼리(JPQL, QueryDSL, JPARepository Interface)기반 Repository 
+## 다양한 매핑 모델들의 객체지향쿼리(JPQL,QueryDSL,JPARepository)기반 Repository 작성 예시
 
 ### JPA01. 엔티티 매핑(Entity Mapping)
 
