@@ -1,0 +1,4 @@
+# Project exclude paths
+/jpa01-entity-mapping/.gradle/
+/jpa01-entity-mapping/build/
+/jpa01-entity-mapping/build/classes/java/main/
