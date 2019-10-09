@@ -1,4 +1,4 @@
-package me.kickscar.practices.jpa.ch01.domain;
+package me.kickscar.practices.jpa01.domain;
 
 import javax.persistence.*;
 import java.util.Date;
