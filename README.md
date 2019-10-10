@@ -2,7 +2,7 @@
 
 
 ### JPA01. 엔티티 매핑(Entity Mapping)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Ex01. Member 엔티티 당얗가ㅔ Table로 매핑하기
+#### &nbsp;&nbsp;&nbsp;&nbsp;Ex01. Member 엔티티 다양한 설정으로 매핑하기
 
 ### JPA02. 영속성 관리 / 엔티티 생명주기
 #### &nbsp;&nbsp;&nbsp;&nbsp;Ex01. 영속성 켄텍스트(Persistence Context)
@@ -90,7 +90,7 @@
   <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/00017.png" width="600px" />
   <br/><br/>
 
-  19) 나머지 모듈도 같은 방식으로...
+  19) 나머지 모듈도 같은 방식으로... (jpa03 모듈들의 QueryDSL Gradle 플러그인 설정은 각 모듈 README.md 참고)
 
 ## 03. 프로젝트 로컬 클론 및 모듈 임포트 그리고 실행 환경 설정 방법 (Eclipse)
 
