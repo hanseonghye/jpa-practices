@@ -1,5 +1,6 @@
 package me.kickscar.practices.jpa03.model01.app.config;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +13,9 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -20,6 +23,10 @@ import java.util.Properties;
 @EnableTransactionManagement
 @ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.repository" } )
 public class AppConfig {
+
+    // EntityManagerFactory가 인식할 수 있게끔!
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Bean
     // Connection Pool DataSource(MySQL)
@@ -85,6 +92,14 @@ public class AppConfig {
 
         return em;
     }
+
+    @Bean
+    // JPAQueryFatory: EntityManager 를 주입받아 생성
+    // QueryDSL 지원 레포지토리에서는 편하게 사용할 수 있다.
+    public JPAQueryFactory jpaQueryFactory() {
+        return new JPAQueryFactory( entityManager );
+    }
+
 
     Properties jpaProperties() {
         Properties properties = new Properties();

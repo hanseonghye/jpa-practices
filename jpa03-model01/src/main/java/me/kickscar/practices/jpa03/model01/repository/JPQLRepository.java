@@ -13,7 +13,8 @@ import java.util.List;
 @Repository
 public class JPQLRepository {
 
-    @PersistenceContext        //factory가 인식할 수 있게끔!
+    // EntityManagerFactory가 인식할 수 있게끔!
+    @PersistenceContext
     private EntityManager em;
 
     @Transactional
