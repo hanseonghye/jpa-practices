@@ -14,7 +14,7 @@ import java.util.List;
 import static me.kickscar.practices.jpa03.model01.domain.QGuestbook.guestbook;
 
 @Repository
-public class QueryDslRepository extends QuerydslRepositorySupport {
+public class QueryDSLRepository extends QuerydslRepositorySupport {
 
     // EntityManagerFactory가 인식할 수 있게끔!
     @PersistenceContext
@@ -22,7 +22,7 @@ public class QueryDslRepository extends QuerydslRepositorySupport {
 
     private final JPAQueryFactory queryFactory;
 
-    public QueryDslRepository(JPAQueryFactory queryFactory) {
+    public QueryDSLRepository(JPAQueryFactory queryFactory) {
         super(Guestbook.class);
         this.queryFactory = queryFactory;
     }

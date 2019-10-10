@@ -1,8 +1,7 @@
 package me.kickscar.practices.jpa03.model01.app;
 
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
-import me.kickscar.practices.jpa03.model01.repository.JPQLRepository;
-import me.kickscar.practices.jpa03.model01.repository.QueryDslRepository;
+import me.kickscar.practices.jpa03.model01.repository.QueryDSLRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -17,7 +16,7 @@ import java.util.List;
 public class JPA03SpringBootAppEx02 {
 
     @Autowired
-    QueryDslRepository repository;
+    QueryDSLRepository repository;
 
     @Bean
     ApplicationRunner applicationRunner() {
