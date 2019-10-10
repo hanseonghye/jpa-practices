@@ -1,5 +1,6 @@
 package me.kickscar.practices.jpa03.model01.app;
 
+import me.kickscar.practices.jpa03.model01.domain.Guestbook;
 import me.kickscar.practices.jpa03.model01.repository.JPQLRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -8,12 +9,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-
-import javax.persistence.EntityManager;
+import java.util.List;
 
 @SpringBootApplication
-@ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.repository" } )
 public class JPA03SpringBootAppEx01 {
 
     @Autowired
@@ -25,19 +23,40 @@ public class JPA03SpringBootAppEx01 {
 
             @Override
             public void run(ApplicationArguments args) throws Exception {
-                System.out.println( repository.getEntityManager() );
+                testInsert();
+                testFindAll();
+
+                testRemove();
+                testFindAll();
             }
 
-            public void testInsert( EntityManager em ) {
+            public void testInsert() {
+                Guestbook gb1 = new Guestbook();
+                gb1.setName("둘리");
+                gb1.setPassword("1234");
+                gb1.setContents("호이~");
+                repository.save(gb1);
+
+                Guestbook gb2 = new Guestbook();
+                gb2.setName("마이콜");
+                gb2.setPassword("1234");
+                gb2.setContents("라면은 구공탄에~~~\n 후르르 짭짭 맛있는 라면~~");
+                repository.save(gb2);
             }
 
-            public void testFind01( EntityManager em ) {
+            public void testFindAll() {
+                List<Guestbook> list = repository.findAll();
+                for(Guestbook gb : list){
+                    System.out.println(gb);
+                }
             }
 
-            public void testIdentity( EntityManager em ) {
-            }
+            public void testRemove() {
+                Guestbook gb = new Guestbook();
+                gb.setNo(1L);
+                gb.setPassword("1234");
 
-            public void testFind02( EntityManager em ) {
+                repository.remove(gb);
             }
         };
     }

@@ -2,33 +2,26 @@ package me.kickscar.practices.jpa03.model01.domain;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
 @Table( name = "guestbook" )
 public class Guestbook {
 	@Id
-	@GeneratedValue( strategy = GenerationType.IDENTITY  )	
+	@Column(name = "no")
+	@GeneratedValue( strategy = GenerationType.IDENTITY  )
 	private Long no;
-	
+
 	@Column( name = "name", nullable = false, length = 100 )
 	private String name;
-	
+
 	@Column( name = "contents", nullable = false )
 	@Lob
 	private String contents;
-	
+
 	@Column( name = "password", nullable = false, length = 32 )
 	private String password;
-	
+
 	@Column( name = "reg_date", nullable = false )
 	@Temporal( value = TemporalType.TIMESTAMP )
 	private Date regDate;
