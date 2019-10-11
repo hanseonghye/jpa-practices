@@ -1,15 +1,16 @@
-### Model01 : 단일 엔티티
+## Model01 : 단일 엔티티
 
 
-#### 01. Doamin
-**1) 엔티티 클래스: Guestbook**
+### 01. Doamin
+
+#### 1) 엔티티 클래스: Guestbook
    me.kickscar.practices.jpa03.model01.domain.Guestbook.java 엔티티 매핑 참고  
    
-**2) ERD**  
+#### 2) ERD 
    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30001.png" width="600px" />
    <br/>
 
-**3) QueryDSL를 위한 쿼리타입 QClass(쿼리용 클래스, Q로 시작) QGuestbook 생성하기**
+#### 3) QueryDSL를 위한 쿼리타입 QClass(쿼리용 클래스, Q로 시작) QGuestbook 생성하기
 
   1. __QueryDSLRespository.java 컴파일 오류__  
      
@@ -67,28 +68,29 @@
   
   
 
-#### 02. Repository
+### 02. Repository
 
-**1) JPQLRepository**
+#### 1) JPQLRepository
 
-**2) QueryDSLRepository**
+#### 2) QueryDSLRepository
 
-**3) GuestbookRepository extends JPARepository** 
+#### 3) GuestbookRepository extends JPARepository
 
 
-#### 03. Test SpringBoot Application:
+### 03. Test SpringBoot Application:
 
-**1) JPA03SpringBootApp01**
+#### 1) JPA03SpringBootApp01
   
   1. __JPQLRepository 빈 주입__
   
   2. __insert, select, delete 테스트__ 
 
 
-**2) JPA03SpringBootApp02**
+#### 2) JPA03SpringBootApp02
 
   1. __QueryDSLRepository 빈 주입__
 
   2. __insert, select, delete 테스트__ 
 
-**3) JPARepository**
+
+#### 3) JPARepository
