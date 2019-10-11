@@ -9,6 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface Model01JpaRepository extends JpaRepository<Guestbook, Long> {
 	List<Guestbook> findAllByOrderByRegDateDesc();
-	List<Guestbook> findAllByOrderByNameDesc(Pageable pageable);
-	List<Guestbook> findByName(String name, Sort sort);
+	List<Guestbook> findAllByOrderByRegDateDesc(Pageable pageable);
+
+	List<Guestbook> findByContents(String contents, Sort sort);
+
+	int deleteByNoAndPassword(Long no, String passwd);
 }
