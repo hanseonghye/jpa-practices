@@ -8,7 +8,6 @@
    
 #### 2) ERD 
    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30001.png" width="600px" />
-   <br/>
 
 #### 3) QueryDSL를 위한 쿼리타입 QClass(쿼리용 클래스, Q로 시작) QGuestbook 생성하기
 
