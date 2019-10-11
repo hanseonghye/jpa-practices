@@ -1,7 +1,7 @@
 ## Model01 : 단일 엔티티
 
 
-### 01. Doamin
+### 01. Domain
 
 #### 1) 엔티티 클래스: Guestbook
    me.kickscar.practices.jpa03.model01.domain.Guestbook.java 엔티티 매핑 참고  
