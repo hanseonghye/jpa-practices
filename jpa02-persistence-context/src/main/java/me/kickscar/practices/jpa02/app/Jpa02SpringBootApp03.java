@@ -17,7 +17,7 @@ import javax.persistence.PersistenceUnit;
 @SpringBootApplication
 // 엔티티 클래스 자동스캐닝 베이스 패키지 지정
 @EntityScan( basePackages = { "me.kickscar.practices.jpa02.domain" } )
-public class JPA02SpringBootApp02 {
+public class Jpa02SpringBootApp03 {
 
     //엔티티매니저팩토리 주입
     @PersistenceUnit
@@ -31,40 +31,55 @@ public class JPA02SpringBootApp02 {
             public void run(ApplicationArguments args) throws Exception {
 
                 // 엔티티매니저 생성
-                EntityManager em = emf.createEntityManager();
+                EntityManager em1 = emf.createEntityManager();
+                EntityManager em2 = emf.createEntityManager();
 
+                beforeTest( em1 );
+                deleteTest( em2 );
+
+                em1.close();
+                em2.close();
+
+                emf.close();
+            }
+
+            public void beforeTest( EntityManager em ){
                 // 트랜잭션 객체 얻어오기
                 EntityTransaction tx = em.getTransaction();
 
-                try{
-                    // [트랜잭션 시작: 엔티티 매니저는 데이터 변경 시 트랜잭션을 시작해야 한다]
-                    tx.begin();
+                // [트랜잭션 시작]
+                tx.begin();
 
-                    Member memberA = new Member();
-                    memberA.setId( "memberA" );
-                    memberA.setName( "회원A" );
-                    em.persist( memberA );
+                Member memberA = new Member();
+                memberA.setId( "memberA" );
+                memberA.setName( "회원A" );
+                em.persist( memberA );
 
-                    Member memberB = new Member();
-                    memberB.setId( "memberB" );
-                    memberB.setName( "회원B" );
-                    em.persist( memberB );
-
-                    tx.commit();
-                    // [트랜잭션 종료: 커밋하는 순간 데이터베이스에 INSERT SQL를 보낸다: 쿼리 로그 확인]
-
-                } catch(Exception e){
-                    e.printStackTrace();
-                    tx.rollback();
-                }
-
-                em.close();
-                emf.close();
+                tx.commit();
+                // [트랜잭션 종료]
             }
+
+            public void deleteTest( EntityManager em ){
+                // 트랜잭션 객체 얻어오기
+                EntityTransaction tx = em.getTransaction();
+
+                // [트랜잭션 시작]
+                tx.begin();
+
+                // 삭제 대상 엔티티 조회
+                Member memberA = em.find( Member.class, "memberA" );
+
+                // 엔티티 삭제
+                em.remove( memberA );
+
+                tx.commit();
+                // [트랜잭션 종료]
+            }
+
         };
     }
 
     public static void main(String[] args) {
-        try(ConfigurableApplicationContext c = SpringApplication.run(JPA02SpringBootApp02.class, args)){}
+        try(ConfigurableApplicationContext c = SpringApplication.run(Jpa02SpringBootApp03.class, args)){}
     }
 }

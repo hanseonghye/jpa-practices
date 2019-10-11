@@ -4,18 +4,18 @@
 ### JPA01. 엔티티 매핑(Entity Mapping)
 #### &nbsp;&nbsp;&nbsp;&nbsp;01. Member 엔티티 다양한 설정으로 매핑하기
 
+
 ### JPA02. 영속성 관리 / 엔티티 생명주기
 #### &nbsp;&nbsp;&nbsp;&nbsp;01. 영속성 켄텍스트(Persistence Context)
 #### &nbsp;&nbsp;&nbsp;&nbsp;02 ~ 04. 엔티티 조회/등록/수정/삭제 
 #### &nbsp;&nbsp;&nbsp;&nbsp;05. 준영속성
 
 
-### JPA03. 다양한 모델 매핑 예제 및 여러 Repository(JPQL, QueryDSL, JPARepository기반)들 예제 코드
+### JPA03. 다양한 모델 매핑 및 다양한 Repository(JPQL, QueryDSL, JPARepository 기반)들 예제 코드
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model01. 단일 엔티티 매핑 - 방명록
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model02...
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model03...
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model04...
-
 
 
 

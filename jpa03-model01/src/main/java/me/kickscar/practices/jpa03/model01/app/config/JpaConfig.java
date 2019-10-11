@@ -22,7 +22,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.repository" } )
-public class JPAConfig {
+public class JpaConfig {
 
     // EntityManagerFactory가 인식할 수 있게끔!
     @PersistenceContext

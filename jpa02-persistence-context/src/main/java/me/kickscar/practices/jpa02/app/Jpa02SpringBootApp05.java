@@ -17,7 +17,7 @@ import javax.persistence.PersistenceUnit;
 @SpringBootApplication
 // 엔티티 클래스 자동스캐닝 베이스 패키지 지정
 @EntityScan( basePackages = { "me.kickscar.practices.jpa02.domain" } )
-public class JPA02SpringBootApp04 {
+public class Jpa02SpringBootApp05 {
 
     //엔티티매니저팩토리 주입
     @PersistenceUnit
@@ -31,58 +31,35 @@ public class JPA02SpringBootApp04 {
             public void run(ApplicationArguments args) throws Exception {
 
                 // 엔티티매니저 생성
-                EntityManager em1 = emf.createEntityManager();
-                EntityManager em2 = emf.createEntityManager();
+                EntityManager em = emf.createEntityManager();
 
-                beforeTest( em1 );
-                updateTest( em2 );
-
-                em1.close();
-                em2.close();
-
-                emf.close();
-            }
-
-            public void beforeTest( EntityManager em ){
                 // 트랜잭션 객체 얻어오기
                 EntityTransaction tx = em.getTransaction();
 
                 // [트랜잭션 시작]
                 tx.begin();
 
+                // 엔티티 생성, 비영속 상태
                 Member memberA = new Member();
                 memberA.setId( "memberA" );
                 memberA.setName( "회원A" );
+
+                //영속 상태
                 em.persist( memberA );
 
-                tx.commit();
-                // [트랜잭션 종료]
-            }
-
-            public void updateTest( EntityManager em ){
-                // 트랜잭션 객체 얻어오기
-                EntityTransaction tx = em.getTransaction();
-
-                // [트랜잭션 시작]
-                tx.begin();
-
-                // 영속 엔티티 조회
-                Member memberA = em.find( Member.class, "memberA" );
-
-                // 영속 엔티티 데이터 수정
-                memberA.setName( "둘리" );
-
-                // update 메서드는 없다.
-                // em.updte( memberA );
+                //회원 엔티티를 영속성 컨텍스트에서 분리, 준영속 상태
+                em.detach( memberA );
 
                 tx.commit();
-                // [트랜잭션 종료]
-            }
+                // [트랜잭션 종료: insert sql이 실행 되지 않는다.]
 
+                em.close();
+                emf.close();
+            }
         };
     }
 
     public static void main(String[] args) {
-        try(ConfigurableApplicationContext c = SpringApplication.run(JPA02SpringBootApp04.class, args)){}
+        try(ConfigurableApplicationContext c = SpringApplication.run(Jpa02SpringBootApp05.class, args)){}
     }
 }

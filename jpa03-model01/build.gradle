@@ -33,17 +33,17 @@ dependencies {
 
 /* QueryDSL PlugIn Configuration */
 
-def qrydslGenDirectory = 'src/main/generated'
+def querydslGenDirectory = 'src/main/generated'
 
 sourceSets {
-    main.java.srcDirs += [ qrydslGenDirectory ]
+    main.java.srcDirs += [ querydslGenDirectory ]
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-    options.annotationProcessorGeneratedSourcesDirectory = file(qrydslGenDirectory)
+    options.annotationProcessorGeneratedSourcesDirectory = file(querydslGenDirectory)
 }
 
 clean.doLast {
-    file(qrydslGenDirectory).deleteDir()
+    file(querydslGenDirectory).deleteDir()
 }

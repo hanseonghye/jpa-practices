@@ -31,26 +31,26 @@
        
      쿼리타입 클래스 QGuestbook가 없기 때문에 발생
   
-  2. __qurydsl plugin for gradle를 build.gradle 에 설정하고 build, clean task 실행을 통해 생성과 삭제를 한다.__ 
+  2. __querydsl plugin for gradle를 build.gradle 에 설정하고 build, clean task 실행을 통해 생성과 삭제를 한다.__ 
   
-  3. __qurydsl plugin 설정 (build.gradle)__
+  3. __querydsl plugin 설정 (build.gradle)__
   
      ```
-       /* QueryDSL PlugIn Configuration */
+       /* querydsl PlugIn Configuration */
 
-       def qrydslGenDirectory = 'src/main/generated'
+       def querydslGenDirectory = 'src/main/generated'
 
        sourceSets {
-          main.java.srcDirs += [ qrydslGenDirectory ]
+          main.java.srcDirs += [ querydsldslGenDirectory ]
        }
 
        tasks.withType(JavaCompile) {
           options.encoding = 'UTF-8'
-           options.annotationProcessorGeneratedSourcesDirectory = file(qrydslGenDirectory)
+           options.annotationProcessorGeneratedSourcesDirectory = file(querydslGenDirectory)
        }
 
        clean.doLast {
-          file(qrydslGenDirectory).deleteDir()
+          file(querydslGenDirectory).deleteDir()
        }  
      ```
 
@@ -70,23 +70,23 @@
 
 ### 02. Repository
 
-#### 1) JPQLRepository
+#### 1) Model01JpqlRepository
 
-#### 2) QueryDSLRepository
+#### 2) Model01QueryDslRepository
 
-#### 3) GuestbookRepository extends JPARepository
+#### 3) Model01JpaRepository extends JpaRepository
 
 
-### 03. Test SpringBoot Application:
+### 03. Test SpringBoot Application
 
-#### 1) JPA03SpringBootApp01
+#### 1) JPA03SpringBootApp01(콘솔)
   
   1. __JPQLRepository 빈 주입__
   
   2. __insert, select, delete 테스트__ 
 
 
-#### 2) JPA03SpringBootApp02
+#### 2) JPA03SpringBootApp02(콘솔)
 
   1. __QueryDSLRepository 빈 주입__
 

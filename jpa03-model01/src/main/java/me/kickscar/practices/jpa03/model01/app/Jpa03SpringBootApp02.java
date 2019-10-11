@@ -1,7 +1,7 @@
 package me.kickscar.practices.jpa03.model01.app;
 
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
-import me.kickscar.practices.jpa03.model01.repository.JPQLRepository;
+import me.kickscar.practices.jpa03.model01.repository.Model01QueryDslRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -9,13 +9,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+
 import java.util.List;
 
 @SpringBootApplication
-public class JPA03SpringBootApp01 {
+public class Jpa03SpringBootApp02 {
 
     @Autowired
-    JPQLRepository repository;
+    Model01QueryDslRepository repository;
 
     @Bean
     ApplicationRunner applicationRunner() {
@@ -62,6 +63,6 @@ public class JPA03SpringBootApp01 {
     }
 
     public static void main(String[] args) {
-        try(ConfigurableApplicationContext c = SpringApplication.run(JPA03SpringBootApp01.class, args)){}
+        try(ConfigurableApplicationContext c = SpringApplication.run(Jpa03SpringBootApp02.class, args)){}
     }
 }
