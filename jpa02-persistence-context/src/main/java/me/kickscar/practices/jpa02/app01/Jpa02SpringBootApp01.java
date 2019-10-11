@@ -1,4 +1,4 @@
-package me.kickscar.practices.jpa02.app;
+package me.kickscar.practices.jpa02.app01;
 
 import me.kickscar.practices.jpa02.domain.Member;
 import org.springframework.boot.ApplicationArguments;

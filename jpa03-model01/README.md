@@ -76,18 +76,18 @@
 
 ### 03. Test SpringBoot Application
 
-#### 1) Jpa03SpringBootApp01(콘솔)
+#### 1) app01.Jpa03SpringBootApp01(Command Line)
   
   1. __Model01JpqlRepository 빈 주입__
   
   2. __insert, select, delete 테스트__ 
 
 
-#### 2) Jpa03SpringBootApp02(콘솔)
+#### 2) app02.Jpa03SpringBootApp02(Command Line)
 
   1. __Model01QueryDslRepository 빈 주입__
 
   2. __insert, select, delete 테스트__ 
 
 
-#### 3) JPARepository
+#### 3) app03.Jpa03SpringBootApp03(Rest Web)

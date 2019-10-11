@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-
 public interface Model01JpaRepository extends JpaRepository<Guestbook, Long> {
 	List<Guestbook> findAllByOrderByRegDateDesc();
 	List<Guestbook> findAllByOrderByNameDesc(Pageable pageable);
