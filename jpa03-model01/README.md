@@ -79,7 +79,7 @@
      + 구현체는 애프리케이션 실행 시, Spring Data JPA가 생성해서 제공해 준다.
      + 즉, **데이터 접근 계층(DAO, Repository) 개발할 떄 구현 클래스 없이 인터페이스만 작성해도 개발을 완료할 수 있다.**  
 
-  2. __설정(Spring Boot)__
+  2. __설정(SpringBoot 에서)__
   
      설정 클래스에 @EnableJpaRepositories 어노테이션으로 JPA Repositories 활성화해야 한다.(코드 주석 참고)
            
@@ -140,7 +140,7 @@
   
   3. __내부에 작성된 Model01Controller 에 매핑된 URL로 Model01JpaRepository 메소드를 테스트 해 볼수 있다.__  
      
-  4. __애플리케이션 싫행 후, URL 접근__  
+  4. __애플리케이션 실행 후, API URL 접근하기__  
      ```ssh
       $ curl http://localhost:8088/model01/list
       [{"no":3,"name":"도우넛","contents":"안녕4","password":"1234","regDate":"2019-10-11T07:25:31.972+0000"},{"no":2,"name":"마이콜","contents":"안녕2","password":"1234","regDate":"2019-10-11T07:25:31.9"}, {"no":1,"name":"둘리","contents":"안녕1","password":"1234","regDate":"2019-10-11T07:25:31.912+0000"}] 
