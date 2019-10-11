@@ -32,7 +32,7 @@
   
   2. __querydsl plugin for gradle를 build.gradle 에 설정하고 Build Task의 build 와 clean 실행을 통해 생성과 삭제를 한다.__ 
   
-  3. __querydsl plugin 설정 (build.gradle)__
+  3. __querydsl plugin 설정 (build.gradle)__  
   
      ```
        /* querydsl PlugIn Configuration */
@@ -52,7 +52,9 @@
           file(querydslGenDirectory).deleteDir()
        }  
      ```
-
+      
+     설정은 gradle 버젼에 민감함(gradle 5.4 기준임. gradle wrapper를 제공하기 때문에 큰 문제는 없다)
+     
   4. __Build Task의 build 또는 Other Task의 compileJava 함수 실행__
  
      <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30002.png" width="600px" />
@@ -72,6 +74,7 @@
 #### 2) Model01QueryDslRepository
 
 #### 3) Model01JpaRepository extends JpaRepository
+
 
 
 ### 03. Test SpringBoot Application

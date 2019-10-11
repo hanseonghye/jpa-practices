@@ -40,13 +40,13 @@ public class Jpa03SpringBootApp02 {
                 Guestbook gb1 = new Guestbook();
                 gb1.setName("둘리");
                 gb1.setPassword("1234");
-                gb1.setContents("호이~");
+                gb1.setContents("안녕1");
                 repository.save(gb1);
 
                 Guestbook gb2 = new Guestbook();
                 gb2.setName("마이콜");
                 gb2.setPassword("1234");
-                gb2.setContents("라면은 구공탄에~~~\n 후르르 짭짭 맛있는 라면~~");
+                gb2.setContents("안녕2");
                 repository.save(gb2);
             }
 

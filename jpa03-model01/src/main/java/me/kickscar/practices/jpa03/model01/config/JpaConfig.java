@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -20,6 +21,10 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+// JPA Repositories 활성화:
+// (JpaRepository 인터페이스를 상속받은 Repository Interface)에 대한 구현체 생성을 애플리케이션 실행 시점에
+// Spring Data JPA가 자동으로 한다.
+@EnableJpaRepositories(basePackages = { "me.kickscar.practices.jpa03.model01.repository" })
 public class JpaConfig {
 
     // EntityManagerFactory가 인식할 수 있게끔!
