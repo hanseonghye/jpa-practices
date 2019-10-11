@@ -54,15 +54,15 @@
        }  
      ```
 
-  3. Build Task의 build 또는 Other Task의 compileJava 함수 실행
+  4. __Build Task의 build 또는 Other Task의 compileJava 함수 실행__
  
      <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30002.png" width="600px" />
      <br/>
 
-     생성되었다.  
+     생성되었다!!!  
      <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30003.png" width="600px" />
   
-  4. Build Task Clean 함수 실행으로 삭제할 수 있다.
+  5. __Build Task clean 함수 실행으로 삭제할 수 있다.__
   
   
 
