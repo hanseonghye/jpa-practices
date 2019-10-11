@@ -2,7 +2,7 @@
 
 
 #### 01. Doamin
-**1) 엔티티 클래스: Guestbook***  
+**1) 엔티티 클래스: Guestbook**
    me.kickscar.practices.jpa03.model01.domain.Guestbook.java 엔티티 매핑 참고  
    
 **2) ERD**  
@@ -63,26 +63,32 @@
      <br/>
        
   
-  4. Build Task Clean 함수 싫행으로 삭제할 수 있다.
+  4. Build Task Clean 함수 실행으로 삭제할 수 있다.
   
   
 
-#### 02. Repository:
-1) JPQLRepository
+#### 02. Repository
 
-2) QueryDSLRepository
+**1) JPQLRepository**
 
-3) GuestbookRepository extends JPARepository 
+**2) QueryDSLRepository**
+
+**3) GuestbookRepository extends JPARepository** 
 
 
 #### 03. Test SpringBoot Application:
-1) JPA03SpringBootApp01
-   + JPQLRepository 빈 주입
-   + insert, select, delete 테스트 
 
-2) JPA03SpringBootApp02
-   + QueryDSLRepository 빈 주입
-   + insert, select, delete 테스트 
-   + 
+**1) JPA03SpringBootApp01**
+  
+  1. __JPQLRepository 빈 주입__
+  
+  2. __insert, select, delete 테스트__ 
 
-3) JPARepository 
+
+**2) JPA03SpringBootApp02**
+
+  1. __QueryDSLRepository 빈 주입__
+
+  2. __insert, select, delete 테스트__ 
+
+**3) JPARepository**
