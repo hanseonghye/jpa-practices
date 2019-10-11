@@ -29,9 +29,9 @@
        }
      ```
        
-     쿼리타입 클래스 QGuestbook가 없기 때문에 발생
+     쿼리타입 클래스 QGuestbook가 없기 때문에 발생!!!
   
-  2. __querydsl plugin for gradle를 build.gradle 에 설정하고 build, clean task 실행을 통해 생성과 삭제를 한다.__ 
+  2. __querydsl plugin for gradle를 build.gradle 에 설정하고 Build Task의 build 와 clean 실행을 통해 생성과 삭제를 한다.__ 
   
   3. __querydsl plugin 설정 (build.gradle)__
   
@@ -61,8 +61,6 @@
 
      생성되었다.  
      <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30003.png" width="600px" />
-     <br/>
-       
   
   4. Build Task Clean 함수 실행으로 삭제할 수 있다.
   
@@ -79,16 +77,16 @@
 
 ### 03. Test SpringBoot Application
 
-#### 1) JPA03SpringBootApp01(콘솔)
+#### 1) Jpa03SpringBootApp01(콘솔)
   
-  1. __JPQLRepository 빈 주입__
+  1. __Model01JpqlRepository 빈 주입__
   
   2. __insert, select, delete 테스트__ 
 
 
-#### 2) JPA03SpringBootApp02(콘솔)
+#### 2) Jpa03SpringBootApp02(콘솔)
 
-  1. __QueryDSLRepository 빈 주입__
+  1. __Model01QueryDslRepository 빈 주입__
 
   2. __insert, select, delete 테스트__ 
 
