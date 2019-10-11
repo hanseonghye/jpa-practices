@@ -1,4 +1,4 @@
-## 01. 다양한 매핑 모델들의 JPQL,QueryDSL,JPARepository 기반 Repository 작성 예시
+## 01. 다양한 매핑 모델들의 JPQL, QueryDSL, JPARepository 기반 Repository 작성 예시
 
 
 ### JPA01. 엔티티 매핑(Entity Mapping)
@@ -10,7 +10,7 @@
 #### &nbsp;&nbsp;&nbsp;&nbsp;05. 준영속성
 
 
-### JPA03. 다양한 모델 매핑 예제 및 Repository 예제 코드
+### JPA03. 다양한 모델 매핑 예제 및 여러 Repository(JPQL, QueryDSL, JPARepository기반)들 예제 코드
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model01. 단일 엔티티 매핑 - 방명록
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model02...
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model03...
