@@ -12,10 +12,24 @@
 
 
 ### JPA03. 다양한 모델 매핑 및 다양한 Repository(JPQL, QueryDSL, JPARepository 기반)들 예제 코드
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model01. 단일 엔티티 매핑 - 방명록
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model02...
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model03...
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model04...
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model01. 단일(One)                      매핑        - 방명록
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model02. 다대일(@ManyToOne)              매핑(단방향) - 게시판
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model03. 다대일(@ManyToOne)              매핑(양방향) - 쇼핑몰
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model04. 일대다(@OneToMany)              매핑(단방향) - 게시판
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model05. 일대다(@OneToMany)              매핑(양방향) - X
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model06. 일대일(@OneToOne)               매핑(단방향) - JBlog
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model07. 일대일(@OneToOne)               매핑(양방향) - JBlog
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model08. 다대다(@ManyToMany)             매핑(양방향) - 음반검색
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model09. 다대다(@ManyToMany)             매핑(양방향) - 음반검색
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model10. 다대다(@OneToMany + @ManyToOne) 매핑       - 쇼핑몰 카트
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model11. 복합키                          매핑       - ?
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model12. 식별관계                         매핑       - JBlog
+
+
+
+
+
+
 
 
 
@@ -66,7 +80,7 @@
   <br/>  
   
   12) Reimport All Gradle Project  
-  <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/00012.png" width="600px" />
+  <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/00018.png" width="600px" />
   <br/>  
   
   13) 잘가져온 모듈 모습!!!
