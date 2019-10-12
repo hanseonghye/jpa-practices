@@ -44,9 +44,9 @@
 #### 3) app02
 
   1. __Model01QueryDslRepository__  
-
-     + 컴파일 오류  
-     
+     + QueryDSL를 편하게 쓰기 위해 JPAQueryFactory Bean을 중비 받는다.
+     + insert를 위해 EntityManager 주입 받는다.
+     + **컴파일 오류**  
        ```
          import static me.kickscar.practices.jpa03.model01.domain.QGuestbook.guestbook;  
             .  
@@ -113,23 +113,38 @@
      
      + Build Task의 build 또는 Other Task의 compileJava 함수 실행  
   
-       <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30002.png" width="600px" />
+       <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30002.png" width="400px" />
        <br/>
 
        생성되었다!!!  
-       <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30003.png" width="600px" />
+       <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30003.png" width="400px" />
   
      + Build Task clean 함수 실행으로 삭제할 수 있다.
 
-  3. __JpaConfig(JPA Java Config)__  
-
+  3. __JpaConfig(JPA Java Config)__
+    
+     + QueryDSL Repository에 JPAQueryFactory를 주입하기 위한 빈설정이 추가적으로 필요하다.
+     
+       ```
+          @PersistenceContext
+          private EntityManager entityManager;
+       
+       ```
+ 
+       ```
+         @Bean
+         public JPAQueryFactory jpaQueryFactory() {
+            return new JPAQueryFactory( entityManager );
+         }
+       ```
+     
   4. __Test Application__  
      + Jpa03SpringBootApp02.java  
      + Model01QueryDslRepository 빈 주입(Auto Wiring)  
      + Command Line Mode  
 
 
-#### 3) app03
+#### 4) app03
 
   1. __Model01JpaRepository__
     
@@ -177,8 +192,7 @@
           }
        ```     
        RepositoryMethodTestAfterBootAppLoaded:   
-       데이터베이스에 테스트 데이터 생성과 Model01JpaRepository의 기본 CRUD 메서드와 예제 QueryMethod 테스트 목적으로 만든 클래스   
-       실행 후, query 로그 꼭 확인해 볼 것. 
+       데이터베이스에 테스트 데이터 생성과 Model01JpaRepository의 기본 CRUD 메서드와 예제 QueryMethod 테스트 목적으로 만든 클래스로 실행 후, query 로그 꼭 확인해 볼 것. 
   
      + Model01Controller에 매핑된 URL로 Model01JpaRepository의 메소드들을 테스트 해 볼수 있다.
        ```ssh
@@ -192,6 +206,6 @@
          [{"no":3,"name":"도우넛","contents":"안녕4","password":"1234","regDate":"2019-10-11T07:25:31.972+0000"}]
          $
        ```
-       [!!!] 윈도우에서는 콘솔창이 기본 cp949이기 때문에 curl사용시 응답내용의 한글이 깨질 수 있다. 다음과 같이 테스트를 하면 UTF-8 인코딩 내용도 제대로 출력된다.  
+       [TIP] 윈도우에서는 콘솔창이 기본 cp949이기 때문에 curl사용시 응답내용의 한글이 깨질 수 있다. 다음과 같이 테스트를 하면 UTF-8 인코딩 내용도 제대로 출력된다.  
        <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30007.png" width="600px" />
        <br/>
