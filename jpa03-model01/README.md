@@ -17,7 +17,7 @@
 #### 1) 개발환경
   1. __Java SE 1.8__  
   2. __Spring Boot 2.1.8.Release__   
-  3. __Spring Data JPA 2.1.10.Release__   
+  3. __Spring Data JPA 2.1.8.Release__   
   4. __Hibernate 5.4.4.Final__  
   5. __H2 Database 1.4.197__  
   6. __Gradle 5.4__   
