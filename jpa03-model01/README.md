@@ -32,8 +32,33 @@
   
   2. __querydsl plugin for gradle를 build.gradle 에 설정하고 Build Task의 build 와 clean 실행을 통해 생성과 삭제를 한다.__ 
   
-  3. __querydsl plugin 설정 (build.gradle)__  
+  3. __querydsl plugin 설정 (build.gradle)__
+     
+     dependency 추가  
+     ```
+     dependencies {
+
+       compile('org.springframework.boot:spring-boot-starter-web:2.1.8.RELEASE')
+       compile('org.springframework.boot:spring-boot-starter-data-jpa:2.1.8.RELEASE')
+       compile('org.hibernate:hibernate-entitymanager:5.4.4.Final')
+       compile('mysql:mysql-connector-java:8.0.16')
+       runtimeOnly('com.h2database:h2:1.4.197')
+       testCompile('junit:junit:4.12')
+
+       compile('com.querydsl:querydsl-jpa:4.1.4')
+       compile('com.mysema.querydsl:querydsl-apt:3.7.4')
+
+       annotationProcessor(
+            'com.querydsl:querydsl-apt:4.1.4:jpa',
+            'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final',
+            'javax.annotation:javax.annotation-api:1.3.2'
+       )
+     }     
+     ```  
+     + querydsl-jpa, querydsl-apt 를 추가 한다.  
+     + annotationProcessor 를 추가 해준다.   
   
+     querydsl gradle plugin 설정
      ```
        /* querydsl PlugIn Configuration */
 
