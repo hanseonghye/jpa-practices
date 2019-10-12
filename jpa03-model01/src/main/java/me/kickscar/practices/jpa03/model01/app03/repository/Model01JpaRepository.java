@@ -1,4 +1,4 @@
-package me.kickscar.practices.jpa03.model01.repository;
+package me.kickscar.practices.jpa03.model01.app03.repository;
 
 import java.util.List;
 

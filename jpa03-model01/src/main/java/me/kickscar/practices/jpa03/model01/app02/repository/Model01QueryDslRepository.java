@@ -1,4 +1,4 @@
-package me.kickscar.practices.jpa03.model01.repository;
+package me.kickscar.practices.jpa03.model01.app02.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;

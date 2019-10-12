@@ -1,6 +1,5 @@
-package me.kickscar.practices.jpa03.model01.config;
+package me.kickscar.practices.jpa03.model01.app03.config;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -13,9 +12,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -24,12 +21,8 @@ import java.util.Properties;
 // JPA Repositories 활성화:
 // (JpaRepository 인터페이스를 상속받은 Repository Interface)에 대한 구현체 생성을 애플리케이션 실행 시점에
 // Spring Data JPA가 자동으로 한다.
-@EnableJpaRepositories(basePackages = { "me.kickscar.practices.jpa03.model01.repository" })
+@EnableJpaRepositories(basePackages = { "me.kickscar.practices.jpa03.model01.app03.repository" })
 public class JpaConfig {
-
-    // EntityManagerFactory가 인식할 수 있게끔!
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Bean
     // Connection Pool DataSource(MySQL)
@@ -45,6 +38,7 @@ public class JpaConfig {
     }
 
     @Bean
+    // Connection Pool DataSource(H2Database)
     public DataSource dataSourceH2() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
@@ -95,14 +89,6 @@ public class JpaConfig {
 
         return em;
     }
-
-    @Bean
-    // JPAQueryFatory: EntityManager 를 주입받아 생성
-    // QueryDSL 지원 레포지토리에서는 편하게 사용할 수 있다.
-    public JPAQueryFactory jpaQueryFactory() {
-        return new JPAQueryFactory( entityManager );
-    }
-
 
     Properties jpaProperties() {
         Properties properties = new Properties();

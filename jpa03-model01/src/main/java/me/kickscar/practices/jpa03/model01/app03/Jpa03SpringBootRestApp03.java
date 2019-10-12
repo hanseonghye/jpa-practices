@@ -1,8 +1,7 @@
 package me.kickscar.practices.jpa03.model01.app03;
 
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
-import me.kickscar.practices.jpa03.model01.repository.Model01JpaRepository;
-import org.hibernate.cfg.CreateKeySecondPass;
+import me.kickscar.practices.jpa03.model01.app03.repository.Model01JpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @SpringBootApplication
-@ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.config", "me.kickscar.practices.jpa03.model01.repository" } )
+// 하위 패키지에 Config, Repository가 있기 때문에 자동스캔 가능(생략가능)
+@ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.app03.config", "me.kickscar.practices.jpa03.model01.app03.repository" } )
 public class Jpa03SpringBootRestApp03 {
 
     @RestController

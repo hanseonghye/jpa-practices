@@ -1,4 +1,4 @@
-package me.kickscar.practices.jpa03.model01.repository;
+package me.kickscar.practices.jpa03.model01.app01.repository;
 
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
 import org.springframework.stereotype.Repository;

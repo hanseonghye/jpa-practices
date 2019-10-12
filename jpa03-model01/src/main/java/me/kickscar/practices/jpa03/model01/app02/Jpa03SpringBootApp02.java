@@ -2,11 +2,10 @@ package me.kickscar.practices.jpa03.model01.app02;
 
 import me.kickscar.practices.jpa03.model01.app01.Jpa03SpringBootApp01;
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
-import me.kickscar.practices.jpa03.model01.repository.Model01QueryDslRepository;
+import me.kickscar.practices.jpa03.model01.app02.repository.Model01QueryDslRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -17,7 +16,8 @@ import org.springframework.context.annotation.ComponentScan;
 import java.util.List;
 
 @SpringBootApplication
-@ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.config", "me.kickscar.practices.jpa03.model01.repository" } )
+// 하위 패키지에 Config, Repository가 있기 때문에 자동스캔 가능(생략가능)
+@ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.app02.config", "me.kickscar.practices.jpa03.model01.app02.repository" } )
 public class Jpa03SpringBootApp02 {
 
     @Autowired
