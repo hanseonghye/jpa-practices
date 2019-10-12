@@ -42,11 +42,12 @@ public class Jpa03SpringBootRestApp03 {
     }
 
     @Component
-    public class BasicCRUDAndQueryMethodTest {
+    public class RepositoryMethodTestAfterBootAppLoaded {
+
         @Autowired
         private Model01JpaRepository repository;
 
-        public void run(){
+        public void test(){
 
             // 기본 CRUD 메소드: save
             Guestbook gb1 = new Guestbook();
@@ -86,6 +87,6 @@ public class Jpa03SpringBootRestApp03 {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run( Jpa03SpringBootRestApp03.class, args );
-        context.getBean(BasicCRUDAndQueryMethodTest.class).run();
+        context.getBean( RepositoryMethodTestAfterBootAppLoaded.class ).test();
     }
 }

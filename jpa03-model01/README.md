@@ -128,17 +128,18 @@
 #### 3) app03.Jpa03SpringBootApp03(Rest Web)
 
   1. __예제는 Spring Boot Rest Web Application으로 작성__
-  2. __얘프리케이션이 실행되고 다음 코드에 의해서 BasicCRUDAndQueryMethodTest bean의 run() 메소드가 실행__
+  2. __애플리케이션 실행 후, 다음 코드에 의해서 RepositoryMethodTestAfterBootAppLoaded Bean의 test() 메소드가 실행__
   
      ```
         public static void main(String[] args) {
            ConfigurableApplicationContext context = SpringApplication.run( Jpa03SpringBootRestApp03.class, args );
-           context.getBean(BasicCRUDAndQueryMethodTest.class).run();
+           context.getBean( RepositoryMethodTestAfterBootAppLoaded.class ).run();
         }
      ```     
-     API 서비스 DB 데이터 생성 및 기본 CRUD 메서드 와 몇 개 예제로 만들어 놓은 QueryMethod 테스트 목적    
+     RepositoryMethodTestAfterBootAppLoaded  
+     데이터베이스에 테스트 데이터 생성 / Model01JpaRepository의 기본 CRUD 메서드와 예제 QueryMethod 테스트 목적으로 만든 클래스    
   
-  3. __내부에 작성된 Model01Controller 에 매핑된 URL로 Model01JpaRepository 메소드를 테스트 해 볼수 있다.__  
+  3. __내부에 작성된 Model01Controller 에 매핑된 URL로 Model01JpaRepository 다른 메소드들을 테스트 해 볼수 있다.__  
      
   4. __애플리케이션 실행 후, API URL 접근하기__  
      ```ssh
