@@ -11,7 +11,7 @@ public interface Model01JpaRepository extends JpaRepository<Guestbook, Long> {
 	List<Guestbook> findAllByOrderByRegDateDesc();
 	List<Guestbook> findAllByOrderByRegDateDesc(Pageable pageable);
 
-	List<Guestbook> findByContents(String contents, Sort sort);
+	List<Guestbook> findAllByContents(String contents, Sort sort);
 
 	int deleteByNoAndPassword(Long no, String passwd);
 }

@@ -137,7 +137,8 @@
         }
      ```     
      RepositoryMethodTestAfterBootAppLoaded  
-     데이터베이스에 테스트 데이터 생성 / Model01JpaRepository의 기본 CRUD 메서드와 예제 QueryMethod 테스트 목적으로 만든 클래스    
+     데이터베이스에 테스트 데이터 생성과 Model01JpaRepository의 기본 CRUD 메서드와 예제 QueryMethod 테스트 목적으로 만든 클래스   
+     실행 후, query 로그 꼭 확인해 볼 것. 
   
   3. __내부에 작성된 Model01Controller 에 매핑된 URL로 Model01JpaRepository 다른 메소드들을 테스트 해 볼수 있다.__  
      

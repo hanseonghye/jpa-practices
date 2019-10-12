@@ -2,6 +2,7 @@ package me.kickscar.practices.jpa03.model01.app03;
 
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
 import me.kickscar.practices.jpa03.model01.repository.Model01JpaRepository;
+import org.hibernate.cfg.CreateKeySecondPass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -47,9 +48,9 @@ public class Jpa03SpringBootRestApp03 {
         @Autowired
         private Model01JpaRepository repository;
 
-        public void test(){
+        public void test() {
 
-            // 기본 CRUD 메소드: save
+            // 기본 CRUD 메소드: save(Entity) : insert
             Guestbook gb1 = new Guestbook();
             gb1.setName("둘리");
             gb1.setPassword("1234");
@@ -66,7 +67,7 @@ public class Jpa03SpringBootRestApp03 {
             gb3.setName("또치");
             gb3.setPassword("1234");
             gb3.setContents("안녕3");
-            repository.save(gb2);
+            repository.save(gb3);
 
             Guestbook gb4 = new Guestbook();
             gb4.setName("도우넛");
@@ -74,14 +75,32 @@ public class Jpa03SpringBootRestApp03 {
             gb4.setContents("안녕4");
             repository.save(gb4);
 
-            // 쿼리메소드: deleteByNoAndPassword
-            repository.deleteByNoAndPassword(0L, "1234");
-
-            // 쿼리메소드: findAllByOrderByRegDateDesc
-            List<Guestbook> list = repository.findAllByOrderByRegDateDesc();
-            for(Guestbook gb : list){
+            // 기본 CRUD 메소드: findAll() : select
+            List<Guestbook> list = repository.findAll();
+            for (Guestbook gb : list) {
                 System.out.println(gb);
             }
+
+            // 기본 CRUD 메소드: deleteById(id) : delete
+            repository.deleteById(1L);
+
+            Long count = repository.count();
+            System.out.println("count:" + count);
+
+            // 쿼리 메소드: deleteByNoAndPassword(delete)
+            repository.deleteByNoAndPassword(1L, "1234");
+
+            // 쿼리 메소드: findAllByOrderByRegDateDesc() : select
+            list = repository.findAllByOrderByRegDateDesc();
+            for (Guestbook gb : list) {
+                System.out.println(gb);
+            }
+
+            // 기본 CRUD 메소드: findById() : select
+            Guestbook gb5 = repository.findById(3L).get();
+
+            // update 메소드는 없음
+            gb5.setPassword("5678");
         }
     }
 
