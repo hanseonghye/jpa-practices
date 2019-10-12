@@ -69,7 +69,7 @@
        }
 
        tasks.withType(JavaCompile) {
-          options.encoding = 'UTF-8'
+           options.encoding = 'UTF-8'
            options.annotationProcessorGeneratedSourcesDirectory = file(querydslGenDirectory)
        }
 
@@ -78,7 +78,7 @@
        }  
      ```
       
-     설정은 gradle 버젼에 민감함(gradle 5.4 기준임. gradle wrapper를 제공하기 때문에 큰 문제는 없다)
+     설정은 gradle 버젼에 매우 민감하다(gradle 5.4 기준임. 이 프로젝트의 gradle wrapper를 빌드에 사용하면 큰 문제가 없다)
      
   4. __Build Task의 build 또는 Other Task의 compileJava 함수 실행__
  
