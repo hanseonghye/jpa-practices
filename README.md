@@ -19,19 +19,11 @@
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model05. 일대다(@OneToMany)              매핑(양방향) - X
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model06. 일대일(@OneToOne)               매핑(단방향) - JBlog
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model07. 일대일(@OneToOne)               매핑(양방향) - JBlog
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model08. 다대다(@ManyToMany)             매핑(양방향) - 음반검색
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model08. 다대다(@ManyToMany)             매핑(단방향) - 음반검색
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model09. 다대다(@ManyToMany)             매핑(양방향) - 음반검색
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model10. 다대다(@OneToMany + @ManyToOne) 매핑       - 쇼핑몰 카트
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model11. 복합키                          매핑       - ?
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model12. 식별관계                         매핑       - JBlog
-
-
-
-
-
-
-
-
 
 
 ## 02. 프로젝트 로컬 클론 및 모듈 임포트 그리고 실행 환경 설정 방법 (IntelliJ IDEA)
