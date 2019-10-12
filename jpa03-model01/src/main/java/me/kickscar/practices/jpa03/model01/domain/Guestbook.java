@@ -68,7 +68,12 @@ public class Guestbook {
 
 	@Override
 	public String toString() {
-		return "Guestbook [no=" + no + ", name=" + name + ", contents=" + contents + ", password=" + password
-				+ ", regDate=" + regDate + "]";
+		return "Guestbook{" +
+				"no=" + no +
+				", name='" + name + '\'' +
+				", contents='" + contents + '\'' +
+				", password='" + password + '\'' +
+				", regDate=" + regDate +
+				'}';
 	}
 }
