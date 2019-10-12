@@ -152,4 +152,9 @@
       $ curl http://localhost:8088/model01/list/1 
       [{"no":3,"name":"도우넛","contents":"안녕4","password":"1234","regDate":"2019-10-11T07:25:31.972+0000"}]
       $
-     ```     
+     ```
+     [Tip] 윈도우에서는 콘솔창이 기본 cp949이기 때문에 curl사용시 응답내용의 한글이 깨질 수 있다. 다음과 같이 테스트를 하면 UTF-8 인코딩 내용도 제대로 출력된다.  
+     <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30007.png" width="600px" />
+     <br/>
+     
+          
