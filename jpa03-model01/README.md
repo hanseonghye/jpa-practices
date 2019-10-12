@@ -44,9 +44,10 @@
 #### 3) app02
 
   1. __Model01QueryDslRepository__  
-     + QueryDSL를 편하게 쓰기 위해 JPAQueryFactory Bean을 중비 받는다.
+     + QueryDSL를 편하게 쓰기 위해 JPAQueryFactory Bean을 주입 받는다.
      + insert를 위해 EntityManager 주입 받는다.
-     + **컴파일 오류**  
+     + **컴파일 오류**
+       
        ```
          import static me.kickscar.practices.jpa03.model01.domain.QGuestbook.guestbook;  
             .  
@@ -68,7 +69,8 @@
      + querydsl plugin for gradle를 build.gradle 에 설정하고 Build Task의 build 와 clean 실행을 통해 생성과 삭제를 한다. 
      + querydsl plugin 설정 (build.gradle)
      
-       - dependency 추가  
+       - dependency 추가
+         
        ```
          dependencies {
 
@@ -89,8 +91,10 @@
               'javax.annotation:javax.annotation-api:1.3.2'
            )
          }     
-       ```  
+       ```
+         
        - querydsl gradle plugin 설정
+       
        ```
           /* querydsl PlugIn Configuration */
 
