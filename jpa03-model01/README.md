@@ -36,9 +36,10 @@
      + JPA Properties (appication.yml의 JPA 섹션과 비교해 보자)  
   
   3. __Test Application__  
-     + SpringBootApp01.java  
-     + Model01JpqlRepository 빈 주입(Auto Wiring)  
+     + SpringBootApp01.java
      + Command Line Mode  
+     + ApplicationRunner 인테페이스 구현체 빈 등록  
+     + ApplicationRunner 인테페이스 구현체에 JpqlGuestbookRepository 빈 주입(Auto Wiring)  
 
 
 #### 3) app02
@@ -144,8 +145,9 @@
      
   4. __Test Application__  
      + SpringBootApp02.java  
-     + Model01QueryDslRepository 빈 주입(Auto Wiring)  
-     + Command Line Mode  
+     + Command Line Mode
+     + ApplicationRunner 인테페이스 구현체 빈 등록  
+     + ApplicationRunner 인테페이스 구현체에 QueryDslGuestbookRepository 빈 주입(Auto Wiring)  
 
 
 #### 4) app03
@@ -198,7 +200,7 @@
        RepositoryMethodTestAfterBootAppLoaded:   
        데이터베이스에 테스트 데이터 생성과 Model01JpaRepository의 기본 CRUD 메서드와 예제 QueryMethod 테스트 목적으로 만든 클래스로 실행 후, query 로그 꼭 확인해 볼 것. 
   
-     + Model01Controller에 매핑된 URL로 Model01JpaRepository의 메소드들을 테스트 해 볼수 있다.
+     + Model01Controller에 매핑된 URL로 JpaGuestbookRepository의 메소드들을 테스트 해 볼수 있다.
        ```ssh
          $ curl http://localhost:8088/model01/list
          [{"no":3,"name":"도우넛","contents":"안녕4","password":"1234","regDate":"2019-10-11T07:25:31.972+0000"},{"no":2,"name":"마이콜","contents":"안녕2","password":"1234","regDate":"2019-10-11T07:25:31.9"}, {"no":1,"name":"둘리","contents":"안녕1","password":"1234","regDate":"2019-10-11T07:25:31.912+0000"}] 

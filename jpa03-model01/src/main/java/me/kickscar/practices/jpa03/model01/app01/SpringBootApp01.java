@@ -19,12 +19,12 @@ import java.util.List;
 @ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.app01.config", "me.kickscar.practices.jpa03.model01.app01.repository" } )
 public class SpringBootApp01 {
 
-    @Autowired
-    JpqlGuestbookRepository repository;
-
     @Bean
     ApplicationRunner applicationRunner() {
         return new ApplicationRunner() {
+
+            @Autowired
+            JpqlGuestbookRepository repository;
 
             @Override
             public void run(ApplicationArguments args) throws Exception {

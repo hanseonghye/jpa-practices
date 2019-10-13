@@ -20,12 +20,12 @@ import java.util.List;
 @ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.app02.config", "me.kickscar.practices.jpa03.model01.app02.repository" } )
 public class SpringBootApp02 {
 
-    @Autowired
-    QueryDslGuestbookRepository repository;
-
     @Bean
     ApplicationRunner applicationRunner() {
         return new ApplicationRunner() {
+
+            @Autowired
+            QueryDslGuestbookRepository repository;
 
             @Override
             public void run(ApplicationArguments args) throws Exception {
