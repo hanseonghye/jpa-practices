@@ -1,8 +1,7 @@
-package me.kickscar.practices.jpa03.model01.app02;
+package me.kickscar.practices.jpa03.model01.app01;
 
-import me.kickscar.practices.jpa03.model01.app01.Jpa03SpringBootApp01;
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
-import me.kickscar.practices.jpa03.model01.app02.repository.QueryDslGuestbookRepository;
+import me.kickscar.practices.jpa03.model01.app01.repository.JpqlGuestbookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -17,11 +16,11 @@ import java.util.List;
 
 @SpringBootApplication
 // 하위 패키지에 Config, Repository가 있기 때문에 자동스캔 가능(생략가능)
-@ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.app02.config", "me.kickscar.practices.jpa03.model01.app02.repository" } )
-public class Jpa03SpringBootApp02 {
+@ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.app01.config", "me.kickscar.practices.jpa03.model01.app01.repository" } )
+public class SpringBootApp01 {
 
     @Autowired
-    QueryDslGuestbookRepository repository;
+    JpqlGuestbookRepository repository;
 
     @Bean
     ApplicationRunner applicationRunner() {
@@ -74,7 +73,7 @@ public class Jpa03SpringBootApp02 {
             콘솔 Command Line App 에서는 Web 자동설정이 문제가 발생할 수 있기 때문에 막음.
         */
         try( ConfigurableApplicationContext c =
-                     new SpringApplicationBuilder( Jpa03SpringBootApp01.class )
+                     new SpringApplicationBuilder( SpringBootApp01.class )
                              .web( WebApplicationType.NONE )
                              .run( args ) ){
 

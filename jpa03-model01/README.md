@@ -36,7 +36,7 @@
      + JPA Properties (appication.yml의 JPA 섹션과 비교해 보자)  
   
   3. __Test Application__  
-     + Jpa03SpringBootApp01.java  
+     + SpringBootApp01.java  
      + Model01JpqlRepository 빈 주입(Auto Wiring)  
      + Command Line Mode  
 
@@ -143,7 +143,7 @@
        ```
      
   4. __Test Application__  
-     + Jpa03SpringBootApp02.java  
+     + SpringBootApp02.java  
      + Model01QueryDslRepository 빈 주입(Auto Wiring)  
      + Command Line Mode  
 
@@ -186,7 +186,7 @@
        ```
   
   3. __Test Application__
-     + Jpa03SpringBootApp03.java  
+     + SpringBootApp03.java  
      + Rest Web Application
      + Application 실행 후, RepositoryMethodTestAfterBootAppLoaded Bean의 test() 실행(코드 참고)  
        ```

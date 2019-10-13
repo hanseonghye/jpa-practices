@@ -20,7 +20,7 @@ import java.util.List;
 @SpringBootApplication
 // 하위 패키지에 Config, Repository가 있기 때문에 자동스캔 가능(생략가능)
 @ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.app03.config", "me.kickscar.practices.jpa03.model01.app03.repository" } )
-public class Jpa03SpringBootRestApp03 {
+public class SpringBootRestApp03 {
 
     @RestController
     @RequestMapping("/model01")
@@ -105,7 +105,7 @@ public class Jpa03SpringBootRestApp03 {
     }
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run( Jpa03SpringBootRestApp03.class, args );
+        ConfigurableApplicationContext context = SpringApplication.run( SpringBootRestApp03.class, args );
         context.getBean( RepositoryMethodTestAfterBootAppLoaded.class ).test();
     }
 }
