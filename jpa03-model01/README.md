@@ -22,29 +22,55 @@
   5. __H2 Database 1.4.197__  
   6. __Gradle 5.4__   
 
+
 #### 2) app01
   
-  1. __JpqlGuestbookRepository__  
-     + JPQL 기반으로 작성    
-     + 간단한 save(Guestbook), findAll(), remove(Guestbook) 등의 CRUD 메소드 구현  
-
-  2. __JpaConfig(JPA Java Config)__
+  1. __JpaConfig(JPA Java Config)__
      + Datasource Bean 설정  
-     + TransactionManager 설정  
+     + **TransactionManager 설정**
+       - JPA에서는 트랜잭셔닝 시작ㅎ라 때 영속성 컨텍스트를 생성하고 트랜잭션이 끝날 때 영솟성 컨텍스틀 종료(트랜잭션 범위 == 영속성 컨텍스트의 생존 범위)
+       - Spring Conatiner는 하나의 쓰레드에 하나의 트랜잭션을 할당한다.
+       - 하나의 쓰레드에서 여러 서비스 또는 여러 레포지토리를 거치면서 여러 엔티티매니저가 객체의 영속성에 관여할 수 있지만 트랜잭션이 같기 때문에 영속성 컨테스트는 같다.
+       - 반대로, **여러 쓰레드에서 같은 엔티티매니저를 쓰는 일은 Web Application에서는 흔한 일이다. 이런 경우는 영속성 컨텍스트가 다르기 때문에 멀티쓰레드에 안전하다.**
+       - 스프링 MVC에서는 비즈니스 로직을 시작하는 서비스 계층에서 @Transaction으로 트랜잭션을 시작하는 것이 보통이다.  
      + PersistenceExceptionTranslationPostProcessor JPA 예외 전환 설정  
      + LocalContainerEntityManagerFactoryBean 엔티티매니저팩토리 설정 (Repository에서 엔티티매니저 빈을 주입받기 위해)  
      + JPA Properties (appication.yml의 JPA 섹션과 비교해 보자)  
-  
-  3. __Test Application__  
+
+  2. __JpqlGuestbookRepository__  
+     + JPQL 기반으로 작성    
+     + 간단한 save(Guestbook), findAll(), remove(Guestbook) 등의 CRUD 메소드 구현  
+
+  3. __GuestbookService__
+     + JpqlGuestbookRepository 빈 주입(Auto Wiring)
+     + 모든 메소드에서 트랜잭션을 시작하고 종료함으로써 Repository에서 생성, 수정, 삭제, 조회 대상이 되는 모든 객체를 영속성 컨텍스트 범위에 있게 한다.
+      
+  4. __Test Application__  
      + SpringBootApp01.java
      + Command Line Mode  
      + ApplicationRunner 인테페이스 구현체 빈 등록  
-     + ApplicationRunner 인테페이스 구현체에 JpqlGuestbookRepository 빈 주입(Auto Wiring)  
+     + ApplicationRunner 인테페이스 구현체에 GuestbookService 빈 주입(Auto Wiring)  
 
 
 #### 3) app02
+  1. __JpaConfig(JPA Java Config)__
+    
+     + QueryDSL Repository에 JPAQueryFactory를 주입하기 위한 빈설정이 추가적으로 필요하다.
+     
+       ```
+          @PersistenceContext
+          private EntityManager entityManager;
+       
+       ```
+ 
+       ```
+         @Bean
+         public JPAQueryFactory jpaQueryFactory() {
+            return new JPAQueryFactory( entityManager );
+         }
+       ```
 
-  1. __QueryDslGuestbookRepository__  
+  2. __QueryDslGuestbookRepository__  
      + QueryDSL를 편하게 쓰기 위해 JPAQueryFactory Bean을 주입 받는다.
      + insert를 위해 EntityManager 주입 받는다.
      + **컴파일 오류**
@@ -65,7 +91,7 @@
        ```
        **쿼리타입 클래스 QGuestbook가 없기 때문에 발생!!!**
 
-  2. __QueryDSL를 위한 쿼리타입 QClass(쿼리용 클래스, Q로 시작) QGuestbook 생성하기__
+  3. __QueryDSL를 위한 쿼리타입 QClass(쿼리용 클래스, Q로 시작) QGuestbook 생성하기__
    
      + querydsl plugin for gradle를 build.gradle 에 설정하고 Build Task의 build 와 clean 실행을 통해 생성과 삭제를 한다. 
      + querydsl plugin 설정 (build.gradle)
@@ -126,33 +152,34 @@
   
      + Build Task clean 함수 실행으로 삭제할 수 있다.
 
-  3. __JpaConfig(JPA Java Config)__
-    
-     + QueryDSL Repository에 JPAQueryFactory를 주입하기 위한 빈설정이 추가적으로 필요하다.
+  4. __GuestbookService__
+     + QueryDslGuestbookRepository 빈 주입(Auto Wiring)
+     + 모든 메소드에서 트랜잭션을 시작하고 종료함으로써 Repository에서 생성, 수정, 삭제, 조회 대상이 되는 모든 객체를 영속성 컨텍스트 범위에 있게 한다.
      
-       ```
-          @PersistenceContext
-          private EntityManager entityManager;
-       
-       ```
- 
-       ```
-         @Bean
-         public JPAQueryFactory jpaQueryFactory() {
-            return new JPAQueryFactory( entityManager );
-         }
-       ```
-     
-  4. __Test Application__  
+  5. __Test Application__  
      + SpringBootApp02.java  
      + Command Line Mode
      + ApplicationRunner 인테페이스 구현체 빈 등록  
-     + ApplicationRunner 인테페이스 구현체에 QueryDslGuestbookRepository 빈 주입(Auto Wiring)  
+     + ApplicationRunner 인테페이스 구현체에 GuestbookService 빈 주입(Auto Wiring)  
 
 
 #### 4) app03
 
-  1. __JpaGuestbookRepository__
+  1. __JpaConfig(JPA Java Config)__  
+     
+     + 설정 클래스에 @EnableJpaRepositories 어노테이션으로 JPA Repositories 활성화해야 한다.(코드 주석 참고)
+       ```
+          @Configuration
+          @EnableTransactionManagement
+          @EnableJpaRepositories(basePackages = { "me.kickscar.practices.jpa03.model01.repository" })
+          public class JpaConfig {
+                 .  
+                 .
+                 .    
+          }      
+       ```
+
+  2. __JpaGuestbookRepository__
     
      + JpaRepository Interface 
        - Spring Data JPA에서 제공하는 인테페이스로 상속받은 Repoitory Interface 에 기본적인 CRUD 메서드를 제공한다.         
@@ -173,45 +200,80 @@
        - QueryDSL과 통합이 가능하다  
        - Specification 를 통해 검색조건을 다양하게 조립하여 사용할 수 있다.  
 
-  2. __JpaConfig(JPA Java Config)__  
+  3. __GuestbookService__
+     + JpaGuestbookRepository 빈 주입(Auto Wiring)
+     + 모든 메소드에서 트랜잭션을 시작하고 종료함으로써 Repository에서 생성, 수정, 삭제, 조회 대상이 되는 모든 객체를 영속성 컨텍스트 범위에 있게 한다.
+  
+  4. __Test Application__
+     + SpringBootRestApp03.java  
+     + Restful API Server로 작동
+     + GuestbookAPIController에 매핑된 Restful URI로 GuestbookService -> JpaGuestbookRepository의 메소드들을 테스트 해 볼수 있다.
      
-     + 설정 클래스에 @EnableJpaRepositories 어노테이션으로 JPA Repositories 활성화해야 한다.(코드 주석 참고)
-       ```
-          @Configuration
-          @EnableTransactionManagement
-          @EnableJpaRepositories(basePackages = { "me.kickscar.practices.jpa03.model01.repository" })
-          public class JpaConfig {
-                 .  
-                 .
-                 .    
-          }      
-       ```
-  
-  3. __Test Application__
-     + SpringBootApp03.java  
-     + Rest Web Application
-     + Application 실행 후, RepositoryMethodTestAfterBootAppLoaded Bean의 test() 실행(코드 참고)  
-       ```
-          public static void main(String[] args) {
-             ConfigurableApplicationContext context = SpringApplication.run( Jpa03SpringBootRestApp03.class, args );
-             context.getBean( RepositoryMethodTestAfterBootAppLoaded.class ).run();
-          }
-       ```     
-       RepositoryMethodTestAfterBootAppLoaded:   
-       데이터베이스에 테스트 데이터 생성과 Model01JpaRepository의 기본 CRUD 메서드와 예제 QueryMethod 테스트 목적으로 만든 클래스로 실행 후, query 로그 꼭 확인해 볼 것. 
-  
-     + Model01Controller에 매핑된 URL로 JpaGuestbookRepository의 메소드들을 테스트 해 볼수 있다.
+       - 방명록 메세지 등록
+       
        ```ssh
-         $ curl http://localhost:8088/model01/list
-         [{"no":3,"name":"도우넛","contents":"안녕4","password":"1234","regDate":"2019-10-11T07:25:31.972+0000"},{"no":2,"name":"마이콜","contents":"안녕2","password":"1234","regDate":"2019-10-11T07:25:31.9"}, {"no":1,"name":"둘리","contents":"안녕1","password":"1234","regDate":"2019-10-11T07:25:31.912+0000"}] 
-         $
-         $ curl http://localhost:8088/model01/list/0
-         [{"no":2,"name":"마이콜","contents":"안녕2","password":"1234","regDate":"2019-10-11T07:25:31.969+0000"},{"no":1,"name":"둘리","contents":"안녕1","password":"1234","regDate":"2019-10-11T07:25:31.9}]
-         $
-         $ curl http://localhost:8088/model01/list/1 
-         [{"no":3,"name":"도우넛","contents":"안녕4","password":"1234","regDate":"2019-10-11T07:25:31.972+0000"}]
-         $
+          $ curl -X POST -H "Content-Type: application/json; charset=utf-8" -d '{"name":"둘리", "password":"1234", "contents":"안녕1"}' http://localhost:8088/api/guestbook
+          {"no":1,"name":"둘리","contents":"안녕1","password":"1234","regDate":"2019-10-13T17:34:37.739+0000"}
+
+          $ curl -X POST -H "Content-Type: application/json; charset=utf-8" -d '{"name":"마이콜", "password":"1234", "contents":"안녕2"}' http://localhost:8088/api/guestbook
+          {"no":2,"name":"마이콜","contents":"안녕2","password":"1234","regDate":"2019-10-13T17:34:45.260+0000"}
+
+          $ curl -X POST -H "Content-Type: application/json; charset=utf-8" -d '{"name":"또치", "password":"1234", "contents":"안녕3"}' http://localhost:8088/api/guestbook
+          {"no":3,"name":"또치","contents":"안녕3","password":"1234","regDate":"2019-10-13T17:34:53.190+0000"}
+
+          $ curl -X POST -H "Content-Type: application/json; charset=utf-8" -d '{"name":"도우넛", "password":"1234", "contents":"안녕4"}' http://localhost:8088/api/guestbook
+          {"no":4,"name":"도우넛","contents":"안녕4","password":"1234","regDate":"2019-10-13T17:35:01.167+0000"}
+
        ```
+       
+       - 방명록 메세지 가져오기
+       
+       ```ssh
+          $ curl -X GET http://localhost:8088/api/guestbook/all
+          [{"no":1,"name":"둘리","contents":"안녕1","password":"1234","regDate":"2019-10-13T18:22:10.682+0000"},{"no":2,"name":"마이콜","contents":"안녕2","password":"1234","regDate":"2019-10-13T18:22:21.258+0000"},{"no":3,"name":"또치","contents":"안녕3","password":"1234","regDate":"2019-10-13T18:22:30.989+0000"},{"no":4,"name":"도우넛","contents":"안녕4","password":"1234","regDate":"2019-10-13T18:22:38.642+0000"}]
+          
+          $ curl -X GET http://localhost:8088/api/guestbook/count
+          {"count":4} 
+       
+          $ curl -X GET http://localhost:8088/api/guestbook/list
+          [{"no":4,"name":"도우넛","contents":"안녕4","password":"1234","regDate":"2019-10-13T18:22:38.642+0000"},{"no":3,"name":"또치","contents":"안녕3","password":"1234","regDate":"2019-10-13T18:22:30.989+0000"},{"no":2,"name":"마이콜","contents":"안녕2","password":"1234","regDate":"2019-10-13T18:22:21.258+0000"},{"no":1,"name":"둘리","contents":"안녕1","password":"1234","regDate":"2019-10-13T18:22:10.682+0000"}]
+       
+          $ curl -X GET http://localhost:8088/api/guestbook/list/0
+          [{"no":4,"name":"도우넛","contents":"안녕4","password":"1234","regDate":"2019-10-13T18:22:38.642+0000"},{"no":3,"name":"또치","contents":"안녕3","password":"1234","regDate":"2019-10-13T18:22:30.989+0000"}]
+       
+          $ curl -X GET http://localhost:8088/api/guestbook/list/1
+          [{"no":2,"name":"마이콜","contents":"안녕2","password":"1234","regDate":"2019-10-13T18:22:21.258+0000"},{"no":1,"name":"둘리","contents":"안녕1","password":"1234","regDate":"2019-10-13T18:22:10.682+0000"}]
+       
+          $ curl -X GET http://localhost:8088/api/guestbook/list/2
+          []
+       
+       ```
+ 
+        - 방명록 메세지 삭제
+        
+        ```ssh
+           $ curl -X DELETE http://localhost:8088/api/guestbook/1?password=1234
+           $ {"no":1}
+       
+           $ curl -X GET http://localhost:8088/api/guestbook/count
+             {"count":3} 
+        ```
+
+        - 방명록 메세지 수정
+        
+        ```ssh
+           $ curl -X GET http://localhost:8088/api/guestbook/2
+           $ {"no":2,"name":"마이콜","contents":"안녕2","password":"1234","regDate":"2019-10-13T18:22:21.258+0000"}
+       
+           $ curl -X PUT -H "Content-Type: application/json; charset=utf-8" -d '{"name":"길동", "password":"5678", "contents":"하이2"}' http://localhost:8088/api/guestbook/2
+           $ {"result":"success"}
+       
+           $ curl -X GET http://localhost:8088/api/guestbook/2
+           $ {"no":2,"name":"길동","contents":"하이2","password":"5678","regDate":"2019-10-13T18:22:21.258+0000"}
+       
+        ```
+      
+       
        [TIP] 윈도우에서는 콘솔창이 기본 cp949이기 때문에 curl사용시 응답내용의 한글이 깨질 수 있다. 다음과 같이 테스트를 하면 UTF-8 인코딩 내용도 제대로 출력된다.  
        <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30007.png" width="600px" />
        <br/>
