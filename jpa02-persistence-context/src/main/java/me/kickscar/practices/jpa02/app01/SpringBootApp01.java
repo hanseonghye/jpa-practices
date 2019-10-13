@@ -17,7 +17,7 @@ import javax.persistence.PersistenceUnit;
 @SpringBootApplication
 // 엔티티 클래스 자동스캐닝 베이스 패키지 지정
 @EntityScan( basePackages = { "me.kickscar.practices.jpa02.domain" } )
-public class Jpa02SpringBootApp01 {
+public class SpringBootApp01 {
 
     //엔티티매니저팩토리 주입
     @PersistenceUnit
@@ -93,6 +93,6 @@ public class Jpa02SpringBootApp01 {
     }
 
     public static void main(String[] args) {
-        try(ConfigurableApplicationContext c = SpringApplication.run(Jpa02SpringBootApp01.class, args)){}
+        try(ConfigurableApplicationContext c = SpringApplication.run(SpringBootApp01.class, args)){}
     }
 }
