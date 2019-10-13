@@ -56,8 +56,8 @@
      + 이 는, 스키마 생성작업 전에 테이블과 외래키 같은 제약조건 drop 때문에 발생한다.(특히, 외래키 제약조건 drop 때문에)
      + 무시해도 되고 실제 DBMS를 사용하고 Update 정도만 하면 발생하지 않는 오류다.
   
-  2. __테스트 성공__
-    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32003.png" width="400px" />
+  2. __테스트 성공__     
+    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32003.png" width="600px" />
     <br>
  
   3. __테스트 결과 생성된 스키마 DDL__
