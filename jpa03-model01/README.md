@@ -32,7 +32,7 @@
        - Spring Conatiner는 하나의 쓰레드에 하나의 트랜잭션을 할당한다.
        - 하나의 쓰레드에서 여러 서비스 또는 여러 레포지토리를 거치면서 여러 엔티티매니저가 객체의 영속성에 관여할 수 있지만 트랜잭션이 같기 때문에 영속성 컨테스트는 같다.
        - 반대로, **여러 쓰레드에서 같은 엔티티매니저를 쓰는 일은 Web Application에서는 흔한 일이다. 이런 경우는 영속성 컨텍스트가 다르기 때문에 멀티쓰레드에 안전하다.**
-       - 스프링 MVC에서는 비즈니스 로직을 시작하는 서비스 계층에서 @Transaction으로 트랜잭션을 시작하는 것이 보통이다.  
+       - 스프링 MVC에서는 비즈니스 로직을 시작하는 서비스 계층에서 @Transactional으로 트랜잭션을 시작하는 것이 보통이다.  
      + PersistenceExceptionTranslationPostProcessor JPA 예외 전환 설정  
      + LocalContainerEntityManagerFactoryBean 엔티티매니저팩토리 설정 (Repository에서 엔티티매니저 빈을 주입받기 위해)  
      + JPA Properties (appication.yml의 JPA 섹션과 비교해 보자)  
@@ -272,8 +272,7 @@
            $ {"no":2,"name":"길동","contents":"하이2","password":"5678","regDate":"2019-10-13T18:22:21.258+0000"}
        
         ```
-      
-       
+
        [TIP] 윈도우에서는 콘솔창이 기본 cp949이기 때문에 curl사용시 응답내용의 한글이 깨질 수 있다. 다음과 같이 테스트를 하면 UTF-8 인코딩 내용도 제대로 출력된다.  
-       <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30007.png" width="600px" />
+       <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30007.png" width="800px" />
        <br/>
