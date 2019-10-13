@@ -24,7 +24,7 @@ public class Board {
 
     @Column( name = "reg_date", nullable = false )
     @Temporal( value = TemporalType.TIMESTAMP )
-    private Date regDate;
+    private Date regDate = new Date();
 
     @Transient // 실제 게시판이 아니기 때문에,,, (계층형 구현 컬럼은 오밋)
     @Column( name = "group_no", nullable = false )
@@ -38,7 +38,7 @@ public class Board {
     @Column( name = "depth", nullable = false )
 	private Integer depth;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)   // @ManytoOne, @OneToOne에서 Default는 FetchType.EAGER
     @JoinColumn( name = "user_no" )
     private User user;
 

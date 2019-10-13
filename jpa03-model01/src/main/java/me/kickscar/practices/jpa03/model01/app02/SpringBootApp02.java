@@ -1,8 +1,5 @@
 package me.kickscar.practices.jpa03.model01.app02;
 
-import me.kickscar.practices.jpa03.model01.app01.SpringBootApp01;
-import me.kickscar.practices.jpa03.model01.domain.Guestbook;
-import me.kickscar.practices.jpa03.model01.app02.repository.QueryDslGuestbookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -13,11 +10,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
-import java.util.List;
+import me.kickscar.practices.jpa03.model01.app02.service.GuestbookService;
+import me.kickscar.practices.jpa03.model01.domain.Guestbook;
 
 @SpringBootApplication
-// 하위 패키지에 Config, Repository가 있기 때문에 자동스캔 가능(생략가능)
-@ComponentScan( basePackages = { "me.kickscar.practices.jpa03.model01.app02.config", "me.kickscar.practices.jpa03.model01.app02.repository" } )
+@ComponentScan( basePackages = {  // 하위 패키지에 Config, Service, Repository가 있기 때문에 자동스캔 가능(생략가능)
+        "me.kickscar.practices.jpa03.model01.app02.config",
+        "me.kickscar.practices.jpa03.model01.app02.service",
+        "me.kickscar.practices.jpa03.model01.app02.repository" } )
 public class SpringBootApp02 {
 
     @Bean
@@ -25,44 +25,41 @@ public class SpringBootApp02 {
         return new ApplicationRunner() {
 
             @Autowired
-            QueryDslGuestbookRepository repository;
+            private GuestbookService guestbookService;
 
             @Override
             public void run(ApplicationArguments args) throws Exception {
-                testInsert();
-                testFindAll();
-
-                testRemove();
-                testFindAll();
+                testAddMesssages();
+                testMessageList();
+                testDeleteMessage();
+                testMessageList();
             }
 
-            public void testInsert() {
+            public void testAddMesssages() {
                 Guestbook gb1 = new Guestbook();
                 gb1.setName("둘리");
                 gb1.setPassword("1234");
                 gb1.setContents("안녕1");
-                repository.save(gb1);
+                guestbookService.addMessage(gb1);
 
                 Guestbook gb2 = new Guestbook();
                 gb2.setName("마이콜");
                 gb2.setPassword("1234");
                 gb2.setContents("안녕2");
-                repository.save(gb2);
+                guestbookService.addMessage(gb2);
             }
 
-            public void testFindAll() {
-                List<Guestbook> list = repository.findAll();
-                for(Guestbook gb : list){
+            public void testMessageList() {
+                for(Guestbook gb : guestbookService.getMessageList()){
                     System.out.println(gb);
                 }
             }
 
-            public void testRemove() {
+            public void testDeleteMessage() {
                 Guestbook gb = new Guestbook();
                 gb.setNo(1L);
                 gb.setPassword("1234");
-
-                repository.remove(gb);
+                guestbookService.deleteMessage(gb);
             }
         };
     }
@@ -74,7 +71,7 @@ public class SpringBootApp02 {
             콘솔 Command Line App 에서는 Web 자동설정이 문제가 발생할 수 있기 때문에 막음.
         */
         try( ConfigurableApplicationContext c =
-                     new SpringApplicationBuilder( SpringBootApp01.class )
+                     new SpringApplicationBuilder( SpringBootApp02.class )
                              .web( WebApplicationType.NONE )
                              .run( args ) ){
 

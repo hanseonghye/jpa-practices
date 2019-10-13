@@ -27,13 +27,11 @@ public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
         this.queryFactory = queryFactory;
     }
 
-    @Transactional
     public void save( Guestbook guestbook ){
         guestbook.setRegDate(new Date());
         em.persist(guestbook);
     }
 
-    @Transactional
     public Boolean remove( Guestbook parameter ) {
         return queryFactory
                 .delete( guestbook )

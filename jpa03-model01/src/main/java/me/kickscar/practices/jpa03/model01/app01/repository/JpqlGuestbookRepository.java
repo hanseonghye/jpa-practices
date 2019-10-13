@@ -13,11 +13,9 @@ import java.util.List;
 @Repository
 public class JpqlGuestbookRepository {
 
-    // EntityManagerFactory가 인식할 수 있게끔!
-    @PersistenceContext
+    @PersistenceContext  // EntityManagerFactory가 @PersistenceContext를 인지하고 EntityManager를 만들어 주입한다.
     private EntityManager em;
 
-    @Transactional
     public void save(Guestbook guestbook){
         guestbook.setRegDate(new Date());
         em.persist(guestbook);
@@ -29,7 +27,6 @@ public class JpqlGuestbookRepository {
         return list;
     }
 
-    @Transactional
     public Boolean remove(Guestbook guestbook){
 
         //

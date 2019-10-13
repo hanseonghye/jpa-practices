@@ -25,9 +25,11 @@ public class User {
 	private String password;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "gender", nullable = false)
 	private GenderType gender;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "role", nullable = false)
 	private RoleType role;
 
 	public Long getNo() {
