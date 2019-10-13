@@ -57,7 +57,7 @@
      + 무시해도 되고 실제 DBMS를 사용하고 Update 정도만 하면 발생하지 않는 오류다.
   
   2. __테스트 성공__     
-    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32003.png" width="600px" />
+    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32003.png" width="800px" />
     <br>
  
   3. __테스트 결과 생성된 스키마 DDL__
