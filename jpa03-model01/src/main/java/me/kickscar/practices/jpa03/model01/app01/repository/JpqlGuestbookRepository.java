@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public class Model01JpqlRepository {
+public class JpqlGuestbookRepository {
 
     // EntityManagerFactory가 인식할 수 있게끔!
     @PersistenceContext

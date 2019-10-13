@@ -1,7 +1,7 @@
 package me.kickscar.practices.jpa03.model01.app03;
 
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
-import me.kickscar.practices.jpa03.model01.app03.repository.Model01JpaRepository;
+import me.kickscar.practices.jpa03.model01.app03.repository.JpaGuestbookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,7 +27,7 @@ public class Jpa03SpringBootRestApp03 {
     public class Model01Controller {
 
         @Autowired
-        private Model01JpaRepository repository;
+        private JpaGuestbookRepository repository;
 
         @GetMapping("/list")
         public List<Guestbook> list() {
@@ -46,7 +46,7 @@ public class Jpa03SpringBootRestApp03 {
     public class RepositoryMethodTestAfterBootAppLoaded {
 
         @Autowired
-        private Model01JpaRepository repository;
+        private JpaGuestbookRepository repository;
 
         public void test() {
 

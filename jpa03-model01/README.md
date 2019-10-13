@@ -24,7 +24,7 @@
 
 #### 2) app01
   
-  1. __Model01JpqlRepository__  
+  1. __JpqlGuestbookRepository__  
      + JPQL 기반으로 작성    
      + 간단한 save(Guestbook), findAll(), remove(Guestbook) 등의 CRUD 메소드 구현  
 
@@ -43,7 +43,7 @@
 
 #### 3) app02
 
-  1. __Model01QueryDslRepository__  
+  1. __QueryDslGuestbookRepository__  
      + QueryDSL를 편하게 쓰기 위해 JPAQueryFactory Bean을 주입 받는다.
      + insert를 위해 EntityManager 주입 받는다.
      + **컴파일 오류**
@@ -150,7 +150,7 @@
 
 #### 4) app03
 
-  1. __Model01JpaRepository__
+  1. __JpaGuestbookRepository__
     
      + JpaRepository Interface 
        - Spring Data JPA에서 제공하는 인테페이스로 상속받은 Repoitory Interface 에 기본적인 CRUD 메서드를 제공한다.         

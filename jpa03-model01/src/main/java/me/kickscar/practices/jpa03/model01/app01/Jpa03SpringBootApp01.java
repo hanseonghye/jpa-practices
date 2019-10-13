@@ -1,7 +1,7 @@
 package me.kickscar.practices.jpa03.model01.app01;
 
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
-import me.kickscar.practices.jpa03.model01.app01.repository.Model01JpqlRepository;
+import me.kickscar.practices.jpa03.model01.app01.repository.JpqlGuestbookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -20,7 +20,7 @@ import java.util.List;
 public class Jpa03SpringBootApp01 {
 
     @Autowired
-    Model01JpqlRepository repository;
+    JpqlGuestbookRepository repository;
 
     @Bean
     ApplicationRunner applicationRunner() {
