@@ -4,8 +4,8 @@ import me.kickscar.practices.jpa03.model01.app01.repository.JpqlGuestbookReposit
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
