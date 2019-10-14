@@ -38,7 +38,7 @@ public class Board {
     @Column( name = "depth", nullable = false )
 	private Integer depth;
 
-    @ManyToOne(fetch = FetchType.LAZY)   // @ManytoOne, @OneToOne에서 Default는 FetchType.EAGER
+    @ManyToOne(fetch = FetchType.EAGER)   // @ManytoOne, @OneToOne에서 Default는 FetchType.EAGER
     @JoinColumn( name = "user_no" )
     private User user;
 

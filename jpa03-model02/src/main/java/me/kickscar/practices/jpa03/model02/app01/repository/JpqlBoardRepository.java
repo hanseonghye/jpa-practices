@@ -17,16 +17,25 @@ public class JpqlBoardRepository {
     @PersistenceContext
     private EntityManager em;
 
+    // 영속화
     public void save(Board board){
         em.persist(board);
     }
 
+    //
     public Board find(Long no){
         Board board = em.find(Board.class, no);
         board.getUser().getName();
         return board;
     }
 
+    // JPQL 집합함수 사용법
+    public Long count() {
+        TypedQuery<Long> query = em.createQuery("select count(b) from Board b", Long.class);
+        return query.getSingleResult();
+    }
+
+    //
     public List<Board> findAll(){
         TypedQuery query = em.createQuery("select b from Board b order by b.regDate desc", Board.class);
         List<Board> list = query.getResultList();

@@ -1,9 +1,5 @@
 package me.kickscar.practices.jpa03.model02.domain;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.persistence.*;
 
 @Entity

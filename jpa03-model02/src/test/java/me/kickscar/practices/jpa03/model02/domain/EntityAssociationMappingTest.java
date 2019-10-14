@@ -19,8 +19,8 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {EntityTest.TestJpaConfig.class})
-public class EntityTest {
+@SpringBootTest(classes = {EntityAssociationMappingTest.Config.class})
+public class EntityAssociationMappingTest {
     @PersistenceUnit
     EntityManagerFactory emf;
 
@@ -33,7 +33,7 @@ public class EntityTest {
     }
 
     @Configuration
-    public static class TestJpaConfig {
+    public static class Config {
         @Bean
         public DataSource dataSource() {
             DriverManagerDataSource dataSource = new DriverManagerDataSource();
