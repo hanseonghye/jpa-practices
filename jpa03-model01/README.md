@@ -186,7 +186,8 @@
                  .    
           }      
        ```
-
+       **따로 레포지토리 컴포넌트 스캔이 필요없다.(경우에 따라서는 빈등록 중복 예외가 발생할 수 있다.)**
+      
   2. __me.kickscar.practices.jpa03.model01.repository.JpaGuestbookRepository__
     
      + JpaRepository Interface 
