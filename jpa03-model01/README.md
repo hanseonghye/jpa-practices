@@ -66,7 +66,7 @@
 
   1. __me.kickscar.practices.jpa03.model01.config.JpqlConfig__
      + JPQL과 설정파일 동일(실제로 QueryDSL은 JPQL의 쓰기쉽게, 특히 Criteria 대용의 래퍼 라이브러리이다)
-     + QueryDSL Repository에 JPAQueryFactory를 주입하기 위한 빈설정이 추가적으로 필요하다.
+     + QueryDSL Repository에 JPAQueryFactory를 주입하기 위한 빈설정a이 추가적으로 필요하다.
      
        ```
           @PersistenceContext
@@ -212,4 +212,4 @@
        + @FixMethodOrder : 메소드 순서 정하기
        + @Transactional : 모든 메소드에 트랜잭션  AOP 적용
        + 방명록에 사용하는 메소드만 테스트
-       + JPQL 테스트 케이스와 동일!!!
+       + JPQL/QueryDSL 테스트 케이스와 동일!!!
