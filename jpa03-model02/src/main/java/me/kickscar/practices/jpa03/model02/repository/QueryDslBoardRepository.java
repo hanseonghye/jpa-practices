@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 
@@ -65,7 +63,8 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
                 .from(board)
                 .orderBy(board.regDate.desc())
                 .offset((page - 1) * 3)
-                .limit(3).fetch();
+                .limit(3)
+                .fetch();
     }
 
     // LIKE 검색 Fetch Paging List: 예제 데이터 수는 3개씩

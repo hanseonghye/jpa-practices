@@ -1,11 +1,10 @@
-package me.kickscar.practices.jpa03.model02.repository;
+package me.kickscar.practices.jpa03.model03.repository;
 
-import me.kickscar.practices.jpa03.model02.domain.User;
+import me.kickscar.practices.jpa03.model03.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
