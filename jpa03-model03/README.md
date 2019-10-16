@@ -5,9 +5,9 @@
 
 #### 1) 테이블 연관관계 VS 객체 연관관계
 
-   <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33001.png" width="400px" />
+   <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33001.png" width="500px" />
    <br>
-   <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33002.png" width="400px" />
+   <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33002.png" width="500px" />
    <br>
    
    1. __보통은 서비스에서 방향성을 찾는 경우가 많다.__
