@@ -23,8 +23,8 @@
 
 
 #### 2) Entity Class: Guestbook
-  1. __me.kickscar.practices.jpa03.model02.domain.User.java 엔티티 매핑 참고__
-  2. __me.kickscar.practices.jpa03.model02.domain.Order.java 엔티티 매핑 참고__
+  1. __me.kickscar.practices.jpa03.model03.domain.User.java 엔티티 매핑 참고__
+  2. __me.kickscar.practices.jpa03.model03.domain.Order.java 엔티티 매핑 참고__
   3. __연관관계 매핑__
 
 
