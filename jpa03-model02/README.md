@@ -47,52 +47,6 @@
      + 테이블에서는 1:N 관계에서는 N쪽에 외래키를 둔다.
      + 엔티티 매핑에서도 마찬가지다. 다중성을 결정하는 어노테이션과 외래키(조인칼럼)을 @JoinColumn 로 지정해주면 끝이다.
 
-#### 3) Mapping Test
-  1. __Test Case 작성__
-     + Spring Boot에서 JUnit 기반의 Test Case 작성 예시다.
-     + Spring Boot Application이 실행 되기전 스키마 생성 DDL를 확인해 본다.
-     + 엔티티매니저팩토리 빈 생성여부만 테스트 해본다. (매핑이 실패하면 엔티티매니저팩토리가 만들어 지지 않고 예외가 발생한다.)
-     + Create, Create-Drop과 상관없이 H2 메모리 데이터베이스에서는 오류가 날 수 있다.
-     + 이는, 스키마 생성작업 전에 테이블과 외래키 같은 제약조건 drop 때문에 발생한다.(특히, 외래키 제약조건 drop 때문에)
-     + 무시해도 되고 실제 DBMS를 사용하고 Update 정도만 하면 발생하지 않는 오류다.
-  
-  2. __테스트 성공__     
-    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32003.png" width="800px" />
-    <br>
- 
-  3. __테스트 결과 생성된 스키마 DDL__
-
-     ```
-     Hibernate: 
-        create table board (
-           no bigint not null auto_increment,
-           contents longtext not null,
-           hit integer not null,
-           reg_date datetime not null,
-           title varchar(200) not null,
-           user_no bigint,
-           primary key (no)
-        ) engine=InnoDB
-
-     Hibernate: 
-         create table User (
-            no bigint not null auto_increment,
-            email varchar(200) not null,
-            gender varchar(255),
-            name varchar(20) not null,
-            password varchar(128) not null,
-            role varchar(255),
-            primary key (no)
-         ) engine=InnoDB
-
-     Hibernate: 
-         alter table board 
-            add constraint FK9b9m5k8x06h6vh8up8n4awoos 
-              foreign key (user_no) 
-              references User (no)        
-     ```
-
-
 
 ### 02. Test SpringBoot Application
 
@@ -104,9 +58,9 @@
   5. __H2 Database 1.4.197__  
   6. __Gradle 5.4__   
 
-#### 2) app01
+#### 2) JPQL Repository Test
 
-#### 3) app02
+#### 3) QueryDSL Repository Test
 
-#### 4) app03
+#### 4) Spring Data JPA(JpaRepository) Repository Test
 
