@@ -40,7 +40,7 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
     // 수정
 
     // 조회1(Fetch One)
-    public Board find(Long no) {  // 1차 캐시(영속컨텍스트)에서 찾고 없으면 Fetch One from DB
+    public Board find1(Long no) {  // 1차 캐시(영속컨텍스트)에서 찾고 없으면 Fetch One from DB
         return getEntityManager().find(Board.class, no);
     }
 

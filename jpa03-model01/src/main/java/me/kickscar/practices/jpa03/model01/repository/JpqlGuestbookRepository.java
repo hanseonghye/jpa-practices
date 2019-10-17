@@ -24,7 +24,7 @@ public class JpqlGuestbookRepository {
     }
 
     // 삭제
-    public Boolean remove(Long no, String password) {
+    public Boolean deleteByNoAndPassword(Long no, String password) {
         Query query = em.createQuery("delete from Guestbook gb where gb.no= :no and gb.password = :password");
         query.setParameter("no", no);
         query.setParameter("password", password);
@@ -33,7 +33,7 @@ public class JpqlGuestbookRepository {
     }
 
     // Fetch List: Projection with GuestbookVo
-    public List<Guestbook> findAll(){
+    public List<Guestbook> findAllByOrderByRegDateDesc(){
         TypedQuery<Guestbook> query = em.createQuery("select gb from Guestbook gb order by gb.regDate desc", Guestbook.class);
         return query.getResultList();
     }

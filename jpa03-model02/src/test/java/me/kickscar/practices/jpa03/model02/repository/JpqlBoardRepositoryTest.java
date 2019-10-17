@@ -33,7 +33,7 @@ public class JpqlBoardRepositoryTest {
 
     @Test
     @Rollback(false)
-    public void test02BoardInsert() {
+    public void test01Save(){
         User user = new User();
         user.setName("둘리");
         user.setPassword("1234");
@@ -76,44 +76,52 @@ public class JpqlBoardRepositoryTest {
     }
 
     @Test
-    public void test03BoardFetchOne() {
-        Board board = boardRepository.find(1L);
+    public void test02Find1(){
+        Board board = boardRepository.find1(1L);
         assertEquals(1L, board.getNo().longValue());
     }
 
     @Test
-    public void test04BoardFetchOne2() {
+    public void test03Find2(){
         Board board = boardRepository.find2(1L);
         assertEquals(1L, board.getNo().longValue());
     }
 
     @Test
-    public void test05BoardEagerFetchOne() {
-        Board board = boardRepository.find(2L);
+    public void test04Find1IsFetchEager(){
+        Long no = 2L;
+        Board board = boardRepository.find1(no);
+
+        // Eager Fetch는 Proxy 객체 타입을 리턴하지 않는다.
+        // Lazy Fetch는 Proxy 객체를 리턴한다.(실제 User 객체가 아니다)
         assertEquals(User.class, board.getUser().getClass());
     }
 
     @Test
-    public void test06BoardFetchPagingList() {
-        List<Board> list1 = boardRepository.findAll(1);
+    public void test05FindAllPaging(){
+        Integer page = 1;
+        List<Board> list1 = boardRepository.findAll(page++);
         assertEquals(3, list1.size());
 
-        List<Board> list2 = boardRepository.findAll(2);
+        List<Board> list2 = boardRepository.findAll(page++);
         assertEquals(2, list2.size());
 
-        List<Board> list3 = boardRepository.findAll(3);
+        List<Board> list3 = boardRepository.findAll(page++);
         assertEquals(0, list3.size());
     }
 
     @Test
-    public void test07BoardLikeSearchFetchPagingList() {
-        List<Board> list1 = boardRepository.findAll("내용", 1);
+    public void test06FindAllLikeSearchAndPaging(){
+        Integer page = 1;
+        String keyword = "내용";
+
+        List<Board> list1 = boardRepository.findAll(keyword, page++);
         assertEquals(3, list1.size());
 
-        List<Board> list2 = boardRepository.findAll("내용", 2);
+        List<Board> list2 = boardRepository.findAll(keyword, page++);
         assertEquals(2, list2.size());
 
-        List<Board> list3 = boardRepository.findAll("내용", 3);
+        List<Board> list3 = boardRepository.findAll(keyword, page++);
         assertEquals(0, list3.size());
     }
 }

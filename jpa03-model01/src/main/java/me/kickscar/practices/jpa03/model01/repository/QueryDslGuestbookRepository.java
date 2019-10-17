@@ -32,7 +32,7 @@ public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
     }
 
     // 삭제
-    public Boolean remove(Long no, String password) {
+    public Boolean deleteByNoAndPassword(Long no, String password) {
         return queryFactory
                 .delete(guestbook)
                 .where(guestbook.no.eq(no).and(guestbook.password.eq(password)))
@@ -40,7 +40,7 @@ public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
     }
 
     // Fetch List: Projection with GuestbookVo
-    public List<Guestbook> findAll(){
+    public List<Guestbook> findAllByOrderByRegDateDesc(){
        return (List<Guestbook>) queryFactory
                 .from(guestbook)
                 .orderBy(guestbook.regDate.desc())

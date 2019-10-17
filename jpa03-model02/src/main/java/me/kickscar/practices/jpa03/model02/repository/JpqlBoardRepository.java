@@ -22,7 +22,9 @@ public class JpqlBoardRepository {
 
     // 삭제
     public Boolean remove(Long boardNo, Long userNo) {
-        Query query = em.createQuery("delete from board b where b.no = ?1 and b.user.no = ?2");
+        String qlString = "delete from board b where b.no = ?1 and b.user.no = ?2";
+        Query query = em.createQuery(qlString);
+
         query.setParameter(1, boardNo);
         query.setParameter(2, userNo);
 
@@ -30,35 +32,44 @@ public class JpqlBoardRepository {
     }
 
     // 조회1(Fetch One)
-    public Board find(Long no) { // 1차 캐시(영속컨텍스트)에서 찾고 없으면 Fetch One from DB
+    public Board find1(Long no) { // 1차 캐시(영속컨텍스트)에서 찾고 없으면 DB에서 가져온다.
         return em.find(Board.class, no);
     }
 
     // 조회2(Fetch One)
-    public Board find2(Long no) { // Unconditionally(무조건) Fetch One SQL from DB
-        TypedQuery<Board> query = em.createQuery("select b from Board b where b.no = :no", Board.class);
+    public Board find2(Long no) { // Unconditionally(무조건) 디비에서 가져온다.
+        String qlString = "select b from Board b where b.no = :no";
+        TypedQuery<Board> query = em.createQuery(qlString, Board.class);
+
         query.setParameter("no", no);
+
         return query.getSingleResult();
     }
 
-    // 집합함수
+    // count
     public Long count() {
-        TypedQuery<Long> query = em.createQuery("select count(b) from Board b", Long.class);
+        String qlString = "select count(b) from Board b";
+        TypedQuery<Long> query = em.createQuery(qlString, Long.class);
+
         return query.getSingleResult();
     }
 
-    // Fetch Paging List(페이징 API 적용): 예제 데이터 수는 3개씩
+    // Fetch List(페이징): 데이터 수는 3개씩
     public List<Board> findAll(Integer page) {
-        TypedQuery<Board> query = em.createQuery("select b from Board b order by b.regDate desc", Board.class);
+        String qlString = "select b from Board b order by b.regDate desc";
+        TypedQuery<Board> query = em.createQuery(qlString, Board.class);
+
         query.setFirstResult((page-1) * 3);
         query.setMaxResults(3);
 
         return query.getResultList();
     }
 
-    // LIKE 검색 Fetch Paging List(페이징 API 적용): 예제 데이터 수는 3개씩
+    // Fetch List (LIKE 검색, 페이징): 데이터 수는 3개씩
     public List<Board> findAll(String keyword, Integer page) {
-        TypedQuery<Board> query = em.createQuery("select b from Board b where b.title like :keywordContains or b.contents like :keywordContains order by b.regDate desc", Board.class);
+        String qlString = "select b from Board b where b.title like :keywordContains or b.contents like :keywordContains order by b.regDate desc";
+        TypedQuery<Board> query = em.createQuery(qlString, Board.class);
+
         query.setParameter("keywordContains", "%" + keyword + "%");
         query.setFirstResult((page-1) * 3);
         query.setMaxResults(3);

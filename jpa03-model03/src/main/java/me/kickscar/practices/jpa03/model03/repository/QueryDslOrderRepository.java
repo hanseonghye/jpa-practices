@@ -29,7 +29,7 @@ public class QueryDslOrderRepository extends QuerydslRepositorySupport {
     }
 
     // 객체그래프(OneToMany Collection 조회)
-    public List<Order> finadAll(Long userNo) {
+    public List<Order> finadAll1(Long userNo) {
         User user = getEntityManager().find(User.class, userNo);
         return user.getOrders();
     }
@@ -107,7 +107,7 @@ public class QueryDslOrderRepository extends QuerydslRepositorySupport {
      * JpaRepository 자식 레포지토리의 이름 기반 메소드로 안나오겠다 싶으면 QueryDSL 기반의 메소드 구현하면 됨. (이건 할줄아는 거 같으니 안할래, 아니 조만간 이걷소 해놓으마)
      *
      */
-    public List<UserOrderCountDto> countsOfEachUser() {
+    public List<UserOrderCountDto> countOfEachUsers() {
         return queryFactory
                 .select(Projections.constructor(UserOrderCountDto.class, order.user.no, order.user.no.count()))
                 .from(order)

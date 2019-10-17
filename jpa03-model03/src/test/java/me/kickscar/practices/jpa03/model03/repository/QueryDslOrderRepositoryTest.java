@@ -35,7 +35,7 @@ public class QueryDslOrderRepositoryTest {
 
     @Test
     @Rollback(false)
-    public void test01OrderInsert() {
+    public void test01Save() {
         User user1 = new User();
         user1.setName("둘리");
         user1.setPassword("1234");
@@ -108,10 +108,10 @@ public class QueryDslOrderRepositoryTest {
     }
 
     @Test
-    public void test02OrdersFetchList() {
+    public void test02FindAll1() {
         Long userNo = 1L;
 
-        List<Order> list = orderRepository.finadAll(userNo);
+        List<Order> list = orderRepository.finadAll1(userNo);
         for(Order o : list){
             System.out.println(o);
         }
@@ -121,7 +121,7 @@ public class QueryDslOrderRepositoryTest {
     }
 
     @Test
-    public void test03OrderFetchPagingList() {
+    public void test03FindAll2Paging() {
         Long userNo = 1L;
         Integer page = 1;
 
@@ -145,7 +145,7 @@ public class QueryDslOrderRepositoryTest {
     }
 
     @Test
-    public void test04OrderFetchPagingList() {
+    public void test04FindAll3Paging() {
         Long userNo = 1L;
         Integer page = 1;
 
@@ -169,8 +169,8 @@ public class QueryDslOrderRepositoryTest {
     }
 
     @Test
-    public void test05UserOrderCountFetchList() {
-        List<UserOrderCountDto> list = orderRepository.countsOfEachUser();
+    public void test05CountOfEachUsers() {
+        List<UserOrderCountDto> list = orderRepository.countOfEachUsers();
         for(UserOrderCountDto dto: list){
             System.out.println(dto);
         }

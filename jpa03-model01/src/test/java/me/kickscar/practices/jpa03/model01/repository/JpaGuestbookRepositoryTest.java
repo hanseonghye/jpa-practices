@@ -29,7 +29,7 @@ public class JpaGuestbookRepositoryTest {
 
     @Test
     @Rollback(false)
-    public void test01GuestbookInsert() {
+    public void test01Save() {
         Guestbook gb1 = new Guestbook();
         gb1.setName("둘리");
         gb1.setPassword("1234");
@@ -46,13 +46,13 @@ public class JpaGuestbookRepositoryTest {
     }
 
     @Test
-    public void test02GuestbookFetchList() {
+    public void test02FindAllByOrderByRegDateDesc() {
         List<Guestbook> list = guestbookRepository.findAllByOrderByRegDateDesc();
         assertEquals(2, list.size());
     }
 
     @Test
-    public void test02GuestbookRemove() {
+    public void test02DeleteByNoAndPassword() {
         assertTrue(guestbookRepository.deleteByNoAndPassword(1L, "1234") == 1);
     }
 }

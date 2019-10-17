@@ -20,7 +20,7 @@ public class JpqlUserRepository {
     }
 
     // 수정1
-    public Boolean update(User user){
+    public Boolean update1(User user){
         Query query = em.createQuery("update User u set u.role=:role, u.gender=:gender, u.email=:email, u.name=:name, u.password=:password where u.no=:no");
 
         query.setParameter("no", user.getNo());

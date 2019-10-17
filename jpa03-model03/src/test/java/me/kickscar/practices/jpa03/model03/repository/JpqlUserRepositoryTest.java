@@ -27,7 +27,7 @@ public class JpqlUserRepositoryTest {
 
     @Test
     @Rollback(false)
-    public void test01UserInsert() {
+    public void test01Save() {
         User user = new User();
         user.setName("둘리");
         user.setPassword("1234");

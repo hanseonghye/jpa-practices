@@ -33,7 +33,7 @@ public class JpqlUserRepositoryTest {
     @Test
     @Transactional
     @Rollback(false)
-    public void test01UserInsert(){
+    public void test01Save(){
         User user = new User();
         user.setName("둘리");
         user.setPassword("1");
@@ -46,18 +46,17 @@ public class JpqlUserRepositoryTest {
     }
 
     @Test
-    public void test02UserFetchOnePersisted(){
+    //@Transactional
+    public void test02Find1NotPersisted(){
         User user = userRepository.find("dooly@kickscar.me", "1");
+        assertEquals("둘리", user.getName());
         assertFalse(em.contains(user));
-
-        System.out.println(user);
-        user.setEmail(".......");
     }
 
     @Test
-    //@Transactional
+    @Transactional
     @Rollback(false)
-    public void test03UserUpdatePersisted(){
+    public void test03Update2Persisted(){
         User user = new User();
         user.setNo(1L);
         user.setName("둘리2");
@@ -66,15 +65,14 @@ public class JpqlUserRepositoryTest {
         user.setGender(GenderType.MALE);
         user.setRole(RoleType.USER);
 
-        //User userPersist =
-                userRepository.update(user);
-        //assertTrue(em.contains(userPersist));
+        User userPersist = userRepository.update2(user);
+        assertTrue(em.contains(userPersist));
     }
 
     @Test
-    public void test04UserFetchOne(){
+    public void test04Find(){
         User user = userRepository.find(1L);
-        assertTrue(true);
+        assertEquals("둘리2", user.getName());
     }
 
 }

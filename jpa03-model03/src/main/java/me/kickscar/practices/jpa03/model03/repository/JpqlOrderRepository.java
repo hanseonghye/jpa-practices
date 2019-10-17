@@ -26,7 +26,7 @@ public class JpqlOrderRepository {
     // 2. Fetch.EAGER : Left Outer Join (User 에 가서 바꿔보고 로그 확인해 볼 것)
     // 3. Fetch.LAZY 추천  : Fetch.EAGER로 조회한 User의 orders가 다 채워져야 할 경우는 많지않다(예로 로그인시 --;;;)
     // 4. 문제는 select가 2회 실행되는 것이다.
-    public List<Order> findAll(Long userNo){
+    public List<Order> findAll1(Long userNo){
         User user = em.find(User.class, userNo);
         return user.getOrders();
     }
@@ -86,7 +86,7 @@ public class JpqlOrderRepository {
      * 2. projection 이  user no, order count 이니깐
      *    UserOrderCountDto로 projection 결과를 받는 특정 객체로 사용했다. (엔티티 클래스 객체를 안받는 경우도 많으니깐 알아두며 좋을 듯~)
      */
-    public List<UserOrderCountDto> countsOfEachUser() {
+    public List<UserOrderCountDto> countOfEachUsers() {
         String qlString = "select new me.kickscar.practices.jpa03.model03.dto.UserOrderCountDto( u.no, count(o.no) ) from Order o join o.user u group by o.user";
         TypedQuery<UserOrderCountDto> query = em.createQuery(qlString, UserOrderCountDto.class);
 
