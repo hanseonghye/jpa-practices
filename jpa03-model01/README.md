@@ -31,7 +31,7 @@
      + PersistenceExceptionTranslationPostProcessor JPA 예외 전환 설정  
      + LocalContainerEntityManagerFactoryBean 엔티티매니저팩토리 설정 (Repository에서 엔티티매니저 빈을 주입받기 위해)  
      + EntityManager 빈 등록(Repository 빈에 주입)
-     + JPA Properties (appication.yml의 JPA 섹션과 비교해 보자)  
+     + JPA Properties (jpa02-persistence-context 모듈의 appication.yml의 JPA 섹션과 비교해 보자)  
 
   2. __JPA 트랜잭션 관리에 관해서...(중요개념)__
      + 트랜잭션과 영속성켄텍스트
@@ -50,7 +50,10 @@
      + 하지만, 이 내용을 숙지하지 못하면 지연로딩이나 프록시초기화 등에 문제가 발생하면 해결에 많은 노력을 기울여야 하기 때문에 꼭 이해해야 할 개념이다. 
   
   3. __JpqlGuestbookRepository.java__  
-     + JPQL 기반으로 작성    
+     + JPQL 기반으로 작성
+     + 객체지향쿼리의 핵심은 JPQL이다. JPQL이 기본이고 제일 중요하다
+     + Criteria, QueryDSL은 String Quqery 기반의 JPQL를 객체지향쿼리로 쓰기 위한 Helper 라이브러리이다.
+     + 쿼리 로그를 보면 JPQL과 SQL이 나오는데, 이는 JPQL로 변환된 것이 최종적으로 SQL로 변환되기 때문이다.     
      + 영속화 
      + TypedQuery 객체 사용
      + Projection 및 Order by 지원
@@ -81,8 +84,9 @@
 #### 3) QueryDSL GuestbookRepository Test : Guestbook QueryDSL 기반 Repository
 
   1. __JpqlConfig.java__
-     + JPQL과 설정파일 동일(실제로 QueryDSL은 JPQL의 쓰기쉽게, 특히 Criteria 대용의 래퍼 라이브러리이다)
-     + QueryDSL Repository에 JPAQueryFactory를 주입하기 위한 빈설정a이 추가적으로 필요하다.
+     + JPQL과 설정파일 동일
+     + QueryDSL은 JPQL의 쓰기쉽게, 특히 Criteria 대용의 래퍼 라이브러리 이다. JPQL로 변환된다.
+     + QueryDSL Repository에 JPAQueryFactory를 주입하기 위한 빈설정이 추가적으로 필요하다.
      
        ```
           @PersistenceContext
@@ -184,14 +188,20 @@
          - QueryDSLGuestbookRepository.save(Guestbook)
          - 객체 영속화
          
-       + test02FindAllByOrderByRegDateDesc
-         - QueryDSLGuestbookRepository.findAllByOrderByRegDateDesc()
-         - TypedQuery 객체 사용  
+       + test02FindAllByOrderByRegDateDesc1
+         - QueryDSLGuestbookRepository.findAllByOrderByRegDateDesc1()
+         - from(), orderBy(), fetch()
          
-       + test02DeleteByNoAndPassword
+       + test03DeleteByNoAndPassword
          - QueryDSLGuestbookRepository.deleteByNoAndPassword(Long, String)
-         - TypedQuery 객체 사용  
-         - JPQL: 이름기반 파라미터 바인딩
+         - delete(), where(), eq(), end(), execute()  
+
+       + test04FindAllByOrderByRegDateDesc2
+         - QueryDSLGuestbookRepository.findAllByOrderByRegDateDesc2()
+         - QueryDsl Projection Projections.constructor(..) 사용법
+         
+       + 참고 메서드 QueryDSLGuestbookRepository.count()
+         - fetchCount()
 
 
 #### 4) JpaRepository 상속받은 GuestbookRepository Test : Guestbook Spring Data JPA 기반 Repository

@@ -2,6 +2,7 @@ package me.kickscar.practices.jpa03.model01.repository;
 
 import me.kickscar.practices.jpa03.model01.config.JpqlRepositoryTestConfig;
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
+import me.kickscar.practices.jpa03.model01.dto.GuestbookDto;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,13 +21,13 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpqlRepositoryTestConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)  // JUnit4.11 부터 지원
-@Transactional
 public class QueryDslGuestbookRepositoryTest {
 
     @Autowired
     private QueryDslGuestbookRepository guestbookRepository;
 
     @Test
+    @Transactional
     @Rollback(false)
     public void test01Save() {
         Guestbook gb1 = new Guestbook();
@@ -45,13 +46,22 @@ public class QueryDslGuestbookRepositoryTest {
     }
 
     @Test
-    public void test02FindAllByOrderByRegDateDesc() {
-        List<Guestbook> list = guestbookRepository.findAllByOrderByRegDateDesc();
+    public void test02FindAllByOrderByRegDateDesc1() {
+        List<Guestbook> list = guestbookRepository.findAllByOrderByRegDateDesc1();
         assertEquals(2, list.size());
     }
 
     @Test
-    public void test02DeleteByNoAndPassword() {
+    @Transactional
+    @Rollback(false)
+    public void test03DeleteByNoAndPassword() {
         assertTrue(guestbookRepository.deleteByNoAndPassword(1L, "1234"));
     }
+
+    @Test
+    public void test04FindAllByOrderByRegDateDesc2() {
+        List<GuestbookDto> list = guestbookRepository.findAllByOrderByRegDateDesc2();
+        assertEquals(1, list.size());
+    }
+
 }
