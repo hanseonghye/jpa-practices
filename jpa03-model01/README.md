@@ -25,7 +25,7 @@
 
 #### 2) Jpql GuestbookRepository Test : Guestbook JPQL 기반 Repository
   
-  1. __me.kickscar.practices.jpa03.model01.config.JpqlConfig__
+  1. __JpqlConfig.java__
      + Datasource Bean 설정  
      + **TransactionManager 설정**
      + PersistenceExceptionTranslationPostProcessor JPA 예외 전환 설정  
@@ -34,37 +34,53 @@
      + JPA Properties (appication.yml의 JPA 섹션과 비교해 보자)  
 
   2. __JPA 트랜잭션 관리에 관해서...(중요개념)__
-      + 트랜잭션과 영속성켄텍스트
-        - 객체 저장, 수정, 삭제, 탐색(특히, Fetch.LAZY)는 영속성켄텍스트 안의 객체를 대상으로 한다.
-        - JPA에서는 트랜잭션이 시작할 때 영속성컨텍스트를 생성하고 트랜잭션이 끝날 때 영속성컨텍스트를 종료한다.(트랜잭션 범위 == 영속성 컨텍스트의 생존범위)
-        - 이는 트랜잭션이 시작과 끝에 많은 경우의 JPA 작업을 해야 한다는 뜻이다.
+     + 트랜잭션과 영속성켄텍스트
+       - 객체 저장, 수정, 삭제, 탐색(특히, Fetch.LAZY)는 영속성켄텍스트 안의 객체를 대상으로 한다.
+       - JPA에서는 트랜잭션이 시작할 때 영속성컨텍스트를 생성하고 트랜잭션이 끝날 때 영속성컨텍스트를 종료한다.(트랜잭션 범위 == 영속성 컨텍스트의 생존범위)
+       - 이는 트랜잭션이 시작과 끝에 많은 경우의 JPA 작업을 해야 한다는 뜻이다.
 
-      + Spring Conatiner 에서의 트랜잭션과 영속성컨텍스트 
-        - Spring Conatiner는 하나의 쓰레드에 하나의 트랜잭션을 할당한다.(중요)
-        - SpringMVC에서는 하나의 요청에 한 개의 쓰레드가 할당 된다.
-        - 이 쓰레드에서, 서비스와 레포지토리를 거치면서 다수의 엔티티매니저가 객체의 영속성에 관여할 수 있으나 하나의 쓰레드 즉, 트랜잭션이 같기 때문에 영속성컨텍스트는 같다.
-        - 반대로, **여러 요청에 대한 여러 쓰레드에서 같은 엔티티매니저를 쓰는 경우는 SpringMVC에서는 흔한 일이다. 이런 경우는 영속성컨텍스트가 다르기 때문에 멀티쓰레드에서는 안전하다.**
-        - 스프링 MVC에서는 비즈니스 로직을 시작하는 서비스 계층에서 AOP가 적용된 @Transactional으로 트랜잭션을 시작하는 것이 보통이다.
+     + Spring Conatiner 에서의 트랜잭션과 영속성컨텍스트 
+       - Spring Conatiner는 하나의 쓰레드에 하나의 트랜잭션을 할당한다.(중요)
+       - SpringMVC에서는 하나의 요청에 한 개의 쓰레드가 할당 된다.
+       - 이 쓰레드에서, 서비스와 레포지토리를 거치면서 다수의 엔티티매니저가 객체의 영속성에 관여할 수 있으나 하나의 쓰레드 즉, 트랜잭션이 같기 때문에 영속성컨텍스트는 같다.
+       - 반대로, **여러 요청에 대한 여러 쓰레드에서 같은 엔티티매니저를 쓰는 경우는 SpringMVC에서는 흔한 일이다. 이런 경우는 영속성컨텍스트가 다르기 때문에 멀티쓰레드에서는 안전하다.**
+       - 스프링 MVC에서는 비즈니스 로직을 시작하는 서비스 계층에서 AOP가 적용된 @Transactional으로 트랜잭션을 시작하는 것이 보통이다.
       
-      + 결론은 Spring Container가 알아서 쓰레드와 연관된 트랜잭션과 영속성켄텍스트의 관리를 맡아주니 개발자는 @Transactional과 비즈니스 로직에만 집중하면 된다.
-      + 하지만, 이 내용을 숙지하지 못하면 지연로딩이나 프록시초기화 등에 문제가 발생하면 해결에 많은 노력을 기울여야 하기 때문에 꼭 이해해야 할 개념이다. 
+     + 결론은 Spring Container가 알아서 쓰레드와 연관된 트랜잭션과 영속성켄텍스트의 관리를 맡아주니 개발자는 @Transactional과 비즈니스 로직에만 집중하면 된다.
+     + 하지만, 이 내용을 숙지하지 못하면 지연로딩이나 프록시초기화 등에 문제가 발생하면 해결에 많은 노력을 기울여야 하기 때문에 꼭 이해해야 할 개념이다. 
   
-  3. __me.kickscar.practices.jpa03.model01.repository.JpqlGuestbookRepository__  
+  3. __JpqlGuestbookRepository.java__  
      + JPQL 기반으로 작성    
-     + save(Guestbook) : 영속화 
-     + findAll() : TypedQuery 기반 Projection 및 Order by 지원
-     + remove() : Query 사용
-     + count : JPQL 기반 집합함수 적용
+     + 영속화 
+     + TypedQuery 객체 사용
+     + Projection 및 Order by 지원
+     + 집합함수: 통계 쿼리 스칼라 타입 조회
       
-  4. __me.kickscar.practices.jpa03.model01.repository.JpqlGuestbookRepositoryTest__  
-     + @FixMethodOrder : 메소드 순서 정하기
-     + @Transactional : 모든 메소드에 트랜잭션  AOP 적용
-     + 방명록에 사용하는 메소드만 테스트
+  4. __JpqlGuestbookRepositoryTest.java__  
+     + test01Save
+        - JpqlGuestbookRepository.save(Guestbook)
+        - 객체 영속화
+
+     + test02FindAllByOrderByRegDateDesc
+       - JpqlGuestbookRepository.findAllByOrderByRegDateDesc2()
+       - TypedQuery 객체 사용
+       - Order By 지원 
+         
+     + test03FindAllByOrderByRegDateDesc2
+       - JpqlGuestbookRepository.findAllByOrderByRegDateDesc2()
+       - TypedQuery 객체 사용
+       - Projection: 방명록 리스트에서는 모든 정보를 담고 있는 Guestbook Entity로 받을 필요가 없다. 이런 경우 DTO(VO) 객체에 필요한 컬럼만 프로젝션한다.  
+       - Order By 지원 
+         
+     + test04DeleteByNoAndPassword
+       - JpqlGuestbookRepository.deleteByNoAndPassword(Long, String)
+       - TypedQuery 객체 사용  
+       - JPQL: 이름기반 파라미터 바인딩
 
 
 #### 3) QueryDSL GuestbookRepository Test : Guestbook QueryDSL 기반 Repository
 
-  1. __me.kickscar.practices.jpa03.model01.config.JpqlConfig__
+  1. __JpqlConfig.java__
      + JPQL과 설정파일 동일(실제로 QueryDSL은 JPQL의 쓰기쉽게, 특히 Criteria 대용의 래퍼 라이브러리이다)
      + QueryDSL Repository에 JPAQueryFactory를 주입하기 위한 빈설정a이 추가적으로 필요하다.
      
@@ -81,7 +97,7 @@
          }
        ```
 
-  2. __me.kickscar.practices.jpa03.model01.repository.QueryDslGuestbookRepository__  
+  2. __QueryDslGuestbookRepository.java__  
      + QueryDSL를 편하게 쓰기 위해 JPAQueryFactory Bean을 주입 받는다.
      + 영속화 관리를 위해 EntityManager 주입 받는다.
      + **컴파일 오류**
@@ -163,18 +179,25 @@
   
      + Build Task clean 함수 실행으로 삭제할 수 있다.
      
-  4. __me.kickscar.practices.jpa03.model01.repository.QueryDSLGuestbookRepositoryTest__  
-       + @FixMethodOrder : 메소드 순서 정하기
-       + @Transactional : 모든 메소드에 트랜잭션  AOP 적용
-       + 방명록에 사용하는 메소드만 테스트
-       + JPQL 테스트 케이스와 동일!!!
-
+  4. __QueryDSLGuestbookRepositoryTest.java__  
+       + test01Save
+         - QueryDSLGuestbookRepository.save(Guestbook)
+         - 객체 영속화
+         
+       + test02FindAllByOrderByRegDateDesc
+         - QueryDSLGuestbookRepository.findAllByOrderByRegDateDesc()
+         - TypedQuery 객체 사용  
+         
+       + test02DeleteByNoAndPassword
+         - QueryDSLGuestbookRepository.deleteByNoAndPassword(Long, String)
+         - TypedQuery 객체 사용  
+         - JPQL: 이름기반 파라미터 바인딩
 
 
 #### 4) JpaRepository 상속받은 GuestbookRepository Test : Guestbook Spring Data JPA 기반 Repository
 
-  1. __me.kickscar.practices.jpa03.model01.config.JpaConfig__
-     + JPQL(QueryDSL 포함) 설정과 다르다.
+  1. __JpaConfig.java__
+     + JPQL(QueryDSL포함) 설정 클래스인 JpqlConfig.java와 다르다.
      + 설정 클래스에 @EnableJpaRepositories 어노테이션으로 JPA Repositories 활성화해야 한다.(코드 주석 참고)
        ```
           @Configuration
@@ -188,7 +211,7 @@
        ```
        **따로 레포지토리 컴포넌트 스캔이 필요없다.(경우에 따라서는 빈등록 중복 예외가 발생할 수 있다.)**
       
-  2. __me.kickscar.practices.jpa03.model01.repository.JpaGuestbookRepository__
+  2. __JpaGuestbookRepository.java__
     
      + JpaRepository Interface 
        - Spring Data JPA에서 제공하는 인테페이스로 상속받은 Repoitory Interface 에 기본적인 CRUD 메서드를 제공한다.         
@@ -204,13 +227,40 @@
        - 이 코드로도 다음과 같은 메소드를 직접 불러 사용할 수 있다.   
          save(S), findOne(Id), exists(Id), count(), detete(T), deleteAll() - CRUD 기능  
          findAll(Sort), findAll(Pageable) - 정열 및 패이징  
-       - 더 막강한 기능은 쿼리 메소드 기능이다. (메소드이름으로 내부에서 JPQL를 생성해서 호출, 예제코드 참고)  
+       - 더 막강한 기능은 **쿼리메소드** 기능이다. (메소드이름으로 내부에서 JPQL를 생성해서 호출, 예제코드 참고)  
        - JPA NamedQuery 작성이 가능하다.   
        - QueryDSL과 통합이 가능하다  
        - Specification 를 통해 검색조건을 다양하게 조립하여 사용할 수 있다.  
   
-  4. __me.kickscar.practices.jpa03.model01.repository.JpaGuestbookRepositoryTest__  
-       + @FixMethodOrder : 메소드 순서 정하기
-       + @Transactional : 모든 메소드에 트랜잭션  AOP 적용
-       + 방명록에 사용하는 메소드만 테스트
-       + JPQL/QueryDSL 테스트 케이스와 동일!!!
+  4. __JpaGuestbookRepositoryTest.java__
+    
+     + Repositry 인터페이스 상속 Hierarchy  
+       JpaGuestbookRepository -> JpaRepository -> PagingAndSortingRepository -> CrudRepository -> Repository
+       
+     + test01Save()
+       - CrudRepository.save(S)
+       
+     + test02FindAll   
+       - JpaRepository.findAll()
+     
+     + test03FindAll()  
+       - PagingAndSortingRepository.findAll(Sort)
+
+     + test04FindAll()  
+       - PagingAndSortingRepository.findAll(Pageable)
+       
+     + test05FindAllByOrderByRegDateDesc
+       - JpaGuestbookRepository.findAllByOrderByRegDateDesc()
+       - JpaGuestbookRepository **쿼리메소드**
+       
+     + test06FindByIdAndDelete()  
+       - CrudRepository.findById(ID)
+       - CrudRepository.delete(S)
+     
+     + test07FindDeleteById()  
+       - CrudRepository.deleteById(id)
+     
+     + test08DeleteByNoAndPassword
+       - JpaGuestbookRepository.deleteByNoAndPassword(Iid, password)
+       - JpaGuestbookRepository **쿼리메소드**
+        
