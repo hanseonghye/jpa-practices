@@ -21,7 +21,6 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-// JPA Repositories 활성화: (JpaRepository 인터페이스를 상속받은 Repository Interface)에 대한 구현체 생성을 애플리케이션 실행 시점에 Spring Data JPA가 자동으로 한다.
 @EnableJpaRepositories(basePackages = { "me.kickscar.practices.jpa03.model01.repository" })
 public class JpaConfig {
 
@@ -80,7 +79,7 @@ public class JpaConfig {
         return em;
     }
 
-    // JPAQueryFatory: EntityManager 를 주입받아 생성: QueryDSL 지원 레포지토리에서는 편하게 사용할 수 있다.
+    // JPAQueryFatory: EntityManager 를 주입받아 생성: QueryDSL 지원 레포지토리에서는 와이어링(빈주입)하여 편하게 사용할 수 있다.
     @Bean
     public JPAQueryFactory jpaQueryFactory() {
         return new JPAQueryFactory(entityManager);
@@ -91,7 +90,7 @@ public class JpaConfig {
 
         /* 하이버네이트 상세 설정 */
         properties.setProperty( "jpa.generate-ddl", "true" );
-        // H2 Memory DB를 쓰고 있지만 지원 Mode가 MySQL이기 때문에 큰 문제 없음.
+        // H2 Memory DB를 쓰고 있지만 지원 Mode는 MySQL로 테스트한다.
         // properties.setProperty( "hibernate.dialect", "org.hibernate.dialect.H2Dialect" );
         properties.setProperty( "hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect" );
         properties.setProperty( "hibernate.show_sql", "true" );

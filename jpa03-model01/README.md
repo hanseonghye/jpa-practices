@@ -208,7 +208,9 @@
 
   1. __JpaConfig.java__
      + JPQL(QueryDSL포함) 설정 클래스인 JpqlConfig.java와 다르다.
-     + 설정 클래스에 @EnableJpaRepositories 어노테이션으로 JPA Repositories 활성화해야 한다.(코드 주석 참고)
+     + 설정 클래스에 @EnableJpaRepositories 어노테이션으로 JPA Repositories 활성화해야 한다.
+     + JPA Repositories 활성화: JpaRepository 인터페이스를 상속받은 Repository Interface 에 대한 구현체 생성을 애플리케이션 실행 처음에 Spring Data JPA가 자동으로 한다.
+
        ```
           @Configuration
           @EnableTransactionManagement
@@ -225,7 +227,7 @@
     
      + JpaRepository Interface 
        - Spring Data JPA에서 제공하는 인테페이스로 상속받은 Repoitory Interface 에 기본적인 CRUD 메서드를 제공한다.         
-       - 구현체는 애프리케이션 실행 시, Spring Data JPA가 생성해서 제공해 준다.  
+       - 구현체는 애플리케이션 처음 시작 시, Spring Data JPA가 생성해서 제공해 준다.  
        - 즉, **데이터 접근 계층(DAO, Repository) 개발할 떄 구현 클래스 없이 인터페이스만 작성해도 개발을 완료할 수 있다.**  
      
      + 기본적으로 JpaRepository를 상속하는 Repository 인터페이스를 생성한다.  
