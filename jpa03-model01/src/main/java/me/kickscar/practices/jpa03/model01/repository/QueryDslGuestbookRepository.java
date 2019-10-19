@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
 import me.kickscar.practices.jpa03.model01.dto.GuestbookDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -13,11 +14,11 @@ import static me.kickscar.practices.jpa03.model01.domain.QGuestbook.guestbook;
 @Repository
 public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
 
-    private final JPAQueryFactory queryFactory;
+    @Autowired
+    private JPAQueryFactory queryFactory;
 
     public QueryDslGuestbookRepository(JPAQueryFactory queryFactory) {
         super(Guestbook.class);
-        this.queryFactory = queryFactory;
     }
 
     // 저장(영속화)
