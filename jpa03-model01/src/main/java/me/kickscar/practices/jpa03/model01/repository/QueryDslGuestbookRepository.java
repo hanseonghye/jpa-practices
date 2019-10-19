@@ -6,18 +6,12 @@ import me.kickscar.practices.jpa03.model01.domain.Guestbook;
 import me.kickscar.practices.jpa03.model01.dto.GuestbookDto;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static me.kickscar.practices.jpa03.model01.domain.QGuestbook.guestbook;
 
 @Repository
 public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
-
-    @PersistenceContext
-    private EntityManager em;
 
     private final JPAQueryFactory queryFactory;
 
@@ -28,7 +22,7 @@ public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
 
     // 저장(영속화)
     public void save(Guestbook guestbook){
-        em.persist(guestbook);
+        getEntityManager().persist(guestbook);
     }
 
     // 조회1

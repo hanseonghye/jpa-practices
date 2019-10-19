@@ -103,7 +103,7 @@
 
   2. __QueryDslGuestbookRepository.java__  
      + QueryDSL를 편하게 쓰기 위해 JPAQueryFactory Bean을 주입 받는다.
-     + 영속화 관리를 위해 EntityManager 주입 받는다.
+     + 영속화 관리를 위해 EntityManager 주입 받을 필요가 없다. 부모 클래스 QuerydslRepositorySupport의 getEntityManager()를 사용한다.
      + **컴파일 오류**
        
        ```
