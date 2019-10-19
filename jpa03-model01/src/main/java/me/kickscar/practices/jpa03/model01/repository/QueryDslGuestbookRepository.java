@@ -27,7 +27,6 @@ public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
 
     // 저장(영속화)
     public void save(Guestbook guestbook){
-        guestbook.setRegDate(new Date());
         em.persist(guestbook);
     }
 

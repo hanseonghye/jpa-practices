@@ -2,6 +2,7 @@ package me.kickscar.practices.jpa03.model01.repository;
 
 import me.kickscar.practices.jpa03.model01.config.JpqlRepositoryTestConfig;
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
+import me.kickscar.practices.jpa03.model01.dto.GuestbookDto;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +51,13 @@ public class JpqlGuestbookRepositoryTest {
     }
 
     @Test
-    public void test02DeleteByNoAndPassword() {
+    public void test03FindAllByOrderByRegDateDesc() {
+        List<GuestbookDto> list = guestbookRepository.findAllByOrderByRegDateDesc2();
+        assertEquals(2, list.size());
+    }
+
+    @Test
+    public void test04DeleteByNoAndPassword() {
         assertTrue(guestbookRepository.deleteByNoAndPassword(1L, "1234"));
     }
 }

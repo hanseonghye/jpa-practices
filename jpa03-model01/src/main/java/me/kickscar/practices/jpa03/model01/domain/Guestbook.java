@@ -24,7 +24,7 @@ public class Guestbook {
 
 	@Column( name = "reg_date", nullable = false )
 	@Temporal( value = TemporalType.TIMESTAMP )
-	private Date regDate;
+	private Date regDate = new Date();
 
 	public Long getNo() {
 		return no;
