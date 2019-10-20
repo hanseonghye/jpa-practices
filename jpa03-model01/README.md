@@ -55,9 +55,9 @@
   
   3. __JpqlGuestbookRepository.java__  
      + JPQL 기반으로 작성
-     + 객체지향쿼리의 핵심은 JPQL이다. JPQL이 기본이고 제일 중요하다
-     + Criteria, QueryDSL은 String Quqery 기반의 JPQL를 객체지향쿼리로 쓰기 위한 Helper 라이브러리이다.
-     + 쿼리 로그를 보면 JPQL과 SQL이 나오는데, 이는 JPQL로 변환된 것이 최종적으로 SQL로 변환되기 때문이다.     
+       - 객체지향쿼리의 핵심은 JPQL이다. JPQL이 **가장 기본**이고 **제일 중요**하다 
+       - Criteria, QueryDSL은 문자열 쿼리 기반의 JPQL를 객체지향쿼리로 쓰기 위한 일종의 Helper Wrapping 라이브러리이다.
+       - 쿼리 로그를 보면 JPQL과 SQL이 나오는데, 이는 JPQL로 변환된 것이 최종적으로 SQL로 변환되기 때문이다.     
      + 영속화 
      + TypedQuery 객체 사용
      + Projection 및 Order by 지원
