@@ -202,9 +202,9 @@
 
        + test04FindAllByOrderByRegDateDesc2
          - QueryDSLGuestbookRepository.findAllByOrderByRegDateDesc2()
-         - QueryDsl Projection Projections.constructor(..) 사용법
+         - Projection을 위한 QueryDsl Projection Projections.constructor(..) 사용법
          
-       + 참고 메서드 QueryDSLGuestbookRepository.count()
+       + QueryDSLGuestbookRepository.count() 메소드
          - fetchCount()
 
 
@@ -246,12 +246,15 @@
        - 더 막강한 기능은 **쿼리메소드** 기능이다. (메소드이름으로 내부에서 JPQL를 생성해서 호출, 예제코드 참고)  
        - JPA NamedQuery 작성이 가능하다.   
        - QueryDSL과 통합이 가능하다  
-       - Specification 를 통해 검색조건을 다양하게 조립하여 사용할 수 있다.  
+       - Specification를 통해 검색조건을 다양하게 조립하여 사용할 수 있다.  
   
   4. __JpaGuestbookRepositoryTest.java__
-    
+  
+     + 방명록에 직접 사용하지 않지만 기본적으로 제공되는 메소드와 쿼리메소드(2걔) 테스트
+
      + Repositry 인터페이스 상속 Hierarchy  
-       JpaGuestbookRepository -> JpaRepository -> PagingAndSortingRepository -> CrudRepository -> Repository
+       - JpaGuestbookRepository -> JpaRepository -> PagingAndSortingRepository -> CrudRepository -> Repository
+       - 상위 인터페이스 JpaRepository, PagingAndSortingRepository, CrudRepositor 들의 메소드들을 별다른 구현없이 사용 가능하다.
        
      + test01Save()
        - CrudRepository.save(S)
@@ -267,7 +270,7 @@
        
      + test05FindAllByOrderByRegDateDesc
        - JpaGuestbookRepository.findAllByOrderByRegDateDesc()
-       - JpaGuestbookRepository **쿼리메소드**
+       - JpaGuestbookRepository **쿼리메소드 예시**
        
      + test06FindByIdAndDelete()  
        - CrudRepository.findById(ID)
@@ -277,6 +280,6 @@
        - CrudRepository.deleteById(id)
      
      + test08DeleteByNoAndPassword
-       - JpaGuestbookRepository.deleteByNoAndPassword(Iid, password)
-       - JpaGuestbookRepository **쿼리메소드**
+       - JpaGuestbookRepository.deleteByNoAndPassword(id, password)
+       - JpaGuestbookRepository **쿼리메소드 예시**
         
