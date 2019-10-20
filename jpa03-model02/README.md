@@ -128,7 +128,7 @@
      + QueryDSL DTO 객체를 활용한 Projection 방법
      + QueryDSL 통계 쿼리
 
-  3. __JpqlUserRepositoryTest.java__
+  3. __QueryDslUserRepository Test.java__
     
      + test01Save
         - QueryDslUserRepository.save(User)
