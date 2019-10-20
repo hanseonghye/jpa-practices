@@ -15,7 +15,7 @@ public class JpqlBoardRepository {
     @Autowired
     private EntityManager em;
 
-    // 저장(영속화)
+    // 저장: 영속화
     public void save(Board board){
         em.persist(board);
     }

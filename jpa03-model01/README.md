@@ -82,14 +82,15 @@
      + test04DeleteByNoAndPassword
        - JpqlGuestbookRepository.deleteByNoAndPassword(Long, String)
        - TypedQuery 객체 사용  
-       - JPQL: 이름기반 파라미터 바인딩
+       - 이름 기반 파라미터 바인딩
 
 
 #### 3) QueryDSL GuestbookRepository Test : QueryDSL 기반 Repository
 
   1. __JpqlConfig.java__
      + JPQL과 설정파일 동일
-     + QueryDSL은 JPQL의 쓰기쉽게, 특히 Criteria 대용의 래퍼 라이브러리 이다. JPQL로 변환된다.
+     + QueryDSL은 JPQL을 사용하기 쉽게, 특히 Criteria 대용의 JPQL래퍼 라이브러리 이다.
+     + 쿼리를 문자열 기반이 아닌 코드로 작성한다.(다양한 쿼리함수 사용법을 익혀야 한다.)
      + QueryDSL Repository에 JPAQueryFactory를 주입하기 위한 빈설정이 추가적으로 필요하다.
      
        ```

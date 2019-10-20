@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpqlRepositoryTestConfig.class})
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)  // JUnit4.11 부터 지원
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Transactional
 public class JpqlBoardRepositoryTest {
 
@@ -76,7 +76,7 @@ public class JpqlBoardRepositoryTest {
     }
 
     @Test
-    public void test02Find1(){
+    public void test02FindById(){
         Board board = boardRepository.find1(1L);
         assertEquals(1L, board.getNo().longValue());
     }

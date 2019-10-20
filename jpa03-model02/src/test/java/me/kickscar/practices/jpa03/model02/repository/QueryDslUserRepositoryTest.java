@@ -23,13 +23,13 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpqlRepositoryTestConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class JpqlUserRepositoryTest {
+public class QueryDslUserRepositoryTest {
 
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
-    private JpqlUserRepository userRepository;
+    private QueryDslUserRepository userRepository;
 
     @Test
     @Transactional
@@ -47,9 +47,11 @@ public class JpqlUserRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void test02FindById(){
         User user = userRepository.findById(1L);
         assertEquals("둘리", user.getName());
+        assertTrue(em.contains(user));
     }
 
     @Test
@@ -69,10 +71,11 @@ public class JpqlUserRepositoryTest {
     }
 
     @Test
-    public void test04FindByEmailAndPassword(){
-        UserDto userDto = userRepository.findByEmailAndPassword("dooly2@kickscar.me", "2");
-        assertEquals(1L, userDto.getNo().longValue());
-        assertEquals("둘리2", userDto.getName());
+    @Transactional
+    public void test04FindBy2(){
+        User user = userRepository.findById2(1L);
+        assertEquals("둘리2", user.getName());
+        assertTrue(em.contains(user));
     }
 
     @Test
@@ -88,6 +91,17 @@ public class JpqlUserRepositoryTest {
         user.setRole(RoleType.USER);
 
         assertTrue(userRepository.update2(user));
+    }
+
+    @Test
+    @Transactional
+    public void test06FindByEmailAndPassword(){
+        UserDto userDto = userRepository.findByEmailAndPassword("dooly3@kickscar.me", "3");
+        assertEquals(1L, userDto.getNo().longValue());
+        assertEquals("둘리3", userDto.getName());
+
+        // throw IllegalArgumentException: Entity 객체만 영속화 여부를 물어 볼수 있다.
+        // assertFalse(em.contains(userDto));
     }
 
 }

@@ -1,11 +1,11 @@
 package me.kickscar.practices.jpa03.model02.repository;
 
 import me.kickscar.practices.jpa03.model02.domain.User;
+import me.kickscar.practices.jpa03.model02.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
@@ -15,27 +15,28 @@ public class JpqlUserRepository {
     @Autowired
     private EntityManager em;
 
-    // 저장(영속화)
+    // 저장: 영속화
     public void save(User user){
         em.persist(user);
     }
 
-    // 수정1
-    public Boolean update1(User user){
-        Query query = em.createQuery("update User u set u.role=:role, u.gender=:gender, u.email=:email, u.name=:name, u.password=:password where u.no=:no");
-
-        query.setParameter("no", user.getNo());
-        query.setParameter("role", user.getRole());
-        query.setParameter("gender", user.getGender());
-        query.setParameter("email", user.getEmail());
-        query.setParameter("name", user.getName());
-        query.setParameter("password", user.getPassword());
-
-        return query.executeUpdate() == 1;
+    // 조회1: Fetch One: 영속객체 반환
+    public User findById(Long no) {
+        return em.find(User.class, no);
     }
 
-    // 수정2
-    public User update2(User user){
+    // 조회2: Fetch One: 영속객체 반환
+    public UserDto findByEmailAndPassword(String email, String password) {
+        String qlString = "select new me.kickscar.practices.jpa03.model02.dto.UserDto(u.no, u.name) from User u where u.email=:email and u.password=:password";
+        TypedQuery<UserDto> query = em.createQuery(qlString, UserDto.class);
+        query.setParameter("email", email);
+        query.setParameter("password", password);
+
+        return query.getSingleResult();
+    }
+
+    // 수정1
+    public User update1(User user){
         User userPersisted = em.find(User.class, user.getNo());
 
         if(userPersisted != null){
@@ -49,23 +50,24 @@ public class JpqlUserRepository {
         return userPersisted;
     }
 
-    // 조회1
-    public User find(Long no) {
-        return em.find(User.class, no);
+    // 수정2
+    public Boolean update2(User user){
+        Query query = em.createQuery("update User u set u.role=:role, u.gender=:gender, u.email=:email, u.name=:name, u.password=:password where u.no=:no");
+
+        query.setParameter("no", user.getNo());
+        query.setParameter("role", user.getRole());
+        query.setParameter("gender", user.getGender());
+        query.setParameter("email", user.getEmail());
+        query.setParameter("name", user.getName());
+        query.setParameter("password", user.getPassword());
+
+        return query.executeUpdate() == 1;
     }
 
-    // 조회2 (UserDto, Projection에 사용)
-    public User find(String email, String password) {
-        TypedQuery<User> query = em.createQuery("select u from User u where u.email=:email and u.password=:password", User.class);
-        query.setParameter("email", email);
-        query.setParameter("password", password);
-
-        return query.getSingleResult();
-    }
-
-    // JPQL 집합함수 사용법
+    // count
     public Long count() {
-        TypedQuery<Long> query = em.createQuery("select count(u) from User u", Long.class);
+        String qlString = "select count(u) from User u";
+        TypedQuery<Long> query = em.createQuery(qlString, Long.class);
         return query.getSingleResult();
     }
 }

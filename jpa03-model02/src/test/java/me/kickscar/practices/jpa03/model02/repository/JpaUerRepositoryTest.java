@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpaRepositoryTestConfig.class})
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)  // JUnit4.11 부터 지원
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JpaUerRepositoryTest {
 
     @PersistenceContext
@@ -49,15 +49,13 @@ public class JpaUerRepositoryTest {
     @Test
     public void test02FindByEmailAndPassword(){
         User user = userRepository.findByEmailAndPassword("dooly@kickscar.me", "1");
-        System.out.println(user);
         assertEquals("둘리", user.getName());
-        assertFalse(em.contains(user));
     }
 
     @Test
     @Transactional
     @Rollback(false)
-    public void test03FindByIdAndSave() {  // 영속객체 수정하기(select + update)
+    public void test03FindByIdAndUpdate() {  // 영속객체 수정하기(select + update)
         User user = userRepository.findById(1L).get();
         System.out.println(user);
         user.setName("둘리2");
@@ -76,7 +74,7 @@ public class JpaUerRepositoryTest {
     @Test
     @Transactional
     @Rollback(false)
-    public void test05Update() { //수정하기(update query만 실행됨)
+    public void test05Update() {
         userRepository.update(1L, "둘리3", "dooly3@kickscar.me", "3", GenderType.MALE, RoleType.USER);
     }
 
@@ -86,26 +84,24 @@ public class JpaUerRepositoryTest {
         assertEquals("둘리3", user.getName());
     }
 
-    @Test
-    @Transactional
-    @Rollback(false)
-    public void test07Update() { //수정하기(update query만 실행됨)
-        User user = new User();
-        user.setNo(1L);
-        user.setName("둘리4");
-        user.setPassword("4");
-        user.setEmail("dooly4@kickscar.me");
-        user.setGender(GenderType.MALE);
-        user.setRole(RoleType.USER);
-
-        userRepository.update(user);
-    }
+//    @Test
+//    @Transactional
+//    @Rollback(false)
+//    public void test07Update() { //수정하기(update query만 실행됨)
+//        User user = new User();
+//        user.setNo(1L);
+//        user.setName("둘리4");
+//        user.setPassword("4");
+//        user.setEmail("dooly4@kickscar.me");
+//        user.setGender(GenderType.MALE);
+//        user.setRole(RoleType.USER);
+//
+//        userRepository.update(user);
+//    }
 
     @Test
     public void test08FindById(){
         User user = userRepository.findById(1L).get();
         assertEquals("둘리4", user.getName());
     }
-
-
 }
