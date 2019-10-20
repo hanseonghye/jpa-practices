@@ -168,5 +168,53 @@
 #### 5) QueryDSL BoardRepository Test : QueryDSL 기반 Repository
 
 #### 6) Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
+  1. __JpaConfig.java__
+  
+     + jpa03-model01 내용과 동일
+      
+  2. __JpaUserRepository.java__
+    
+     + 기본 메소드
+       - save(User)         
+       - findById(id)
+       
+     + 쿼리 메소드
+       - findByEmailAndPassword(email, password)
+       
+     + @Query 어노테이션을 사용한 메소드에 쿼리 정의
+       - findById2(id)
+       - update(User)
+       
+  4. __JpaUserRepositoryTest.java__
+
+     + test01Save()
+       - CrudRepository.save(S)
+       
+     + test02FindById   
+       - CrudRepository.findById()
+     
+     + test03UpdatePersisted()  
+       - CrudRepository.findById()
+       - 영속객체를 사용한 업데이트
+       - 성능이슈: update 쿼리 이전에 select 쿼리 실행
+
+     + test04FindById2()  
+       - JpaUserRepository.findById2(id)
+       - @Query 어노테이션을 사용한 메소드 쿼리(JPQL) 정의
+       - JPQL Projection
+       
+     + test05Update
+       - JpaUserRepository.update(...)
+       - @Query 어노테이션을 사용한 메소드 쿼리(JPQL) 정의
+       - JPQL 이름 바인딩
+       - 이름 바인딩은 객체 이름 경로를 사용할 수 없기 때문에 메소드의 파라미터가 많다.
+       - 이를 해결하기 위해서는 QueryDSL과 통합해야 함(jpa03-model03의 JpaUserRepository 참고) 
+       
+     + test06FindByEmailAndPassword()  
+       - JpaUserRepository.findByEmailAndPassword(email, password)
+       - JpaUserRepository **쿼리메소드 예시**
+       - 프로젝션 하지 않음
+       - 프로젝션을 하기 위해서는 앞의 @Query 메소드 쿼리 정의 또는 QueryDSL 통합을 해야 한다.(jpa03-model03의 JpaUserRepository 참고)
+
 
 #### 7) Spring Data JPA BoardRepository Test : Spring Data JPA 기반 Repository
