@@ -163,7 +163,7 @@
        - 쿼리함수 select(), from(), where(), fetchOne()
     
      + QueryDslUserRepository.count() 메소드
-       - QueryDsl에서 fetchCount() 사용방법
+       - QueryDSL의 fetchCount() 사용방법
 
 #### 5) QueryDSL BoardRepository Test : QueryDSL 기반 Repository
 
