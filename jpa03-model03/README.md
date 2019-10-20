@@ -28,15 +28,19 @@
   3. __연관관계 매핑__
 
 
-### 02. Test SpringBoot Application
+### 02. SpringBoot Test Case
 
-#### 1) 개발환경
+#### 1) 테스트 환경
   1. __Java SE 1.8__  
-  2. __Spring Boot 2.1.8.Release__   
-  3. __Spring Data JPA 2.1.8.Release__   
-  4. __Hibernate 5.4.4.Final__  
-  5. __H2 Database 1.4.197__  
-  6. __Gradle 5.4__   
+  2. __Spring Boot Starter Web 2.1.8.RELEASE (Spring Core, Context, Web ... etc 5.19.RELEASE)__   
+  3. __Spring Boot Starter Data JPA 2.1.8.RELEASE (Spring Data JPA 2.1.10.RELEASE)__
+  4. __Hibernate 5.4.4.Final__ 
+  5. __QueryDsl JPA 4.2.1__
+  6. __QueryDsl APT 3.7.4__ 
+  7. __H2 Database 1.4.197__  
+  8. __JUnit 4.12__
+  9. __Spring Boot Starter Test 2.1.8.RELEASE (Spring Test 5.1.9.RELEASE)__   
+ 10. __Gradle 5.4__    
 
 #### 2) JPQL Repository Test
 

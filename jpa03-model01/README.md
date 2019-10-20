@@ -12,18 +12,22 @@
 
 
 
-### 02. Test
+### 02. SpringBoot Test Case
 
-#### 1) 개발환경
+#### 1) 테스트 환경
   1. __Java SE 1.8__  
-  2. __Spring Boot 2.1.8.Release__   
-  3. __Spring Data JPA 2.1.8.Release__   
-  4. __Hibernate 5.4.4.Final__  
-  5. __H2 Database 1.4.197__  
-  6. __Gradle 5.4__   
+  2. __Spring Boot Starter Web 2.1.8.RELEASE (Spring Core, Context, Web ... etc 5.19.RELEASE)__   
+  3. __Spring Boot Starter Data JPA 2.1.8.RELEASE (Spring Data JPA 2.1.10.RELEASE)__
+  4. __Hibernate 5.4.4.Final__ 
+  5. __QueryDsl JPA 4.1.4__
+  6. __QueryDsl APT 3.7.4__ 
+  7. __H2 Database 1.4.197__  
+  8. __JUnit 4.12__
+  9. __Spring Boot Starter Test 2.1.8.RELEASE (Spring Test 5.1.9.RELEASE)__   
+ 10. __Gradle 5.4__  
 
 
-#### 2) Jpql GuestbookRepository Test : Guestbook JPQL 기반 Repository
+#### 2) Jpql GuestbookRepository Test : JPQL 기반 Repository
   
   1. __JpqlConfig.java__
      + Datasource Bean 설정  
@@ -81,7 +85,7 @@
        - JPQL: 이름기반 파라미터 바인딩
 
 
-#### 3) QueryDSL GuestbookRepository Test : Guestbook QueryDSL 기반 Repository
+#### 3) QueryDSL GuestbookRepository Test : QueryDSL 기반 Repository
 
   1. __JpqlConfig.java__
      + JPQL과 설정파일 동일
@@ -204,7 +208,7 @@
          - fetchCount()
 
 
-#### 4) JpaRepository 상속받은 GuestbookRepository Test : Guestbook Spring Data JPA 기반 Repository
+#### 4) Spring Data JPA GuestbookRepository Test : Spring Data JPA 기반 Repository
 
   1. __JpaConfig.java__
      + JPQL(QueryDSL포함) 설정 클래스인 JpqlConfig.java와 다르다.
