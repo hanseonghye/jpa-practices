@@ -38,11 +38,11 @@
      ```
        .
        .
-     
+       .
        @ManyToOne
        @JoinColumn( name = "user_no" )
        private User user;
-     
+       .
        .
        .    
      ```
@@ -114,6 +114,97 @@
 
 #### 3) Jpql BoardRepository Test : JPQL 기반 Repository
 
+  1. __JpqlConfig.java__
+  
+     + jpa03-model01 내용과 동일 
+     
+  2. __JpqlBoardRepository.java__
+    
+     + 저장(insert)을 위한 객체 영속화
+     + 삭제(delete) 지원
+     + 수정(update) 지원
+     + 조회(select) - fetch one 하는 두가지 방법
+     + 조회(select) - fetch list, inner join list, **fetch join** list, 
+     + 조회(select) - paging 및 like 검색
+     + JPQL 파라미터 인덱스 바인딩 & 이름 바인딩
+     + 집합함수: 통계 쿼리 스칼라 타입 조회
+     + **@ManyToOne Fetch.EAGER 기본 모드 이해**
+     + fetch one에서 join 문제 이해하기
+
+  3. __JpqlBoardRepositoryTest.java__
+    
+     + test01Save
+        - JpqlBoardRepository.save(Board)
+        - 객체 영속화
+
+     + test02FindById1
+       - JpqlBoardRepository.findById1(id)
+       - Eager Fetch(@ManyToOne 기본 Fetch Mode)는 Proxy 객체 타입을 리턴하지 않는다. Lazy Fetch는 Proxy 객체를 리턴한다.(실제 User 객체가 아니다)
+       - 영속화 객체 조회 에서는 Left Outer Join 으로 User 정보를 가져온다. (로그 확인 할 것)
+         
+     + test03FindById2
+       - JpqlBoardRepository.findById2(id)
+       - Eager Fetch(@ManyToOne 기본 Fetch Mode)는 Proxy 객체 타입을 리턴하지 않는다. Lazy Fetch는 Proxy 객체를 리턴한다.(실제 User 객체가 아니다)
+       - JPQL를 사용하면 User 정보를 가져오기 위해 Join 대신 Select 쿼리를 2번 실행한다. (로그 확인 할 것)  
+         
+     + test04FindAll1
+       - JpqlBoardRepository.findAll1()
+       - Board 엔티티만 지정하면 join으로 한 번에 User 정보까지 가져오지 않는다는 것이다. 
+       - 기본이 EAGER이기 때문에 각각의 Board가 참조하고 있는 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행된다.(User가 영속객체이기 때문에 1차 캐시됨)
+       - **성능이슈**: 대용량 게시판에선 문제가 될 수 있다.
+       - 해결 방법은 **Inner Join을 직접 사용하는 방법**과 **Fetch Join** 을 사용하는 것이다.
+        
+     + test05FindAll2
+       - JpqlBoardRepository.findAll2()
+       - Inner Join을 사용한다.
+       - 쿼리상으로 Join이 걸리지만 select에 User를 올릴 수 없기 떄문에 Inner Join도 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행되는 문제가 있다.
+ 
+     + test06FindAll3
+       - JpqlBoardRepository.findAll3()
+       - Fecth Join을 사용한다.
+       - Fecth Join은 Inner Join의 성능 문제를 해결 할 수 있다.
+       - 실제 실행되는 쿼리를 보면 select절에 user table의 컬럼이 프로젝션 된다.
+
+     + test07FindAll4
+       - JpqlBoardRepository.findAll4(page)
+       - Fetch Join 적용
+       - Paging 적용(TypedQuery 의 setFirstResult(), setMaxResults() 메소드)
+
+     + test08FindAll5
+       - JpqlBoardRepository.findAll5(keyword, page)
+       - Fetch Join 적용
+       - Paging 적용(TypedQuery 의 setFirstResult(), setMaxResults() 메소드)
+       - like 검색 적용
+
+     + test09Update1
+       - JpqlBoardRepository.update1(User)
+       - 영속객체를 사용한다.
+       - 선별적 컬럼 업데이트이지만 영속객체를 사용하기 때문에 전체 속성이 업데이트 된다.
+       - select와 update 쿼리가 2개 실행된다.
+       
+     + test10Update2
+       - JpqlBoardRepository.update2(User)
+       - JPQL기반 update 쿼리만 실행된다.
+       - 선별적 컬럼 업데이트가 가능하다.
+     
+     + test11Delete1
+       - JpqlBoardRepository.delete1(no)
+       - 영속객체를 사용한다.
+       - select와 delete 쿼리가 2개 실행된다.
+      
+     + test12Delete2
+       - JpqlBoardRepository.delete2(no)
+       - JPQL 기반 delete 쿼리만 실행된다.
+
+     + test13Delete3
+       - JpqlBoardRepository.delete3(boardNo, userNo)
+       - JPQL 기반 delete 쿼리만 실행된다.
+       - 게시판 삭제 비즈니스 로직에 맞게 작성된 메소드이다.
+    
+     + JpqlUserRepository.count() 메소드
+       - JPQL에서 통계함수 사용
+
+
 #### 4) QueryDSL UserRepository Test : QueryDSL 기반 Repository
 
   1. __JpqlConfig.java__
@@ -167,6 +258,7 @@
 
 #### 5) QueryDSL BoardRepository Test : QueryDSL 기반 Repository
 
+
 #### 6) Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
   1. __JpaConfig.java__
   
@@ -185,7 +277,7 @@
        - findById2(id)
        - update(User)
        
-  4. __JpaUserRepositoryTest.java__
+  3. __JpaUserRepositoryTest.java__
 
      + test01Save()
        - CrudRepository.save(S)
