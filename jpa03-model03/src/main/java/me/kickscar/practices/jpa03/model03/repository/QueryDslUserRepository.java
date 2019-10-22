@@ -10,6 +10,7 @@ import static me.kickscar.practices.jpa03.model03.domain.QUser.user;
 
 @Repository
 public class QueryDslUserRepository extends QuerydslRepositorySupport {
+
     @Autowired
     private JPAQueryFactory queryFactory;
 
