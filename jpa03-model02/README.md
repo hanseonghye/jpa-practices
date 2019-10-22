@@ -177,13 +177,14 @@
        - like 검색 적용
 
      + test09Update1
-       - JpqlBoardRepository.update1(User)
+       - JpqlBoardRepository.update1(Board)
        - 영속객체를 사용한다.
        - 선별적 컬럼 업데이트이지만 영속객체를 사용하기 때문에 전체 속성이 업데이트 된다.
        - select와 update 쿼리가 2개 실행된다.
        
      + test10Update2
-       - JpqlBoardRepository.update2(User)
+       - JpqlBoardRepository.update2(Board)
+       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
        - JPQL기반 update 쿼리만 실행된다.
        - 선별적 컬럼 업데이트가 가능하다.
      
@@ -194,10 +195,12 @@
       
      + test12Delete2
        - JpqlBoardRepository.delete2(no)
+       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
        - JPQL 기반 delete 쿼리만 실행된다.
 
      + test13Delete3
        - JpqlBoardRepository.delete3(boardNo, userNo)
+       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
        - JPQL 기반 delete 쿼리만 실행된다.
        - 게시판 삭제 비즈니스 로직에 맞게 작성된 메소드이다.
     
@@ -213,7 +216,7 @@
      
   2. __QueryDslUserRepository.java__
     
-     + JPQL 기반으로 작성
+     + QueryDSL 기반으로 작성
      + 저장을 위한 객체 영속화
      + 다양한 쿼리함수 사용법 
      + QueryDSL DTO 객체를 활용한 Projection 방법
@@ -257,7 +260,108 @@
        - QueryDSL의 fetchCount() 사용방법
 
 #### 5) QueryDSL BoardRepository Test : QueryDSL 기반 Repository
+  1. __JpqlConfig.java__
+  
+     + jpa03-model01 내용과 동일 
+     
+  2. __QueryDslBoardRepository.java__
+    
+     + QueryDSL 기반으로 작성
+     + 저장을 위한 객체 영속화
+     + 다양한 쿼리함수 사용법
+     + JPQL Repository 메소드와 완전 동일(구현 내용만 다름) 
+     + JPQL Repository 메소드와 구현 및 실행 시 쿼리 로그 1:1 비교해 볼 것
+     + QueryDSL Fetch Join
+     + QueryDSL Like 검색  
+     + QueryDSL 통계 쿼리
 
+  3. __QueryDslBoardRepositoryTest.java__
+     + JpqlBoardRepositoryTest 와 완전 동일
+     
+     + JpqlBoardRepositoryTest 쿼리로그 꼭 비교 분석할 것 (완전 일치)
+     
+     + test01Save
+        - QueryDslBoardRepository.save(Board)
+        - 객체 영속화
+
+     + test02FindById1
+       - QueryDslBoardRepository.findById1(id)
+       - Eager Fetch(@ManyToOne 기본 Fetch Mode)는 Proxy 객체 타입을 리턴하지 않는다. Lazy Fetch는 Proxy 객체를 리턴한다.(실제 User 객체가 아니다)
+       - 영속화 객체 조회 에서는 Left Outer Join 으로 User 정보를 가져온다. (로그 확인 할 것)
+         
+     + test03FindById2
+       - QueryDslBoardRepository.findById2(id)
+       - Eager Fetch(@ManyToOne 기본 Fetch Mode)는 Proxy 객체 타입을 리턴하지 않는다. Lazy Fetch는 Proxy 객체를 리턴한다.(실제 User 객체가 아니다)
+       - JPQL를 사용하면 User 정보를 가져오기 위해 Join 대신 Select 쿼리를 2번 실행한다. (로그 확인 할 것)
+       - from(), where(), fetchOne() 함수 사용법  
+         
+     + test04FindAll1
+       - QueryDslBoardRepository.findAll1()
+       - Board 엔티티만 지정하면 join으로 한 번에 User 정보까지 가져오지 않는다는 것이다. 
+       - 기본이 EAGER이기 때문에 각각의 Board가 참조하고 있는 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행된다.(User가 영속객체이기 때문에 1차 캐시됨)
+       - **성능이슈**: 대용량 게시판에선 문제가 될 수 있다.
+       - 해결 방법은 **Inner Join을 직접 사용하는 방법**과 **Fetch Join** 을 사용하는 것이다.
+       - from(), orderBy(), Q클래스 desc(), fetch() 함수 사용법
+        
+     + test05FindAll2
+       - QueryDslBoardRepository.findAll2()
+       - Inner Join을 사용한다.
+       - 쿼리상으로 Join이 걸리지만 select에 User를 올릴 수 없기 떄문에 Inner Join도 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행되는 문제가 있다.
+       - from(), innerJoin(), orderBy(), fetch() 함수 사용법
+       
+     + test06FindAll3
+       - QueryDslBoardRepository.findAll3()
+       - Fecth Join을 사용한다.
+       - Fecth Join은 Inner Join의 성능 문제를 해결 할 수 있다.
+       - 실제 실행되는 쿼리를 보면 select절에 user table의 컬럼이 프로젝션 된다.
+       - from(), innerJoin(), fetchJoin(), orderBy(), fetch() 함수 사용법
+
+     + test07FindAll4
+       - QueryDslBoardRepository.findAll4(page)
+       - Fetch Join 적용
+       - Paging 적용(offset(), limit() 함수)
+       - from(), innerJoin(), fetchJoin(), orderBy(), offset(), limit(), fetch() 함수 사용법
+
+     + test08FindAll5
+       - QueryDslBoardRepository.findAll5(keyword, page)
+       - Fetch Join 적용
+       - Paging 적용(offset(), limit() 함수)
+       - like 검색 적용(Q클래스 contains() 메소드 사용)
+       - from(), innerJoin(), fetchJoin(), where(), orderBy(), offset(), limit(), fetch() 함수 사용법 
+
+     + test09Update1
+       - QueryDslBoardRepository.update1(Board)
+       - 영속객체를 사용한다.
+       - 선별적 컬럼 업데이트이지만 영속객체를 사용하기 때문에 전체 속성이 업데이트 된다.
+       - select와 update 쿼리가 2개 실행된다.
+       
+     + test10Update2
+       - QueryDslBoardRepository.update2(Board)
+       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
+       - update 쿼리만 실행된다.
+       - 선별적 컬럼 업데이트가 가능하다.
+       - update(), set(), where(), execute() 함수 사용법 
+     
+     + test11Delete1
+       - JpqlBoardRepository.delete1(no)
+       - 영속객체를 사용한다.
+       - select와 delete 쿼리가 2개 실행된다.
+      
+     + test12Delete2
+       - JpqlBoardRepository.delete2(no)
+       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
+       - delete 쿼리만 실행된다.
+       - delete(), where(), execute() 함수 사용법
+
+     + test13Delete3
+       - JpqlBoardRepository.delete3(boardNo, userNo)
+       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
+       - delete 쿼리만 실행된다.
+       - 게시판 삭제 비즈니스 로직에 맞게 작성된 메소드이다.
+       - delete(), where(), execute() 함수 사용법
+    
+     + JpqlUserRepository.count() 메소드
+       - JPQL에서 통계함수 사용     
 
 #### 6) Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
   1. __JpaConfig.java__

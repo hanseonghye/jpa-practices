@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static me.kickscar.practices.jpa03.model02.domain.QBoard.board;
+import static me.kickscar.practices.jpa03.model02.domain.QUser.user;
 
 @Repository
 public class QueryDslBoardRepository extends QuerydslRepositorySupport {
@@ -24,8 +25,54 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
         getEntityManager().persist(board);
     }
 
+    // 삭제1: 영속객체
+    public void delete1(Long no){
+        Board board = getEntityManager().find(Board.class, no);
+        getEntityManager().remove(board);
+    }
+
+    // 삭제2: JPQL
+    public Boolean delete2(Long no) {
+        return queryFactory
+                .delete(board)
+                .where(board.no.eq(no))
+                .execute() == 1;
+    }
+
+    // 삭제3: JPQL: 비즈니스 로직(게시물 번호와 사용자 번호로 삭제)
+    public Boolean delete3(Long boardNo, Long userNo) {
+        return queryFactory
+                .delete(board)
+                // 다음 2개의 where 메소드는 완전 동일
+                // .where(board.no.eq(boardNo).and(board.user.no.eq(userNo)))
+                .where(board.no.eq(boardNo), board.user.no.eq(userNo))
+                .execute() == 1;
+    }
+
+    // 수정1:
+    public Board update1(Board board){
+        Board boardPersisted = getEntityManager().find(Board.class, board.getNo());
+
+        if(boardPersisted != null){
+            boardPersisted.setTitle(board.getTitle());
+            boardPersisted.setContents(board.getContents());
+        }
+
+        return boardPersisted;
+    }
+
+    // 수정2
+    public Boolean update2(Board argBoard){
+        return queryFactory
+                .update(board)
+                .set(board.title, argBoard.getTitle())
+                .set(board.contents, argBoard.getContents())
+                .where(board.no.eq(argBoard.getNo()))
+                .execute() == 1;
+    }
+
     // 조회1: Fetch One
-    public Board findById(Long no) {
+    public Board findById1(Long no) {
         return getEntityManager().find(Board.class, no);
     }
 
@@ -37,37 +84,53 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
                 .fetchOne();
     }
 
-    // 조회3: Fetch List: Paging, 예제 데이터 수는 3개씩
-    public List<Board> findAll(Integer page) {
+    // 조회3: Fetch List
+    public List<Board> findAll1() {
         return (List<Board>) queryFactory
                 .from(board)
+                .orderBy(board.regDate.desc())
+                .fetch();
+    }
+
+    // 조회4: Inner Join List
+    public List<Board> findAll2() {
+        return (List<Board>) queryFactory
+                .from(board)
+                .innerJoin(board.user)
+                .orderBy(board.regDate.desc())
+                .fetch();
+    }
+
+    // 조회5: Fetch Join List
+    public List<Board> findAll3() {
+        return (List<Board>) queryFactory
+                .from(board)
+                .innerJoin(board.user).fetchJoin()
+                .orderBy(board.regDate.desc())
+                .fetch();
+    }
+
+    // 조회6: Fetch Join List: Paging: 데이터 수는 3개씩
+    public List<Board> findAll4(Integer page) {
+        return (List<Board>) queryFactory
+                .from(board)
+                .innerJoin(board.user).fetchJoin()
                 .orderBy(board.regDate.desc())
                 .offset((page - 1) * 3)
                 .limit(3)
                 .fetch();
     }
 
-    // 조회4: Fetch List: Paging, LIKE 검색, 예제 데이터 수는 3개씩
-    public List<Board> findAll(String keyword, Integer page) {
+    // 조회7: Fetch Join List: Paging: 데이터 수는 3개씩: LIKE 검색
+    public List<Board> findAll5(String keyword, Integer page) {
         return (List<Board>) queryFactory
                 .from(board)
+                .innerJoin(board.user).fetchJoin()
                 .where(board.title.contains(keyword).or(board.contents.contains(keyword)))
                 .orderBy(board.regDate.desc())
                 .offset((page - 1) * 3)
+                .limit(3)
                 .fetch();
-    }
-
-    // 수정
-
-
-    // 삭제
-    public Boolean delete(Long boardNo, Long userNo) {
-        return queryFactory
-                .delete(board)
-//              다음 2개의 where 메소드는 완전 동일
-//              .where(board.no.eq(boardNo).and(board.user.no.eq(userNo)))
-                .where(board.no.eq(boardNo), board.user.no.eq(userNo))
-                .execute() == 1;
     }
 
     // count
