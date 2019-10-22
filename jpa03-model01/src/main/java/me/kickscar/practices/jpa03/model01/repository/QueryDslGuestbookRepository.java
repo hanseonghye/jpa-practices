@@ -27,7 +27,7 @@ public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
     }
 
     // 조회1
-    public List<Guestbook> findAllByOrderByRegDateDesc1(){
+    public List<Guestbook> findAll1(){
         return (List<Guestbook>) queryFactory
                 .from(guestbook)
                 .orderBy(guestbook.regDate.desc())
@@ -35,7 +35,7 @@ public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
     }
 
     // 조회2 - 프로젝션
-    public List<GuestbookDto> findAllByOrderByRegDateDesc2(){
+    public List<GuestbookDto> findAll2(){
         return queryFactory
                 .select(Projections.constructor(GuestbookDto.class, guestbook.no, guestbook.name, guestbook.contents, guestbook.regDate))
                 .from(guestbook)
@@ -44,7 +44,7 @@ public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
     }
 
     // 삭제
-    public Boolean deleteByNoAndPassword(Long no, String password) {
+    public Boolean delete(Long no, String password) {
         return queryFactory
                 .delete(guestbook)
                 .where(guestbook.no.eq(no).and(guestbook.password.eq(password)))

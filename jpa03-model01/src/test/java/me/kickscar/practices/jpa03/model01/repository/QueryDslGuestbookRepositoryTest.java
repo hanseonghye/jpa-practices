@@ -46,22 +46,21 @@ public class QueryDslGuestbookRepositoryTest {
     }
 
     @Test
-    public void test02FindAllByOrderByRegDateDesc1() {
-        List<Guestbook> list = guestbookRepository.findAllByOrderByRegDateDesc1();
+    public void test02FindAll1() {
+        List<Guestbook> list = guestbookRepository.findAll1();
         assertEquals(2, list.size());
     }
 
     @Test
     @Transactional
     @Rollback(false)
-    public void test03DeleteByNoAndPassword() {
-        assertTrue(guestbookRepository.deleteByNoAndPassword(1L, "1234"));
+    public void test03Delete() {
+        assertTrue(guestbookRepository.delete(1L, "1234"));
     }
 
     @Test
-    public void test04FindAllByOrderByRegDateDesc2() {
-        List<GuestbookDto> list = guestbookRepository.findAllByOrderByRegDateDesc2();
+    public void test04FindAll2() {
+        List<GuestbookDto> list = guestbookRepository.findAll2();
         assertEquals(1, list.size());
     }
-
 }

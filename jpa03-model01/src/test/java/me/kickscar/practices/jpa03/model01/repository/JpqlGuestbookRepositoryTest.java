@@ -45,19 +45,19 @@ public class JpqlGuestbookRepositoryTest {
     }
 
     @Test
-    public void test02FindAllByOrderByRegDateDesc() {
-        List<Guestbook> list = guestbookRepository.findAllByOrderByRegDateDesc();
+    public void test02FindAll1() {
+        List<Guestbook> list = guestbookRepository.findAll1();
         assertEquals(2, list.size());
     }
 
     @Test
-    public void test03FindAllByOrderByRegDateDesc() {
-        List<GuestbookDto> list = guestbookRepository.findAllByOrderByRegDateDesc2();
+    public void test03FindAll2() {
+        List<GuestbookDto> list = guestbookRepository.findAll2();
         assertEquals(2, list.size());
     }
 
     @Test
-    public void test04DeleteByNoAndPassword() {
-        assertTrue(guestbookRepository.deleteByNoAndPassword(1L, "1234"));
+    public void test04Delete() {
+        assertTrue(guestbookRepository.delete(1L, "1234"));
     }
 }

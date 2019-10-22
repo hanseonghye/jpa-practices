@@ -22,7 +22,7 @@ public class JpqlGuestbookRepository {
     }
 
     // 삭제
-    public Boolean deleteByNoAndPassword(Long no, String password) {
+    public Boolean delete(Long no, String password) {
         String qlString = "delete from Guestbook gb where gb.no=:no and gb.password=:password";
         Query query = em.createQuery(qlString);
         query.setParameter("no", no);
@@ -31,14 +31,14 @@ public class JpqlGuestbookRepository {
     }
 
     // 조회1
-    public List<Guestbook> findAllByOrderByRegDateDesc(){
+    public List<Guestbook> findAll1(){
         String qlString = "select gb from Guestbook gb order by gb.regDate desc";
         TypedQuery<Guestbook> query = em.createQuery(qlString, Guestbook.class);
         return query.getResultList();
     }
 
     // 조회2
-    public List<GuestbookDto> findAllByOrderByRegDateDesc2(){
+    public List<GuestbookDto> findAll2(){
         String qlString = "select new me.kickscar.practices.jpa03.model01.dto.GuestbookDto(gb.no, gb.name, gb.contents, gb.regDate) from Guestbook gb order by gb.regDate desc";
         TypedQuery<GuestbookDto> query = em.createQuery(qlString, GuestbookDto.class);
         return query.getResultList();

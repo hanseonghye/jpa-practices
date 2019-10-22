@@ -68,19 +68,19 @@
         - JpqlGuestbookRepository.save(Guestbook)
         - 객체 영속화
 
-     + test02FindAllByOrderByRegDateDesc
-       - JpqlGuestbookRepository.findAllByOrderByRegDateDesc2()
+     + test02FindAll1
+       - JpqlGuestbookRepository.findAll1()
        - TypedQuery 객체 사용
        - Order By 지원 
          
-     + test03FindAllByOrderByRegDateDesc2
-       - JpqlGuestbookRepository.findAllByOrderByRegDateDesc2()
+     + test03FindAll2
+       - JpqlGuestbookRepository.findAll2()
        - TypedQuery 객체 사용
        - Projection: 방명록 리스트에서는 모든 정보를 담고 있는 Guestbook Entity로 받을 필요가 없다. 이런 경우 DTO(VO) 객체에 필요한 컬럼만 프로젝션한다.  
        - Order By 지원 
          
-     + test04DeleteByNoAndPassword
-       - JpqlGuestbookRepository.deleteByNoAndPassword(Long, String)
+     + test04Delete
+       - JpqlGuestbookRepository.delete(Long, String)
        - TypedQuery 객체 사용  
        - 이름 기반 파라미터 바인딩
 
@@ -193,16 +193,16 @@
          - QueryDSLGuestbookRepository.save(Guestbook)
          - 객체 영속화
          
-       + test02FindAllByOrderByRegDateDesc1
-         - QueryDSLGuestbookRepository.findAllByOrderByRegDateDesc1()
+       + test02FindAll1
+         - QueryDSLGuestbookRepository.findAll1()
          - from(), orderBy(), fetch()
          
-       + test03DeleteByNoAndPassword
-         - QueryDSLGuestbookRepository.deleteByNoAndPassword(Long, String)
+       + test03Delete
+         - QueryDSLGuestbookRepository.delete(Long, String)
          - delete(), where(), eq(), end(), execute()  
 
-       + test04FindAllByOrderByRegDateDesc2
-         - QueryDSLGuestbookRepository.findAllByOrderByRegDateDesc2()
+       + test04FindAll2
+         - QueryDSLGuestbookRepository.findAll2()
          - Projection을 위한 QueryDsl Projection Projections.constructor(..) 사용법
          
        + QueryDSLGuestbookRepository.count() 메소드
