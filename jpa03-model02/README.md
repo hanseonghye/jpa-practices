@@ -343,25 +343,25 @@
        - update(), set(), where(), execute() 함수 사용법 
      
      + test11Delete1
-       - JpqlBoardRepository.delete1(no)
+       - QueryDslBoardRepository.delete1(no)
        - 영속객체를 사용한다.
        - select와 delete 쿼리가 2개 실행된다.
       
      + test12Delete2
-       - JpqlBoardRepository.delete2(no)
+       - QueryDslBoardRepository.delete2(no)
        - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
        - delete 쿼리만 실행된다.
        - delete(), where(), execute() 함수 사용법
 
      + test13Delete3
-       - JpqlBoardRepository.delete3(boardNo, userNo)
+       - QueryDslBoardRepository.delete3(boardNo, userNo)
        - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
        - delete 쿼리만 실행된다.
        - 게시판 삭제 비즈니스 로직에 맞게 작성된 메소드이다.
        - delete(), where(), execute() 함수 사용법
     
-     + JpqlUserRepository.count() 메소드
-       - JPQL에서 통계함수 사용     
+     + QueryDslBoardRepository.count() 메소드
+       - QueryDSL의 fetchCount() 사용방법   
 
 #### 6) Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
   1. __JpaConfig.java__
