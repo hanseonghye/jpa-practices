@@ -24,7 +24,7 @@ public class Order {
     @Temporal( value = TemporalType.TIMESTAMP )
     private Date regDate = new Date();
 
-    @ManyToOne(fetch = FetchType.EAGER)   // @ManytoOne, @OneToOne에서 Default는 FetchType.EAGER
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn( name = "user_no" )
     private User user;
 

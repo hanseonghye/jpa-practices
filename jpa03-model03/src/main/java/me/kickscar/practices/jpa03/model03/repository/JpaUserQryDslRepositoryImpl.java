@@ -10,7 +10,7 @@ import static me.kickscar.practices.jpa03.model03.domain.QUser.user;
 public class JpaUserQryDslRepositoryImpl extends QuerydslRepositorySupport implements JpaUserQryDslRepository {
 
     @Autowired
-    private JPAQueryFactory queryFactory;
+    private JPAQueryFactory query;
 
     public JpaUserQryDslRepositoryImpl() {
         super(User.class);
@@ -18,7 +18,7 @@ public class JpaUserQryDslRepositoryImpl extends QuerydslRepositorySupport imple
 
     @Override
     public Boolean update(User argUser) {
-        return queryFactory.update(user)
+        return query.update(user)
                 .where(user.no.eq(argUser.getNo()))
                 .set(user.name, argUser.getName())
                 .set(user.email, argUser.getEmail())
