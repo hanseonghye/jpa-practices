@@ -65,54 +65,7 @@
  10. __Gradle 5.4__   
 
 
-#### 2) Jpql UserRepository Test : JPQL 기반 Repository
-  1. __JpqlConfig.java__
-  
-     + jpa03-model01 내용과 동일 
-     
-  2. __JpqlUserRepository.java__
-    
-     + JPQL 기반으로 작성
-     + 저장을 위한 객체 영속화 
-     + TypedQuery 객체 및 Update 구현시 TypedQuery 대신 Query 객체 사용하는 방법
-     + DTO 객체를 활용한 Projection 방법
-     + 집합함수: 통계 쿼리 스칼라 타입 조회
-
-  3. __JpqlUserRepositoryTest.java__
-    
-     + test01Save
-        - JpqlUserRepository.save(User)
-        - 객체 영속화
-
-     + test02FindAllById
-       - JpqlUserRepository.findById(id)
-       - 영속화 객체 조회 이기 때문에 영속화 컨텍스트에서 찾고 없으면 select 쿼리를 통해 DB에서 가져온다.(1차 캐시)
-         
-     + test03UpdatePersisted
-       - JpqlUserRepository.update1(User)
-       - 영속화 객체를 사용한 수정(업데이트)
-       - 성능 이슈: update 이전에 select 쿼리가 실행되는 문제점이 있다.(쿼리 로그 확인해 볼 것) 
-         
-     + test04FindByEmailAndPassword
-       - JpqlUserRepository.findByEmailAndPassword(Long, String)
-       - 영속화 객체를 사용하지 않는다. 따라서 무조건 select 쿼리를 통해 DB에서 가져온다.
-       - TypedQuery 객체 사용
-       - 주로 사용자 인증(로그인)에 사용하게 될 메소드이다.
-       - 따라서, 모든 정보를 담은 User 엔티티 객체륿 반환할 이유가 없다. UserDto를 사용한 Projection 구현  
-       - 이름 기반 파라미터 바인딩
-
-     + test05Update2
-       - JpqlUserRepository.update2(User)
-       - 영속화 객체를 사용하지 않고 JPQL 기반의 업데이트
-       - JpqlUserRepository.update1(User)에 비하여 select 쿼리가 실행되지 않는 장점이 있다(쿼리 로그 확인해 볼 것)
-       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
-       - 이름 기반의 파라미터 바인딩을 사용하는 것은 TypedQuery와 다르지 않다.
-    
-     + JpqlUserRepository.count() 메소드
-       - JPQL에서 통계함수 사용
-   
-
-#### 3) Jpql BoardRepository Test : JPQL 기반 Repository
+#### 2) Jpql BoardRepository Test : JPQL 기반 Repository
 
   1. __JpqlConfig.java__
   
@@ -208,58 +161,8 @@
        - JPQL에서 통계함수 사용
 
 
-#### 4) QueryDSL UserRepository Test : QueryDSL 기반 Repository
+#### 3) QueryDSL BoardRepository Test : QueryDSL 기반 Repository
 
-  1. __JpqlConfig.java__
-  
-     + jpa03-model01 내용과 동일 
-     
-  2. __QueryDslUserRepository.java__
-    
-     + QueryDSL 기반으로 작성
-     + 저장을 위한 객체 영속화
-     + 다양한 쿼리함수 사용법 
-     + QueryDSL DTO 객체를 활용한 Projection 방법
-     + QueryDSL 통계 쿼리
-
-  3. __QueryDslUserRepository Test.java__
-    
-     + test01Save
-        - QueryDslUserRepository.save(User)
-        - 객체 영속화
-
-     + test02FindAllById
-       - QueryDslUserRepository.findById(id)
-       - 영속화 객체 조회 이기 때문에 영속화 컨텍스트에서 찾고 없으면 select 쿼리를 통해 DB에서 가져온다.(1차 캐시)
-         
-     + test03UpdatePersisted
-       - QueryDslUserRepository.update1(User)
-       - 영속화 객체를 사용한 수정(업데이트)
-       - 성능 이슈: update 이전에 select 쿼리가 실행되는 문제점이 있다.(쿼리 로그 확인해 볼 것) 
-         
-     + test04FindAllById2
-       - QueryDslUserRepository.findById2(id)
-       - 영속화 객체를 사용하지 않는다. 따라서 무조건 select 쿼리를 통해 DB에서 가져온다.
-       - 하지만, 반환되는 Entity 객체는 영속객체다.
-       - 쿼리함수 from(), where(), fetchOne()
-
-     + test05Update2
-       - QueryDslUserRepository.update2(User)
-       - 영속화 객체를 사용하지 않고 JPQL 기반의 업데이트
-       - QueryDslUserRepository.update1(User)에 비하여 select 쿼리가 실행되지 않는 장점이 있다(쿼리 로그 확인해 볼 것)
-       - 쿼리함수 update(), where(), set(), execute() 
-         
-     + test05FindByEmailAndPassword
-       - QueryDslUserRepository.findByEmailAndPassword(Long, String)
-       - 영속화 객체를 사용하지 않는다. 따라서 무조건 select 쿼리를 통해 DB에서 가져온다.
-       - 주로 사용자 인증(로그인)에 사용하게 될 메소드이다.
-       - QueryDSL에서 UserDto를 사용한 Projection 구현 (Projections.constructor) 
-       - 쿼리함수 select(), from(), where(), fetchOne()
-    
-     + QueryDslUserRepository.count() 메소드
-       - QueryDSL의 fetchCount() 사용방법
-
-#### 5) QueryDSL BoardRepository Test : QueryDSL 기반 Repository
   1. __JpqlConfig.java__
   
      + jpa03-model01 내용과 동일 
@@ -367,58 +270,7 @@
        - QueryDSL의 fetchCount() 사용방법   
 
 
-#### 6) Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
-  1. __JpaConfig.java__
-  
-     + jpa03-model01 내용과 동일
-      
-  2. __JpaUserRepository.java__
-    
-     + 기본 메소드
-       - save(User)         
-       - findById(id)
-       
-     + 쿼리 메소드
-       - findByEmailAndPassword(email, password)
-       
-     + @Query 어노테이션을 사용한 메소드에 쿼리 정의
-       - findById2(id)
-       - update(User)
-       
-  3. __JpaUserRepositoryTest.java__
-
-     + test01Save()
-       - 기본 메소드 CrudRepository.save(S)
-       
-     + test02FindById
-       - 기본 메소드 CrudRepository.findById()
-     
-     + test03UpdatePersisted()  
-       - 기본 메소드 CrudRepository.findById()를 통해 영속객체를 얻어오고 업데이트를 한다.
-       - **성능이슈: update 쿼리 이전에 select 쿼리 실행**
-
-     + test04FindById2()
-       - JPQL 기반 메소드 직접 구현  
-       - JpaUserRepository.findById2(id)
-       - @Query 어노테이션을 사용한 메소드 쿼리(JPQL) 정의
-       - JPQL Projection
-       
-     + test05Update
-       - JPQL 기반 메소드 직접 구현
-       - JpaUserRepository.update(...)
-       - @Query 어노테이션을 사용한 메소드 쿼리(JPQL) 정의
-       - JPQL 이름 바인딩
-       - 이름 바인딩은 객체 이름 경로를 사용할 수 없기 때문에 메소드의 파라미터가 많다.
-       - 이를 해결하기 위해서는 QueryDSL과 통합해야 함(jpa03-model03의 JpaUserRepository 참고) 
-       
-     + test06FindByEmailAndPassword()  
-       - JpaUserRepository.findByEmailAndPassword(email, password)
-       - JpaUserRepository **쿼리메소드 예시**
-       - 프로젝션 하지 않음
-       - 프로젝션을 하기 위해서는 앞의 @Query 메소드 쿼리 정의 또는 QueryDSL 통합을 해야 한다.(jpa03-model03의 JpaUserRepository 참고)
-
-
-#### 7) Spring Data JPA BoardRepository Test : Spring Data JPA 기반 Repository
+#### 4) Spring Data JPA BoardRepository Test : Spring Data JPA 기반 Repository
 
   1. __JpaConfig.java__
   
@@ -490,6 +342,193 @@
      + test09FindAll3
        - JpaBoardQryDslRepositoryImpl.findAll3(keyword, pageable)는 Like검색을 위한 keyword를 추가하였다.
 
+     + test10Update
+       - 특별난 메소드를 제공하지 않는다.
+       - 영속객체를 사용한다.
+       - 선별적 컬럼 업데이트이지만 영속객체를 사용하기 때문에 전체 속성이 업데이트 된다.
+       - select와 update 쿼리가 2개 실행된다.
+       
+     + test11Update
+       - test10의 문제점을 해결하기 위해 QueryDSL로 구현된 JpaBoardQryDslRepositoryImpl.update(Board) 이다.
+       - update 쿼리만 실행된다.
+       - 선별적 컬럼 업데이트가 가능하다.
+       - update(), set(), where(), execute() 함수 사용법 
+     
+     + test12Delete
+       - 기본 메소드 CrudRepository.delete(board)
+       - 영속객체를 사용한다.
+       - select와 delete 쿼리가 2개 실행된다.
+      
+     + test13Delete
+       - 기본 메소드 CrudRepository.deleteById(no)
+       - 영속객체를 사용한다.
+       - select와 delete 쿼리가 2개 실행된다.
+       - test12의 CrudRepository.delete(board)와 동작은 완전 동일하다.
+       - 영속 객체를 삭제전 다룰 지 여부에 따라 골라 써야 한다.
 
+     + test14Delete
+       - JpaBoardQryDslRepositoryImpl.delete(no)
+       - QueryDSL로 구현된 메소드다.
+       - delete 쿼리만 실행된다.
+       
+     + test15Delete
+       - JpaBoardQryDslRepositoryImpl.delete(boardNo, userNo)
+       - QueryDSL로 구현된 메소드다.
+       - delete 쿼리만 실행된다.
+       - 게시판 삭제 비즈니스 로직에 맞게 작성된 메소드이다.
+    
+     + JpaBoardRepository.count() 메소드
+       - 기본 메소드 CrudRepository.count()
+       
+       
+#### 5) Jpql UserRepository Test : JPQL 기반 Repository
+
+  1. __JpqlConfig.java__
+  
+     + jpa03-model01 내용과 동일 
+     
+  2. __JpqlUserRepository.java__
+    
+     + JPQL 기반으로 작성
+     + 저장을 위한 객체 영속화 
+     + TypedQuery 객체 및 Update 구현시 TypedQuery 대신 Query 객체 사용하는 방법
+     + DTO 객체를 활용한 Projection 방법
+     + 집합함수: 통계 쿼리 스칼라 타입 조회
+
+  3. __JpqlUserRepositoryTest.java__
+    
+     + test01Save
+        - JpqlUserRepository.save(User)
+        - 객체 영속화
+
+     + test02FindAllById
+       - JpqlUserRepository.findById(id)
+       - 영속화 객체 조회 이기 때문에 영속화 컨텍스트에서 찾고 없으면 select 쿼리를 통해 DB에서 가져온다.(1차 캐시)
          
+     + test03UpdatePersisted
+       - JpqlUserRepository.update1(User)
+       - 영속화 객체를 사용한 수정(업데이트)
+       - 성능 이슈: update 이전에 select 쿼리가 실행되는 문제점이 있다.(쿼리 로그 확인해 볼 것) 
+         
+     + test04FindByEmailAndPassword
+       - JpqlUserRepository.findByEmailAndPassword(Long, String)
+       - 영속화 객체를 사용하지 않는다. 따라서 무조건 select 쿼리를 통해 DB에서 가져온다.
+       - TypedQuery 객체 사용
+       - 주로 사용자 인증(로그인)에 사용하게 될 메소드이다.
+       - 따라서, 모든 정보를 담은 User 엔티티 객체륿 반환할 이유가 없다. UserDto를 사용한 Projection 구현  
+       - 이름 기반 파라미터 바인딩
+
+     + test05Update2
+       - JpqlUserRepository.update2(User)
+       - 영속화 객체를 사용하지 않고 JPQL 기반의 업데이트
+       - JpqlUserRepository.update1(User)에 비하여 select 쿼리가 실행되지 않는 장점이 있다(쿼리 로그 확인해 볼 것)
+       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
+       - 이름 기반의 파라미터 바인딩을 사용하는 것은 TypedQuery와 다르지 않다.
+    
+     + JpqlUserRepository.count() 메소드
+       - JPQL에서 통계함수 사용
+
+
+#### 6) QueryDSL UserRepository Test : QueryDSL 기반 Repository
+
+  1. __JpqlConfig.java__
+  
+     + jpa03-model01 내용과 동일 
+     
+  2. __QueryDslUserRepository.java__
+    
+     + QueryDSL 기반으로 작성
+     + 저장을 위한 객체 영속화
+     + 다양한 쿼리함수 사용법 
+     + QueryDSL DTO 객체를 활용한 Projection 방법
+     + QueryDSL 통계 쿼리
+
+  3. __QueryDslUserRepository Test.java__
+    
+     + test01Save
+        - QueryDslUserRepository.save(User)
+        - 객체 영속화
+
+     + test02FindAllById
+       - QueryDslUserRepository.findById(id)
+       - 영속화 객체 조회 이기 때문에 영속화 컨텍스트에서 찾고 없으면 select 쿼리를 통해 DB에서 가져온다.(1차 캐시)
+         
+     + test03UpdatePersisted
+       - QueryDslUserRepository.update1(User)
+       - 영속화 객체를 사용한 수정(업데이트)
+       - 성능 이슈: update 이전에 select 쿼리가 실행되는 문제점이 있다.(쿼리 로그 확인해 볼 것) 
+         
+     + test04FindAllById2
+       - QueryDslUserRepository.findById2(id)
+       - 영속화 객체를 사용하지 않는다. 따라서 무조건 select 쿼리를 통해 DB에서 가져온다.
+       - 하지만, 반환되는 Entity 객체는 영속객체다.
+       - 쿼리함수 from(), where(), fetchOne()
+
+     + test05Update2
+       - QueryDslUserRepository.update2(User)
+       - 영속화 객체를 사용하지 않고 JPQL 기반의 업데이트
+       - QueryDslUserRepository.update1(User)에 비하여 select 쿼리가 실행되지 않는 장점이 있다(쿼리 로그 확인해 볼 것)
+       - 쿼리함수 update(), where(), set(), execute() 
+         
+     + test05FindByEmailAndPassword
+       - QueryDslUserRepository.findByEmailAndPassword(Long, String)
+       - 영속화 객체를 사용하지 않는다. 따라서 무조건 select 쿼리를 통해 DB에서 가져온다.
+       - 주로 사용자 인증(로그인)에 사용하게 될 메소드이다.
+       - QueryDSL에서 UserDto를 사용한 Projection 구현 (Projections.constructor) 
+       - 쿼리함수 select(), from(), where(), fetchOne()
+    
+     + QueryDslUserRepository.count() 메소드
+       - QueryDSL의 fetchCount() 사용방법
+
+
+#### 7) Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
+  1. __JpaConfig.java__
+  
+     + jpa03-model01 내용과 동일
+      
+  2. __JpaUserRepository.java__
+    
+     + 기본 메소드
+       - save(User)         
+       - findById(id)
+       
+     + 쿼리 메소드
+       - findByEmailAndPassword(email, password)
+       
+     + @Query 어노테이션을 사용한 메소드에 쿼리 정의
+       - findById2(id)
+       - update(User)
+       
+  3. __JpaUserRepositoryTest.java__
+
+     + test01Save()
+       - 기본 메소드 CrudRepository.save(S)
+       
+     + test02FindById
+       - 기본 메소드 CrudRepository.findById()
+     
+     + test03UpdatePersisted()  
+       - 기본 메소드 CrudRepository.findById()를 통해 영속객체를 얻어오고 업데이트를 한다.
+       - **성능이슈: update 쿼리 이전에 select 쿼리 실행**
+
+     + test04FindById2()
+       - JPQL 기반 메소드 직접 구현  
+       - JpaUserRepository.findById2(id)
+       - @Query 어노테이션을 사용한 메소드 쿼리(JPQL) 정의
+       - JPQL Projection
+       
+     + test05Update
+       - JPQL 기반 메소드 직접 구현
+       - JpaUserRepository.update(...)
+       - @Query 어노테이션을 사용한 메소드 쿼리(JPQL) 정의
+       - JPQL 이름 바인딩
+       - 이름 바인딩은 객체 이름 경로를 사용할 수 없기 때문에 메소드의 파라미터가 많다.
+       - 이를 해결하기 위해서는 QueryDSL과 통합해야 함(jpa03-model03의 JpaUserRepository 참고) 
+       
+     + test06FindByEmailAndPassword()  
+       - JpaUserRepository.findByEmailAndPassword(email, password)
+       - JpaUserRepository **쿼리메소드 예시**
+       - 프로젝션 하지 않음
+       - 프로젝션을 하기 위해서는 앞의 @Query 메소드 쿼리 정의 또는 QueryDSL 통합을 해야 한다.(jpa03-model03의 JpaUserRepository 참고)
+
 

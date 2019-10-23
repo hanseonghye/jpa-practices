@@ -39,7 +39,7 @@ public class JpaBoardQryDslRepositoryImpl extends QuerydslRepositorySupport impl
 
     @Override
     public List<Board> findAllByOrderByRegDateDesc2() {
-        return (List<Board>)queryFactory
+        return (List<Board>) queryFactory
                 .from(board)
                 .innerJoin(board.user).fetchJoin()
                 .orderBy(board.regDate.desc())
@@ -78,7 +78,7 @@ public class JpaBoardQryDslRepositoryImpl extends QuerydslRepositorySupport impl
             query.limit(pageable.getPageSize());
             for (Sort.Order o : pageable.getSort()) {
                 PathBuilder orderByExpression = new PathBuilder(Board.class, "board");
-                query.orderBy(new OrderSpecifier(o.isAscending() ?  com.querydsl.core.types.Order.ASC : com.querydsl.core.types.Order.DESC, orderByExpression.get(o.getProperty())));
+                query.orderBy(new OrderSpecifier(o.isAscending() ? com.querydsl.core.types.Order.ASC : com.querydsl.core.types.Order.DESC, orderByExpression.get(o.getProperty())));
             }
         }
 
@@ -92,16 +92,41 @@ public class JpaBoardQryDslRepositoryImpl extends QuerydslRepositorySupport impl
                 .innerJoin(board.user)
                 .where(board.title.contains(keyword).or(board.contents.contains(keyword)));
 
-        if(pageable != null) {
+        if (pageable != null) {
             query.offset(pageable.getOffset());
             query.limit(pageable.getPageSize());
             for (Sort.Order o : pageable.getSort()) {
                 PathBuilder orderByExpression = new PathBuilder(Board.class, "board");
-                query.orderBy(new OrderSpecifier(o.isAscending() ?  com.querydsl.core.types.Order.ASC : com.querydsl.core.types.Order.DESC, orderByExpression.get(o.getProperty())));
+                query.orderBy(new OrderSpecifier(o.isAscending() ? com.querydsl.core.types.Order.ASC : com.querydsl.core.types.Order.DESC, orderByExpression.get(o.getProperty())));
             }
         }
 
         return query.fetch();
     }
 
+    @Override
+    public Boolean update(Board argBoard) {
+        return queryFactory
+                .update(board)
+                .set(board.title, argBoard.getTitle())
+                .set(board.contents, argBoard.getContents())
+                .where(board.no.eq(argBoard.getNo()))
+                .execute() == 1;
+    }
+
+    @Override
+    public Boolean delete(Long no) {
+        return queryFactory
+                .delete(board)
+                .where(board.no.eq(no))
+                .execute() == 1;
+    }
+
+    @Override
+    public Boolean delete(Long boardNo, Long userNo) {
+        return queryFactory
+                .delete(board)
+                .where(board.no.eq(boardNo).and(board.user.no.eq(userNo)))
+                .execute() == 1;
+    }
 }

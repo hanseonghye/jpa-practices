@@ -24,6 +24,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpaRepositoryTestConfig.class})
@@ -173,4 +174,59 @@ public class JpaBoardRepositoryTest {
         assertEquals(0, boardDtos.size());
     }
 
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test10Update(){
+        Board board = boardRepository.findById(1L).get();
+        board.setTitle("제목10");
+        board.setContents("내용10");
+
+        assertEquals("둘리", board.getUser().getName());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test11Update(){
+        Board board = new Board();
+        board.setNo(2L);
+        board.setTitle("제목20");
+        board.setContents("내용20");
+
+        assertTrue("둘리", boardRepository.update(board));
+    }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test12Delete(){
+        Board board = boardRepository.findById(1L).get();
+        boardRepository.delete(board);
+        assertEquals(4L, boardRepository.count());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test13Delete(){
+        boardRepository.deleteById(2L);
+        assertEquals(3L, boardRepository.count());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test14Delete(){
+        boardRepository.delete(3L);
+        assertEquals(2L, boardRepository.count());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test15Delete(){
+        boardRepository.delete(4L, 2L);
+        assertEquals(1L, boardRepository.count());
+    }
 }
