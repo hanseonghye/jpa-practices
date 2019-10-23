@@ -26,12 +26,14 @@
       + 양방향에서는 ManyToOne, OneToMany가 다 존재하지만 관계의 주인이 되는 필드를 설정하는 ManyToOne으로 다중성을 잡는 것이 자연스럽다. 
 
 
-#### 2) Entity Class: Guestbook
+
+#### 2) Entity Class: User, Order
+
    1. __User 엔티티 매핑 참고__
    2. __Order 엔티티 매핑 참고__
    3. __연관관계 매핑__
    
-      + ManyToOne
+      + ManyToOne(User 엔티티)
         ```
              .
              .
@@ -43,7 +45,7 @@
         ```
         - ManytoOne, OneToOne에서 Default Fetch Mode는 EAGER 이다.  
       
-      + OneToMany  
+      + OneToMany(Order 엔티티)  
         ```
              .
              .
@@ -53,8 +55,39 @@
              .
         ```
         - mappedBy = "user" 주인이 누구임을 설정하는 부분이다. 반대편 엔티티의 user 필드이다.
-        - OneToMany 에서는 Default Fetch Mode는 FetchType.LAZY 이다.  
+        - OneToMany 에서는 Default Fetch Mode는 LAZY 이다.
+      
+      + 객체 관계 설정에 주의 할점
+        - 영속성과 상관 없이 순수 객체들과의 관계도 고려한 엔티티 클래스 작성을 해야 한다.
+        - 양방향 관계이기 때문에 순수 객체에서도 양방향 관계를 맺어 준느 것이 좋다.
+        - 관계를 맺는 주인 필드가 세팅되는 Order.setUser() 코드에서 양방향 관계를 맺는 안전한 코드 예시이다.
+        
+          ```
+          public void setUser(User user) {
+             if(this.user != null){
+                this.user.getOrders().remove(this);
+             }
 
+             this.user = user;
+             user.getOrders().add(this);
+          }          
+          ``` 
+          
+        - toString() 오버라이딩 하는 것도 주의해야 한다.
+        
+          ```
+          public String toString() {
+             return "Order{" +
+                "no=" + no +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", totalPrice=" + totalPrice +
+                ", regDate=" + regDate +
+                // 무한루프조심!!!
+                // ", user=" + user +
+                '}';
+          }         
+          ``` 
 
 
 ### 02. SpringBoot Test Case

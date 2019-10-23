@@ -73,9 +73,6 @@ public class Order {
     }
 
     public void setUser(User user) {
-        /* 양방향 연관관계에서 주의할 점 -> 편의 안전하 setter 작성 */
-
-        // 기존 주문 관계 제거
         if(this.user != null){
             this.user.getOrders().remove(this);
         }
