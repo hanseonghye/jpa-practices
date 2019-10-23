@@ -120,31 +120,31 @@ public class QueryDslBoardRepositoryTest {
     }
 
     @Test
-    public void test07FindAll4(){
+    public void test07FindAll3(){
         Integer page = 1;
 
-        List<Board> list1 = boardRepository.findAll4(page++);
+        List<Board> list1 = boardRepository.findAll3(page++);
         assertEquals(3, list1.size());
 
-        List<Board> list2 = boardRepository.findAll4(page++);
+        List<Board> list2 = boardRepository.findAll3(page++);
         assertEquals(2, list2.size());
 
-        List<Board> list3 = boardRepository.findAll4(page++);
+        List<Board> list3 = boardRepository.findAll3(page++);
         assertEquals(0, list3.size());
     }
 
     @Test
-    public void test08FindAll5(){
+    public void test08FindAll3(){
+        final String keyword = "내용";
         Integer page = 1;
-        String keyword = "내용";
 
-        List<Board> list1 = boardRepository.findAll5(keyword, page++);
+        List<Board> list1 = boardRepository.findAll3(keyword, page++);
         assertEquals(3, list1.size());
 
-        List<Board> list2 = boardRepository.findAll5(keyword, page++);
+        List<Board> list2 = boardRepository.findAll3(keyword, page++);
         assertEquals(2, list2.size());
 
-        List<Board> list3 = boardRepository.findAll5(keyword, page++);
+        List<Board> list3 = boardRepository.findAll3(keyword, page++);
         assertEquals(0, list3.size());
     }
 
@@ -192,8 +192,8 @@ public class QueryDslBoardRepositoryTest {
     @Test
     @Transactional
     @Rollback(false)
-    public void test13Delete3(){
-        boardRepository.delete3(3L, 1L);
+    public void test13Delete2(){
+        boardRepository.delete2(3L, 1L);
         assertEquals(2L, boardRepository.count().longValue());
     }
 }

@@ -165,13 +165,13 @@
        - Fecth Join은 Inner Join의 성능 문제를 해결 할 수 있다.
        - 실제 실행되는 쿼리를 보면 select절에 user table의 컬럼이 프로젝션 된다.
 
-     + test07FindAll4
-       - JpqlBoardRepository.findAll4(page)
+     + test07FindAll3
+       - JpqlBoardRepository.findAll43page)
        - Fetch Join 적용
        - Paging 적용(TypedQuery 의 setFirstResult(), setMaxResults() 메소드)
 
-     + test08FindAll5
-       - JpqlBoardRepository.findAll5(keyword, page)
+     + test08FindAll3
+       - JpqlBoardRepository.findAll3(keyword, page)
        - Fetch Join 적용
        - Paging 적용(TypedQuery 의 setFirstResult(), setMaxResults() 메소드)
        - like 검색 적용
@@ -198,8 +198,8 @@
        - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
        - JPQL 기반 delete 쿼리만 실행된다.
 
-     + test13Delete3
-       - JpqlBoardRepository.delete3(boardNo, userNo)
+     + test13Delete2
+       - JpqlBoardRepository.delete2(boardNo, userNo)
        - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
        - JPQL 기반 delete 쿼리만 실행된다.
        - 게시판 삭제 비즈니스 로직에 맞게 작성된 메소드이다.
@@ -298,8 +298,204 @@
      + test04FindAll1
        - QueryDslBoardRepository.findAll1()
        - Board 엔티티만 지정하면 join으로 한 번에 User 정보까지 가져오지 않는다는 것이다. 
-       - 기본이 EAGER이기 때문에 각각의 Board가 참조하고 있는 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행된다.(User가 영속객체이기 때문에 1차 캐시됨)
+       - 기본이 EAGER이기 때문에 각각의 Board가 참조하고 있는 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행된다.
+       - User가 영속객체이기 때문에 1차 캐시가 되서 User를 가져오기 위해 게시물 전체 5개에 대한 select는 하지 않는다.
        - **성능이슈**: 대용량 게시판에선 문제가 될 수 있다.
+       - 해결 방법은 **Inner Join을 직접 사용하는 방법**과 **Fetch Join** 을 사용하는 것이다.
+       - from(), orderBy(), Q클래스 desc(), fetch() 함수 사용법
+        
+     + test05FindAll2
+       - QueryDslBoardRepository.findAll2()
+       - Inner Join을 사용한다.
+       - 쿼리상으로 Join이 걸리지만 select에 User를 올릴 수 없기 떄문에 Inner Join도 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행되는 문제가 있다.
+       - from(), innerJoin(), orderBy(), fetch() 함수 사용법
+       
+     + test06FindAll3
+       - QueryDslBoardRepository.findAll3()
+       - Fecth Join을 사용한다.
+       - Fecth Join은 Inner Join의 성능 문제를 해결 할 수 있다.
+       - 실제 실행되는 쿼리를 보면 select절에 user table의 컬럼이 프로젝션 된다.
+       - from(), innerJoin(), fetchJoin(), orderBy(), fetch() 함수 사용법
+
+     + test07FindAll3
+       - QueryDslBoardRepository.findAll3(page)
+       - Fetch Join 적용
+       - Paging 적용(offset(), limit() 함수)
+       - from(), innerJoin(), fetchJoin(), orderBy(), offset(), limit(), fetch() 함수 사용법
+
+     + test08FindAll3
+       - QueryDslBoardRepository.findAll3(keyword, page)
+       - Fetch Join 적용
+       - Paging 적용(offset(), limit() 함수)
+       - like 검색 적용(Q클래스 contains() 메소드 사용)
+       - from(), innerJoin(), fetchJoin(), where(), orderBy(), offset(), limit(), fetch() 함수 사용법 
+
+     + test09Update1
+       - QueryDslBoardRepository.update1(Board)
+       - 영속객체를 사용한다.
+       - 선별적 컬럼 업데이트이지만 영속객체를 사용하기 때문에 전체 속성이 업데이트 된다.
+       - select와 update 쿼리가 2개 실행된다.
+       
+     + test10Update2
+       - QueryDslBoardRepository.update2(Board)
+       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
+       - update 쿼리만 실행된다.
+       - 선별적 컬럼 업데이트가 가능하다.
+       - update(), set(), where(), execute() 함수 사용법 
+     
+     + test11Delete1
+       - QueryDslBoardRepository.delete1(no)
+       - 영속객체를 사용한다.
+       - select와 delete 쿼리가 2개 실행된다.
+      
+     + test12Delete2
+       - QueryDslBoardRepository.delete2(no)
+       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
+       - delete 쿼리만 실행된다.
+       - delete(), where(), execute() 함수 사용법
+
+     + test13Delete2
+       - QueryDslBoardRepository.delete2(boardNo, userNo)
+       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
+       - delete 쿼리만 실행된다.
+       - 게시판 삭제 비즈니스 로직에 맞게 작성된 메소드이다.
+       - delete(), where(), execute() 함수 사용법
+    
+     + QueryDslBoardRepository.count() 메소드
+       - QueryDSL의 fetchCount() 사용방법   
+
+
+#### 6) Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
+  1. __JpaConfig.java__
+  
+     + jpa03-model01 내용과 동일
+      
+  2. __JpaUserRepository.java__
+    
+     + 기본 메소드
+       - save(User)         
+       - findById(id)
+       
+     + 쿼리 메소드
+       - findByEmailAndPassword(email, password)
+       
+     + @Query 어노테이션을 사용한 메소드에 쿼리 정의
+       - findById2(id)
+       - update(User)
+       
+  3. __JpaUserRepositoryTest.java__
+
+     + test01Save()
+       - 기본 메소드 CrudRepository.save(S)
+       
+     + test02FindById
+       - 기본 메소드 CrudRepository.findById()
+     
+     + test03UpdatePersisted()  
+       - 기본 메소드 CrudRepository.findById()를 통해 영속객체를 얻어오고 업데이트를 한다.
+       - **성능이슈: update 쿼리 이전에 select 쿼리 실행**
+
+     + test04FindById2()
+       - JPQL 기반 메소드 직접 구현  
+       - JpaUserRepository.findById2(id)
+       - @Query 어노테이션을 사용한 메소드 쿼리(JPQL) 정의
+       - JPQL Projection
+       
+     + test05Update
+       - JPQL 기반 메소드 직접 구현
+       - JpaUserRepository.update(...)
+       - @Query 어노테이션을 사용한 메소드 쿼리(JPQL) 정의
+       - JPQL 이름 바인딩
+       - 이름 바인딩은 객체 이름 경로를 사용할 수 없기 때문에 메소드의 파라미터가 많다.
+       - 이를 해결하기 위해서는 QueryDSL과 통합해야 함(jpa03-model03의 JpaUserRepository 참고) 
+       
+     + test06FindByEmailAndPassword()  
+       - JpaUserRepository.findByEmailAndPassword(email, password)
+       - JpaUserRepository **쿼리메소드 예시**
+       - 프로젝션 하지 않음
+       - 프로젝션을 하기 위해서는 앞의 @Query 메소드 쿼리 정의 또는 QueryDSL 통합을 해야 한다.(jpa03-model03의 JpaUserRepository 참고)
+
+
+#### 7) Spring Data JPA BoardRepository Test : Spring Data JPA 기반 Repository
+
+  1. __JpaConfig.java__
+  
+     + jpa03-model01 내용과 동일
+      
+  2. __JpaBoardRepository.java__
+     
+     + 실무에서는 Spring Data JPA 기반의 레포지토리를 많이 사용한다.
+     + 하지만 JPQL(QueryDSL) 기반의 Repository를 만들 수 있어야 최적화된 Repository를 구현할 수 있다.
+     + JPQL(QueryDSL) Repository Test를 통해 성능 문제가 있는 JPQL(QueryDSL) Repository의 메소드는 JpaBoardRepository에서 따로 구현하지 않는다.
+     + 반대로, 성능 문제가 있는 기본 메소드와 쿼리 메소드도 있다. 그리고 기본 메소드로 존재하지 않고 쿼리 메소드로 만들수 없는 쿼리도 있기 때문에 @Query 어노테이션을 통한 JPQL 직접 사용 또는 QueryDSL 통합 방법 등을 사용한다.
+     + JPQL은 QueryDSL로 어느정도 같은 쿼리 작성이 가능하기 때문에 객체함수를 통한 객체지향쿼리의 모습에 좀더 가까운 QueryDSL과 통합하는 방법을 선호한다.
+     + 결론은 JPQL에 대한 완벽한 이해를 기본으로 Spring Data JPA 기반의 Repository를 구현하되 성능이슈와 비지니스 요구사항을 고려하여 QueryDSL과 통합된 최적의 Repository를 작성해야 한다. 
+       - QueryDSL로 작성해야 하는 메소드는 JpaBoardQryDslRepository 인터페이스에 정의 하였다.
+       - JpaBoardQryDslRepository 인터페이스 구현은 JpaBoardQryDslRepositoryImpl에 QuerydslRepositorySupport 클래스를 상속하여 구현한다.
+       - @Query 어노테이션을 통한 JPQL 직접 사용하는 방식은 부가적인 인터페이스 정의와 구현 클래스가 없어 간편해 보이기는 하지만 문자열 JPQL이 Repository 인터페아스 코드에 섞여있기 때문에 오히려 더 복잡하고 NamedQuery역시 복잡성을 해결하지는 못한다.
+       - 테스트에서는 기본 메소드 그리고 쿼리 메소드와 비교하여 성능을 검증한다.
+       
+  3. __JpaBoardRepositoryTest.java__
+  
+     + JpqlBoardRepositoryTest 쿼리로그 꼭 비교 분석할 것 (완전 일치)
+
+     + test01Save()
+       - 기본 메소드 CrudRepository.save(S)
+       - 문제없다.
+     
+     + test02FindById
+       - 기본 메소드 CrudRepository.findById()를 사용하면 Left Outer Join이 자동으로 걸린다.
+       - JPQL(QueryDSL)를 사용해서 구현하는 것은 JPQL(QueryDSL) 기반 Repository Test에서 확인 한 것 처럼 Select 쿼리가 2번 실행하기 때문에 고려의 대상이 안된다.
+       - Left Outer Join 쿼리 로그 확인해 볼 것. 
+
+     + test03FindById2
+       - JpaBoardQryDslRepositoryImpl.findById2(no)
+       - 기본 메소드 CrudRepository.findById()는 Projection이 이슈가 되면 사용하지 못한다.
+       - QueryDSL Projection을 사용해서 해결한다.
+       - Inner Join을 사용한다.
+       - Projection에서는 setter를 사용하는 Projections.fields() 메소드를 사용했다.
+       - Projection 타겟 객체는 BoardDto 이다.
+
+     + test04FindAllByOrderByRegDateDesc
+       - 쿼리메소드 JpaBoardRepository.findAllByOrderByRegDateDesc()
+       - join을 하지 않는다.
+       - 기본이 EAGER이기 때문에 각각의 Board가 참조하고 있는 User의 정보를 얻어오기 위해 select 쿼리가 개별적으로 실행된다.
+       - User가 영속객체이기 때문에 1차 캐시가 되서 User를 가져오기 위해 게시물 전체 5개에 대한 select는 하지 않는다.
+       - **성능이슈**: 하지만, 대용량 게시판에선 문제가 될 수 있다.
+
+     + test05FindAllByOrderByRegDateDesc2
+       - JpaBoardQryDslRepositoryImpl.findAllByOrderByRegDateDesc2()는 test04의 문제를 해결한다.
+       - QueryDSL Fetch Join을 사용한다.
+         
+     + test06FindAllByOrderByRegDateDesc3
+       - JpaBoardQryDslRepositoryImpl.findAllByOrderByRegDateDesc3()은 test05의 findAllByOrderByRegDateDesc2()에 Projection 기능을 추가하였다.
+       - QueryDSL Inner Join을 사용한다.
+       - Projections.fields()를 통해 setter릃 활용한다.
+       - 주의할 것은 Projection 리스트에 User의 속성이 있으면 단방향에서는 fetch join을 할 수 없다.(test02에서도 마찬 가지이다.)
+       - Inner Join 으로만으로 문제 해결이 가능하다.
+       
+     + test07FindAllByOrderByRegDateDesc3
+       - JpaBoardQryDslRepositoryImpl.findAllByOrderByRegDateDesc3(page, size)는 test06의 findAllByOrderByRegDateDesc3()에 Paging 기능을 오버로딩 하였다.
+       - QueryDSL의 offset(), limit()를 사용해서 Paging을 구현하였다.          
+
+     + test08FindAll3
+       - JpaBoardQryDslRepositoryImpl.findAll3(pageable)는 기능과 만들어지는 쿼리는 test07의 findAllByOrderByRegDateDesc3(page, size)와 같다.
+       - 차이점은 Paging과 Sorting을 위해 Pageable 인터페이스 구현체를 파라미터로 받아 QueryDSL에 적용하고 있다.
+       - 따라서 OrderBy 필드를 외부에서 지정할 수 있다.         
+         
+     + test09FindAll3
+       - JpaBoardQryDslRepositoryImpl.findAll3(keyword, pageable)는 Like검색을 위한 keyword를 추가하였다.
+
+
+         
+     + test03FindById2
+       - QueryDslBoardRepository.findById2(id)
+       - Eager Fetch(@ManyToOne 기본 Fetch Mode)는 Proxy 객체 타입을 리턴하지 않는다. Lazy Fetch는 Proxy 객체를 리턴한다.(실제 User 객체가 아니다)
+       - JPQL를 사용하면 User 정보를 가져오기 위해 Join 대신 Select 쿼리를 2번 실행한다. (로그 확인 할 것)
+       - from(), where(), fetchOne() 함수 사용법  
+         
+     + test04FindAll1
+       - QueryDslBoardRepository.findAll1()
        - 해결 방법은 **Inner Join을 직접 사용하는 방법**과 **Fetch Join** 을 사용하는 것이다.
        - from(), orderBy(), Q클래스 desc(), fetch() 함수 사용법
         
@@ -361,56 +557,4 @@
        - delete(), where(), execute() 함수 사용법
     
      + QueryDslBoardRepository.count() 메소드
-       - QueryDSL의 fetchCount() 사용방법   
-
-#### 6) Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
-  1. __JpaConfig.java__
-  
-     + jpa03-model01 내용과 동일
-      
-  2. __JpaUserRepository.java__
-    
-     + 기본 메소드
-       - save(User)         
-       - findById(id)
-       
-     + 쿼리 메소드
-       - findByEmailAndPassword(email, password)
-       
-     + @Query 어노테이션을 사용한 메소드에 쿼리 정의
-       - findById2(id)
-       - update(User)
-       
-  3. __JpaUserRepositoryTest.java__
-
-     + test01Save()
-       - CrudRepository.save(S)
-       
-     + test02FindById   
-       - CrudRepository.findById()
-     
-     + test03UpdatePersisted()  
-       - CrudRepository.findById()
-       - 영속객체를 사용한 업데이트
-       - 성능이슈: update 쿼리 이전에 select 쿼리 실행
-
-     + test04FindById2()  
-       - JpaUserRepository.findById2(id)
-       - @Query 어노테이션을 사용한 메소드 쿼리(JPQL) 정의
-       - JPQL Projection
-       
-     + test05Update
-       - JpaUserRepository.update(...)
-       - @Query 어노테이션을 사용한 메소드 쿼리(JPQL) 정의
-       - JPQL 이름 바인딩
-       - 이름 바인딩은 객체 이름 경로를 사용할 수 없기 때문에 메소드의 파라미터가 많다.
-       - 이를 해결하기 위해서는 QueryDSL과 통합해야 함(jpa03-model03의 JpaUserRepository 참고) 
-       
-     + test06FindByEmailAndPassword()  
-       - JpaUserRepository.findByEmailAndPassword(email, password)
-       - JpaUserRepository **쿼리메소드 예시**
-       - 프로젝션 하지 않음
-       - 프로젝션을 하기 위해서는 앞의 @Query 메소드 쿼리 정의 또는 QueryDSL 통합을 해야 한다.(jpa03-model03의 JpaUserRepository 참고)
-
-
-#### 7) Spring Data JPA BoardRepository Test : Spring Data JPA 기반 Repository
+       - QueryDSL의 fetchCount() 사용방법

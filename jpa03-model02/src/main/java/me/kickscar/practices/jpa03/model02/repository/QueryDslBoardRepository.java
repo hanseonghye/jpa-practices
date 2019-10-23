@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static me.kickscar.practices.jpa03.model02.domain.QBoard.board;
-import static me.kickscar.practices.jpa03.model02.domain.QUser.user;
 
 @Repository
 public class QueryDslBoardRepository extends QuerydslRepositorySupport {
@@ -40,7 +39,7 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
     }
 
     // 삭제3: JPQL: 비즈니스 로직(게시물 번호와 사용자 번호로 삭제)
-    public Boolean delete3(Long boardNo, Long userNo) {
+    public Boolean delete2(Long boardNo, Long userNo) {
         return queryFactory
                 .delete(board)
                 // 다음 2개의 where 메소드는 완전 동일
@@ -111,18 +110,19 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
     }
 
     // 조회6: Fetch Join List: Paging: 데이터 수는 3개씩
-    public List<Board> findAll4(Integer page) {
+    public List<Board> findAll3(Integer page) {
         return (List<Board>) queryFactory
                 .from(board)
                 .innerJoin(board.user).fetchJoin()
-                .orderBy(board.regDate.desc())
                 .offset((page - 1) * 3)
                 .limit(3)
+                .orderBy(board.regDate.desc())
+
                 .fetch();
     }
 
     // 조회7: Fetch Join List: Paging: 데이터 수는 3개씩: LIKE 검색
-    public List<Board> findAll5(String keyword, Integer page) {
+    public List<Board> findAll3(String keyword, Integer page) {
         return (List<Board>) queryFactory
                 .from(board)
                 .innerJoin(board.user).fetchJoin()

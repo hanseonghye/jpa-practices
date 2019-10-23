@@ -36,7 +36,7 @@ public class JpqlBoardRepository {
     }
 
     // 삭제3: JPQL: 비즈니스 로직(게시물 번호와 사용자 번호로 삭제)
-    public Boolean delete3(Long boardNo, Long userNo){
+    public Boolean delete2(Long boardNo, Long userNo){
         String qlString = "delete from Board b where b.no = ?1 and b.user.no = ?2";
         Query query = em.createQuery(qlString);
 
@@ -109,7 +109,7 @@ public class JpqlBoardRepository {
     }
 
     // 조회6: Fetch Join List: Paging: 데이터 수는 3개씩
-    public List<Board> findAll4(Integer page){
+    public List<Board> findAll3(Integer page){
         String qlString = "select b from Board b join fetch b.user order by b.regDate desc";
         TypedQuery<Board> query = em.createQuery(qlString, Board.class);
 
@@ -120,7 +120,7 @@ public class JpqlBoardRepository {
     }
 
     // 조회7: Fetch Join List: Paging: 데이터 수는 3개씩: LIKE 검색
-    public List<Board> findAll5(String keyword, Integer page){
+    public List<Board> findAll3(String keyword, Integer page){
         String qlString = "select b from Board b join fetch b.user where b.title like :keywordContains or b.contents like :keywordContains order by b.regDate desc";
         TypedQuery<Board> query = em.createQuery(qlString, Board.class);
 
