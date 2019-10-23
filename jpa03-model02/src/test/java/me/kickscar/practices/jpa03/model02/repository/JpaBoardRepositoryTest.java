@@ -127,7 +127,7 @@ public class JpaBoardRepositoryTest {
     @Test
     public void test07FindAllByOrderByRegDateDesc3(){
         final Integer size = 3;
-        Integer page = 1;
+        Integer page = 0;
         List<BoardDto> boardDtos = null;
 
         boardDtos = boardRepository.findAllByOrderByRegDateDesc3(page++, size);

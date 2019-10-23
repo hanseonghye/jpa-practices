@@ -114,37 +114,37 @@ public class QueryDslBoardRepositoryTest {
 
     @Test
     public void test06FindAll3(){
-        Integer page = 1;
+        Integer page = 0;
         List<Board> list = boardRepository.findAll3();
         assertEquals(5, list.size());
     }
 
     @Test
     public void test07FindAll3(){
-        Integer page = 1;
+        Integer page = 0;
 
-        List<Board> list1 = boardRepository.findAll3(page++);
+        List<Board> list1 = boardRepository.findAll3(page++, 3);
         assertEquals(3, list1.size());
 
-        List<Board> list2 = boardRepository.findAll3(page++);
+        List<Board> list2 = boardRepository.findAll3(page++, 3);
         assertEquals(2, list2.size());
 
-        List<Board> list3 = boardRepository.findAll3(page++);
+        List<Board> list3 = boardRepository.findAll3(page++, 3);
         assertEquals(0, list3.size());
     }
 
     @Test
     public void test08FindAll3(){
         final String keyword = "내용";
-        Integer page = 1;
+        Integer page = 0;
 
-        List<Board> list1 = boardRepository.findAll3(keyword, page++);
+        List<Board> list1 = boardRepository.findAll3(keyword, page++, 3);
         assertEquals(3, list1.size());
 
-        List<Board> list2 = boardRepository.findAll3(keyword, page++);
+        List<Board> list2 = boardRepository.findAll3(keyword, page++, 3);
         assertEquals(2, list2.size());
 
-        List<Board> list3 = boardRepository.findAll3(keyword, page++);
+        List<Board> list3 = boardRepository.findAll3(keyword, page++, 3);
         assertEquals(0, list3.size());
     }
 

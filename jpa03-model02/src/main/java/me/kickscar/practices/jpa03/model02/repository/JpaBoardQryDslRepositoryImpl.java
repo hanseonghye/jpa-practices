@@ -62,7 +62,7 @@ public class JpaBoardQryDslRepositoryImpl extends QuerydslRepositorySupport impl
                 .from(board)
                 .innerJoin(board.user)
                 .orderBy(board.regDate.desc())
-                .offset((page - 1) * size)
+                .offset(page * size)
                 .limit(size)
                 .fetch();
     }

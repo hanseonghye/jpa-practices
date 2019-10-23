@@ -318,15 +318,17 @@
        - from(), innerJoin(), fetchJoin(), orderBy(), fetch() 함수 사용법
 
      + test07FindAll3
-       - QueryDslBoardRepository.findAll3(page)
+       - QueryDslBoardRepository.findAll3(page, size)
        - Fetch Join 적용
        - Paging 적용(offset(), limit() 함수)
        - from(), innerJoin(), fetchJoin(), orderBy(), offset(), limit(), fetch() 함수 사용법
+       - page index 시작은 0
 
      + test08FindAll3
-       - QueryDslBoardRepository.findAll3(keyword, page)
+       - QueryDslBoardRepository.findAll3(keyword, page, size)
        - Fetch Join 적용
        - Paging 적용(offset(), limit() 함수)
+       - page index 시작은 0
        - like 검색 적용(Q클래스 contains() 메소드 사용)
        - from(), innerJoin(), fetchJoin(), where(), orderBy(), offset(), limit(), fetch() 함수 사용법 
 
@@ -477,84 +479,17 @@
      + test07FindAllByOrderByRegDateDesc3
        - JpaBoardQryDslRepositoryImpl.findAllByOrderByRegDateDesc3(page, size)는 test06의 findAllByOrderByRegDateDesc3()에 Paging 기능을 오버로딩 하였다.
        - QueryDSL의 offset(), limit()를 사용해서 Paging을 구현하였다.          
+       - page index는 0부터 시작 
 
      + test08FindAll3
        - JpaBoardQryDslRepositoryImpl.findAll3(pageable)는 기능과 만들어지는 쿼리는 test07의 findAllByOrderByRegDateDesc3(page, size)와 같다.
        - 차이점은 Paging과 Sorting을 위해 Pageable 인터페이스 구현체를 파라미터로 받아 QueryDSL에 적용하고 있다.
-       - 따라서 OrderBy 필드를 외부에서 지정할 수 있다.         
+       - 따라서 OrderBy 필드를 외부에서 지정할 수 있다.
+       - page index는 0부터 시작 
          
      + test09FindAll3
        - JpaBoardQryDslRepositoryImpl.findAll3(keyword, pageable)는 Like검색을 위한 keyword를 추가하였다.
 
 
          
-     + test03FindById2
-       - QueryDslBoardRepository.findById2(id)
-       - Eager Fetch(@ManyToOne 기본 Fetch Mode)는 Proxy 객체 타입을 리턴하지 않는다. Lazy Fetch는 Proxy 객체를 리턴한다.(실제 User 객체가 아니다)
-       - JPQL를 사용하면 User 정보를 가져오기 위해 Join 대신 Select 쿼리를 2번 실행한다. (로그 확인 할 것)
-       - from(), where(), fetchOne() 함수 사용법  
-         
-     + test04FindAll1
-       - QueryDslBoardRepository.findAll1()
-       - 해결 방법은 **Inner Join을 직접 사용하는 방법**과 **Fetch Join** 을 사용하는 것이다.
-       - from(), orderBy(), Q클래스 desc(), fetch() 함수 사용법
-        
-     + test05FindAll2
-       - QueryDslBoardRepository.findAll2()
-       - Inner Join을 사용한다.
-       - 쿼리상으로 Join이 걸리지만 select에 User를 올릴 수 없기 떄문에 Inner Join도 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행되는 문제가 있다.
-       - from(), innerJoin(), orderBy(), fetch() 함수 사용법
-       
-     + test06FindAll3
-       - QueryDslBoardRepository.findAll3()
-       - Fecth Join을 사용한다.
-       - Fecth Join은 Inner Join의 성능 문제를 해결 할 수 있다.
-       - 실제 실행되는 쿼리를 보면 select절에 user table의 컬럼이 프로젝션 된다.
-       - from(), innerJoin(), fetchJoin(), orderBy(), fetch() 함수 사용법
 
-     + test07FindAll4
-       - QueryDslBoardRepository.findAll4(page)
-       - Fetch Join 적용
-       - Paging 적용(offset(), limit() 함수)
-       - from(), innerJoin(), fetchJoin(), orderBy(), offset(), limit(), fetch() 함수 사용법
-
-     + test08FindAll5
-       - QueryDslBoardRepository.findAll5(keyword, page)
-       - Fetch Join 적용
-       - Paging 적용(offset(), limit() 함수)
-       - like 검색 적용(Q클래스 contains() 메소드 사용)
-       - from(), innerJoin(), fetchJoin(), where(), orderBy(), offset(), limit(), fetch() 함수 사용법 
-
-     + test09Update1
-       - QueryDslBoardRepository.update1(Board)
-       - 영속객체를 사용한다.
-       - 선별적 컬럼 업데이트이지만 영속객체를 사용하기 때문에 전체 속성이 업데이트 된다.
-       - select와 update 쿼리가 2개 실행된다.
-       
-     + test10Update2
-       - QueryDslBoardRepository.update2(Board)
-       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
-       - update 쿼리만 실행된다.
-       - 선별적 컬럼 업데이트가 가능하다.
-       - update(), set(), where(), execute() 함수 사용법 
-     
-     + test11Delete1
-       - QueryDslBoardRepository.delete1(no)
-       - 영속객체를 사용한다.
-       - select와 delete 쿼리가 2개 실행된다.
-      
-     + test12Delete2
-       - QueryDslBoardRepository.delete2(no)
-       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
-       - delete 쿼리만 실행된다.
-       - delete(), where(), execute() 함수 사용법
-
-     + test13Delete3
-       - QueryDslBoardRepository.delete3(boardNo, userNo)
-       - 반환할 타입이 없는 경우에는 TypedQuery 대신 Query객체를 사용하여 JPQL를 실행시킨다.
-       - delete 쿼리만 실행된다.
-       - 게시판 삭제 비즈니스 로직에 맞게 작성된 메소드이다.
-       - delete(), where(), execute() 함수 사용법
-    
-     + QueryDslBoardRepository.count() 메소드
-       - QueryDSL의 fetchCount() 사용방법

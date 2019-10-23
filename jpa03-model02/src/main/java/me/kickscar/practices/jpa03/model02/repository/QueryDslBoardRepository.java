@@ -109,27 +109,27 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
                 .fetch();
     }
 
-    // 조회6: Fetch Join List: Paging: 데이터 수는 3개씩
-    public List<Board> findAll3(Integer page) {
+    // 조회6: Fetch Join List: Paging
+    public List<Board> findAll3(Integer page, Integer size) {
         return (List<Board>) queryFactory
                 .from(board)
                 .innerJoin(board.user).fetchJoin()
-                .offset((page - 1) * 3)
-                .limit(3)
+                .offset(page * size)
+                .limit(size)
                 .orderBy(board.regDate.desc())
 
                 .fetch();
     }
 
-    // 조회7: Fetch Join List: Paging: 데이터 수는 3개씩: LIKE 검색
-    public List<Board> findAll3(String keyword, Integer page) {
+    // 조회7: Fetch Join List: Paging: LIKE 검색
+    public List<Board> findAll3(String keyword, Integer page, Integer size) {
         return (List<Board>) queryFactory
                 .from(board)
                 .innerJoin(board.user).fetchJoin()
                 .where(board.title.contains(keyword).or(board.contents.contains(keyword)))
                 .orderBy(board.regDate.desc())
-                .offset((page - 1) * 3)
-                .limit(3)
+                .offset(page * size)
+                .limit(size)
                 .fetch();
     }
 
