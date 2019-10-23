@@ -1,6 +1,6 @@
 package me.kickscar.practices.jpa03.model02.repository;
 
-import me.kickscar.practices.jpa03.model02.conf.JpaRepositoryTestConfig;
+import me.kickscar.practices.jpa03.model02.config.JpaRepositoryTestConfig;
 import me.kickscar.practices.jpa03.model02.domain.GenderType;
 import me.kickscar.practices.jpa03.model02.domain.RoleType;
 import me.kickscar.practices.jpa03.model02.domain.User;
@@ -55,9 +55,9 @@ public class JpaUerRepositoryTest {
     @Test
     @Transactional
     @Rollback(false)
-    public void test03UpdatePersisted(){
+    public void test03Update(){
         User user = userRepository.findById(1L).get();
-        System.out.println(user);
+
         user.setName("둘리2");
         user.setPassword("2");
         user.setEmail("dooly2@kickscar.me");

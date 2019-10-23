@@ -1,6 +1,6 @@
 package me.kickscar.practices.jpa03.model02.repository;
 
-import me.kickscar.practices.jpa03.model02.conf.JpqlRepositoryTestConfig;
+import me.kickscar.practices.jpa03.model02.config.JpqlRepositoryTestConfig;
 import me.kickscar.practices.jpa03.model02.domain.Board;
 import me.kickscar.practices.jpa03.model02.domain.GenderType;
 import me.kickscar.practices.jpa03.model02.domain.RoleType;

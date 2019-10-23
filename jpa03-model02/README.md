@@ -509,7 +509,7 @@
      + test02FindById
        - 기본 메소드 CrudRepository.findById()
      
-     + test03UpdatePersisted()  
+     + test03Update()  
        - 기본 메소드 CrudRepository.findById()를 통해 영속객체를 얻어오고 업데이트를 한다.
        - **성능이슈: update 쿼리 이전에 select 쿼리 실행**
 
