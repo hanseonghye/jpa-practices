@@ -311,6 +311,7 @@
        - JpaBoardQryDslRepository 인터페이스 구현은 JpaBoardQryDslRepositoryImpl에 QuerydslRepositorySupport 클래스를 상속하여 구현한다.
        - @Query 어노테이션을 통한 JPQL 직접 사용하는 방식은 부가적인 인터페이스 정의와 구현 클래스가 없어 간편해 보이기는 하지만 문자열 JPQL이 Repository 인터페아스 코드에 섞여있기 때문에 오히려 더 복잡하고 NamedQuery역시 복잡성을 해결하지는 못한다.
        - 테스트에서는 기본 메소드 그리고 쿼리 메소드와 비교하여 성능을 검증한다.
+     + QueryDSL과 통합방법 설명은 jpa03-model03 JpaUserRepository 구현에 자세히 설명 있음.  
        
   3. __JpaBoardRepositoryTest.java__
   
@@ -551,6 +552,7 @@
        - JpaUserRepository.findByEmailAndPassword(email, password)
        - JpaUserRepository **쿼리메소드 예시**
        - 프로젝션 하지 않음
-       - 프로젝션을 하기 위해서는 앞의 @Query 메소드 쿼리 정의 또는 QueryDSL 통합을 해야 한다.(jpa03-model03의 JpaUserRepository 참고)
+       - 프로젝션을 하기 위해서는 앞의 @Query 메소드 쿼리 정의 또는 QueryDSL 통합을 해야 한다.
+       - **jpa03-model03의 JpaUserRepository 참고**
 
 

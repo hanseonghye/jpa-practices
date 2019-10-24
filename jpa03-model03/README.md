@@ -59,7 +59,7 @@
       
       + 객체 관계 설정에 주의 할점
         - 영속성과 상관 없이 순수 객체들과의 관계도 고려한 엔티티 클래스 작성을 해야 한다.
-        - 양방향 관계이기 때문에 순수 객체에서도 양방향 관계를 맺어 준느 것이 좋다.
+        - 양방향 관계이기 때문에 순수 객체에서도 양방향 관계를 맺어주는 것이 좋다.
         - 관계를 맺는 주인 필드가 세팅되는 Order.setUser() 코드에서 양방향 관계를 맺는 안전한 코드 예시이다.
         
           ```
@@ -91,9 +91,15 @@
 
 
 ### 02. SpringBoot Test Case
- 
+
+#### 0) 요약: 다루는 기술적 내용
+
+  1. Spring Data JPA 기반의 QueryDSL 통합 레포지토리만 작성했다.
+  2. ManyToOne 양방향(Bidirection) 매핑에서 OneToMany 방향의 left join(컬렉션 조인), fetch join 등의 이슈등을 주로 다루고 해결방법을 제시한다.
+
 
 #### 1) 테스트 환경
+
   1. __Java SE 1.8__  
   2. __Spring Boot Starter Web 2.1.8.RELEASE (Spring Core, Context, Web ... etc 5.19.RELEASE)__   
   3. __Spring Boot Starter Data JPA 2.1.8.RELEASE (Spring Data JPA 2.1.10.RELEASE)__
@@ -105,7 +111,39 @@
   9. __Spring Boot Starter Test 2.1.8.RELEASE (Spring Test 5.1.9.RELEASE)__   
  10. __Gradle 5.4__    
 
-#### 2) JPQL Repository Test
+
+#### 2) Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
+
+  1. __JpaUserRepository.java__
+     + User 엔티티(user 테이블)의 CRUD관련 메소드를 사용할 수 있는 인터 페이스다.
+     + 기본메소드
+       - 상속 Hierachy:   
+         JpaUserRepository -> JpaRepository -> PagingAndSortingRepository -> CrudRepository -> Repository
+       - 상속을 통해 상위 인터페이스 JpaRepository, PagingAndSortingRepository, CrudRepositor 들의 메소드들을 별다른 구현없이 사용 가능하다.
+     + 쿼리메소드
+       - 메소드 이름기반으로 자동으로 JPQL을 생성하는 메소드가 구현되는데 이를 쿼리 메소드라 한다.
+       - findByEmailAndPassword(String, String) 메소드가 그 예이다.
+
+  2. __JpaUserQryDslRepository.java__
+     + 기본메소드나 쿼리메소드가 성능이슈가 발생하거나 자동 구현이 불가능한 경우 직접 메소드를 직접 만들어 JPQL를 실행해야 한다.
+     + @Query에 JPQL를 직접 넣는 방법이 있으나 문자열 기반이고 기능상 제약이 많다. QueryDSL을 통합하는 방식을 많이 선호한다.
+     + 이를 위해, 구현해야하는 QueryDSL기반 메소드를 정의해 놓은 인터페이스다.
+     + 그리고 애플리케이션에서 직접 사용해야 하는 인터페이스 JpaUserRepository가 이를 상속한다.
+     + 몇가지 메소드의 예를 보면,
+       - findById2(no)는 기본메소드 findById(no)의 성능문제와 비즈니스 요구사항 때문에 QueryDSL로 직접 구현해야 하는 메소드이다.
+       - update(user)는 영속객체를 사용한 update의 성능문제 때문에 jpa03-model02의 JpaUserRepository에 @Query 어노테이션을 사용해서 JPQL를 직접 사용했는데 메소드 파라미터에 문제가 있어 QueryDSL로 직접 구현해야 하는 메소드이다. 
+
+  3. __JpaUserQryDslRepositoryImp.java__
+     + JpaUserQryDslRepository 인터페이스의 메소드를 QueryDSL로 구현한다.
+     + 정리하면,
+       - 기본 메소드, 쿼리 메소드의 구현은 Spring Data JPA가 해주는 것이고
+       - JpaUserQryDslRepository 인터페이스 구현은 직접 해야 하는 것이다.
+       - Spring Data JPA는 JpaUserQryDslRepository 인터페이스의 구현체를 스캔해야하기 때문에 네이밍 규칙이 있다. 인터페이스이름에 **"Impl"** 을 붙힌다.
+    
+       <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33003.png" width="500px" />
+       <br>
+       
+
 
 #### 3) QueryDSL Repository Test
 

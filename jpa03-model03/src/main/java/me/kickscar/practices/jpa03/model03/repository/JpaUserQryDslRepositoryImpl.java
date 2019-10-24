@@ -1,9 +1,14 @@
 package me.kickscar.practices.jpa03.model03.repository;
 
+
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import me.kickscar.practices.jpa03.model03.domain.User;
+import me.kickscar.practices.jpa03.model03.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+
 
 import static me.kickscar.practices.jpa03.model03.domain.QUser.user;
 
@@ -14,6 +19,15 @@ public class JpaUserQryDslRepositoryImpl extends QuerydslRepositorySupport imple
 
     public JpaUserQryDslRepositoryImpl() {
         super(User.class);
+    }
+
+    @Override
+    public UserDto findById2(Long no){
+        return query
+                .select(Projections.bean(UserDto.class, user.no, user.name))
+                .from(user)
+                .where(user.no.eq(no))
+                .fetchOne();
     }
 
     @Override

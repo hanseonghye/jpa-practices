@@ -73,12 +73,11 @@ public class Order {
     }
 
     public void setUser(User user) {
-        if(this.user != null){
-            this.user.getOrders().remove(this);
-        }
-
         this.user = user;
-        user.getOrders().add(this);
+
+        if(!user.getOrders().contains(this)) {
+            user.getOrders().add(this);
+        }
     }
 
     @Override
