@@ -189,13 +189,13 @@
       
       + test06NplusOneProblemNotSolvedYet
         - Collection Join 문제를 해결한 findAllCollectionJoinProblemSolved() 메소드로 전체 User List를 가져와서 N+1 문제를 검증하는 테스트 코드를 돌려본다.
-        - User List의 User의 Order List의 Order가 Proxy라면 test05NplusOneProblem() 태스트와 마찬가지로 N + 1번 퀄리가 수행됐을 것이다.
+        - User List의 User의 Order List의 Order가 Proxy라면 test05NplusOneProblem() 태스트와 마찬가지로 N + 1번 쿼리가 수행됐을 것이다.
         - N + 1번 나오기 때문에 아직 문제가 해결되지 못했다.
         - findAllCollectionJoinProblemSolved() 는 left join을 사용한다.
         
       + test07NplusOneProblemSolved
         - N + 1 문제를 해결하기 위해  JpaUserQryDslRepositoryImpl.findAllCollectionJoinAndNplusOneProblemSolved() 메소드를 구현했다.
         - 이름은 길지만 innerJoin() + fetchJoin() 으로 작성된 QueryDSL 컬렉션 페치 조인한다.
-        - 테스트 통과조건인 1번 쿼리수가 나왔다.
+        - 테스트 통과 조건인 1번 쿼리수가 나왔다.
         - OneToMany에서 객체그래프를 통해 컬렉션 접근 시, 발생하는 조인문제와 N+1 Lazy 로딩 문제를 해결하기 위해서는 selectDistinct(), fecthJoin()을 사용하면 된다.
-        - Lazy로 개체 그래프를 통해 컬렉션에 접근하는 것이 반드시 좋지 못한 것은 아니다. 상황에 따라 선택해야 한다. 
+        - Lazy로 객체 그래프를 통해 컬렉션에 접근하는 것이 반드시 좋지 못한 것은 아니다. 상황에 따라 선택해야 한다. 
