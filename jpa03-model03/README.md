@@ -63,14 +63,14 @@
         - 관계를 맺는 주인 필드가 세팅되는 Order.setUser() 코드에서 양방향 관계를 맺는 안전한 코드 예시이다.
         
           ```
-          public void setUser(User user) {
-             if(this.user != null){
-                this.user.getOrders().remove(this);
-             }
+            public void setUser(User user) {
+                this.user = user;
 
-             this.user = user;
-             user.getOrders().add(this);
-          }          
+                if(!user.getOrders().contains(this)) {
+                    user.getOrders().add(this);
+                }
+            }
+                   
           ``` 
           
         - toString() 오버라이딩 하는 것도 주의해야 한다.

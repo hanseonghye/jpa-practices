@@ -27,7 +27,7 @@
    
    4. __단방향에서는 연관관계의 주인을 따지지 않아도 된다.__
       + 연관관계가 하나밖에 없기 때문에 관계 설정을 한 필드가 주인이다.
-      + 이 필드에 값 설정에 따라 외래키가 변겨되면 관계가 변경되기 때문에 이 필드가 관계의 주인이 되는 것이다.
+      + 이 필드에 값 설정에 따라 외래키가 변경되면 관계가 변경되기 때문에 이 필드가 관계의 주인이 되는 것이다.
 
 
 #### 2) Entity Class: User, Board
@@ -61,7 +61,7 @@
   4. ManyToOne(단방향)에서 left outer join, inner join, join fetch 등의 차이점 그리고 성능 이슈들을 인지 할 것
   5. ManyToOne(단방향)이 가장 기본이 되는 연관관계 매핑이기 때문에 반드시 숙지할 것
   6. 프로젝션, 페이징, 소팅, Like 검색 등의 무척 다양한 쿼리 기법을 세 종류(총 6개)의 레포지토리에서 확인할 것
-  7. Spring Data JPA 기반의 기본 메소드들과 이름 기반의 쿼리 메소드들이 만들어 내는 SQL들을 검증해보고 왜 QueryDSL과 통합해야 하는 가 이해할 것 
+  7. Spring Data JPA 기반의 기본 메소드들과 이름 기반의 쿼리 메소드들이 만들어 내는 SQL들을 검증해보고 왜 QueryDSL과 통합해야 하는 가? 이해할 것 
 
 #### 1) 테스트 환경
   1. __Java SE 1.8__  
@@ -143,7 +143,7 @@
          
          ```
        - fetch b.user 에서 엔티티에 별칭(alias)를 쓸 수 없는 것이 원칙이다. (Hibernate는 허용)
-       - 따라서 fecth join에서는 프로젝션을 시도하면 예외가 발생한다. (별칭을 허용하느 Hibernate도 마찬가지다. 별칭만 허용하는 것이다)
+       - 따라서 fecth join에서는 프로젝션을 시도하면 예외가 발생한다. (별칭을 허용하는 Hibernate도 마찬가지다. 별칭만 허용하는 것이다)
 
      + test07FindAll3
        - JpqlBoardRepository.findAll4(page)
@@ -318,7 +318,6 @@
 
      + test01Save()
        - 기본 메소드 CrudRepository.save(S)
-       - 문제없다.
      
      + test02FindById
        - 기본 메소드 CrudRepository.findById()를 사용하면 Left Outer Join이 자동으로 걸린다.
@@ -347,9 +346,9 @@
      + test06FindAllByOrderByRegDateDesc3
        - JpaBoardQryDslRepositoryImpl.findAllByOrderByRegDateDesc3()은 test05의 findAllByOrderByRegDateDesc2()에 Projection 기능을 추가하였다.
        - QueryDSL Inner Join을 사용한다.
-       - Projections.fields()를 통해 setter릃 활용한다.
+       - Projections.fields()를 통해 setter를 활용한다.
        - 주의할 것은 Projection을 사용하면 fetch join되는 엔티티는 별칭을 가질 수 없기 때문에 fetch join을 사용할 수 없다.(test02에서도 마찬 가지이다.)
-       - Inner Join만으로도 이 문제는 해결된다.(엔티티 타입을 한개만 select에 지정한 Inner Join과는 다르다.)
+       - Inner Join만으로도 이 문제는 해결된다.(엔티티 타입 한 개만 select에 지정한 Inner Join과는 다르다.)
        
      + test07FindAllByOrderByRegDateDesc3
        - JpaBoardQryDslRepositoryImpl.findAllByOrderByRegDateDesc3(page, size)는 test06의 findAllByOrderByRegDateDesc3()에 Paging 기능을 오버로딩 하였다.
@@ -387,7 +386,7 @@
        - 영속객체를 사용한다.
        - select와 delete 쿼리가 2개 실행된다.
        - test12의 CrudRepository.delete(board)와 동작은 완전 동일하다.
-       - 영속 객체를 삭제전 다룰 지 여부에 따라 골라 써야 한다.
+       - 삭제하기 전, 영속객체에 대한 레퍼런스가 있냐없냐가 차이일 것이다.
 
      + test14Delete
        - JpaBoardQryDslRepositoryImpl.delete(no)
