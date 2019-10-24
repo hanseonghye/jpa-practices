@@ -55,8 +55,8 @@
 ### 02. SpringBoot Test Case
 
 #### 0) 요약: 다루는 기술적 내용
-  1. JPQL 그리고 QuqeryDSL, Spring Data JPA 기반의 각각의 레포지토리 구현 방법을 이해할 것
-  2. 특히, JPQL를 QuqeryDSL과 비교하고 QueryDSL이 JPQL로 변환되는 것을 이해할 것
+  1. JPQL 그리고 QueryDSL, Spring Data JPA 기반의 각각의 레포지토리 구현 방법을 이해할 것
+  2. 특히, JPQL를 QueryDSL과 비교하고 QueryDSL이 JPQL로 변환되는 것을 이해할 것
   3. JPQL 기본의 중요성 그리고 QueryDSL 사용성을 이해할 것
   4. ManyToOne(단방향)에서 left outer join, inner join, join fetch 등의 차이점 그리고 성능 이슈들을 인지 할 것
   5. ManyToOne(단방향)이 가장 기본이 되는 연관관계 매핑이기 때문에 반드시 숙지할 것
