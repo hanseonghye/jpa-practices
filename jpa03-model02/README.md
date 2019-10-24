@@ -54,6 +54,15 @@
 
 ### 02. SpringBoot Test Case
 
+#### 0) 요약: 다루는 기술적 내용
+  1. JPQL 그리고 QuqeryDSL, Spring Data JPA 기반의 각각의 레포지토리 구현 방법을 이해할 것
+  2. 특히, JPQL를 QuqeryDSL과 비교하고 QueryDSL이 JPQL로 변환되는 것을 이해할 것
+  3. JPQL 기본의 중요성 그리고 QueryDSL 사용성을 이해할 것
+  4. ManyToOne(단방향)에서 left outer join, inner join, join fetch 등의 차이점 그리고 성능 이슈들을 인지 할 것
+  5. ManyToOne(단방향)이 가장 기본이 되는 연관관계 매핑이기 때문에 반드시 숙지할 것
+  6. 프로젝션, 페이징, 소팅, Like 검색 등의 무척 다양한 쿼리 기법을 세 종류(총 6개)의 레포지토리에서 확인할 것
+  7. Spring Data JPA 기반의 기본 메소드들과 이름 기반의 쿼리 메소드들이 만들어 내는 SQL들을 검증해보고 왜 QueryDSL과 통합해야 하는 가 이해할 것 
+
 #### 1) 테스트 환경
   1. __Java SE 1.8__  
   2. __Spring Boot Starter Web 2.1.8.RELEASE (Spring Core, Context, Web ... etc 5.19.RELEASE)__   
@@ -65,8 +74,7 @@
   8. __JUnit 4.12__
   9. __Spring Boot Starter Test 2.1.8.RELEASE (Spring Test 5.1.9.RELEASE)__   
  10. __Gradle 5.4__   
-
-
+ 
 #### 2) Jpql BoardRepository Test : JPQL 기반 Repository
 
   1. __JpqlConfig.java__
@@ -111,17 +119,34 @@
         
      + test05FindAll2
        - JpqlBoardRepository.findAll2()
-       - Inner Join을 사용한다.
-       - 쿼리상으로 Join이 걸리지만 select에 User를 올릴 수 없기 떄문에 Inner Join도 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행되는 문제가 있다.
+       - Inner Join을 사용하여 test04의 문제를 해결한다.
+       
+         ```
+          select b from Board b inner join b.user u order by b.regDate desc
+         
+         ```
+       - 쿼리상으로 Inner Join이 걸리지만 test04의 문제가 되었던 User를 해결하기 위해서는 select에 User를 올려야 한다.
+       - 그러면 select에 타입이 2개가 되어 TypeQuery를 사용하지 못하고 Projection을 고려해야 한다. 
+       - select에 Board만 있으면 Join이 걸려도 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행되는 것은 피할 수 없다.
+       - JpaBoardRepository의 QueryDsl 통합 구현 레포지토리 JpaBoardQryDslRepositoryImpl에서는 Inner Join과 Projection으로 이 문제를 해결한다.
+       - JpaBoardRepositoryTest의 test05에서 부터 BoardDto를 Projection하고 Inner Join만 사용해서 이 문제를 해결하는 것을 테스트한다. 
  
      + test06FindAll3
        - JpqlBoardRepository.findAll3()
        - Fecth Join을 사용한다.
-       - Fecth Join은 Inner Join의 성능 문제를 해결 할 수 있다.
-       - 실제 실행되는 쿼리를 보면 select절에 user table의 컬럼이 프로젝션 된다.
+       - Fecth Join은 test05의 프로젝션을 해야하는 Inner Join의 문제를 해결 할 수 있다.
+       - 실제 실행되는 쿼리를 보면 select에 User가 올라와 있는 것이 보인다.
+       - 하지만 약간의 문제가 있다.
+       
+         ```
+          select b from Board b join fetch b.user order by b.regDate desc
+         
+         ```
+       - fetch b.user 에서 엔티티에 별칭(alias)를 쓸 수 없는 것이 원칙이다. (Hibernate는 허용)
+       - 따라서 fecth join에서는 프로젝션을 시도하면 예외가 발생한다. (별칭을 허용하느 Hibernate도 마찬가지다. 별칭만 허용하는 것이다)
 
      + test07FindAll3
-       - JpqlBoardRepository.findAll43page)
+       - JpqlBoardRepository.findAll4(page)
        - Fetch Join 적용
        - Paging 적용(TypedQuery 의 setFirstResult(), setMaxResults() 메소드)
 
@@ -164,7 +189,6 @@
 
 
 #### 3) QueryDSL BoardRepository Test : QueryDSL 기반 Repository
-
   1. __JpqlConfig.java__
   
      + jpa03-model01 내용과 동일 
@@ -204,22 +228,19 @@
        - QueryDslBoardRepository.findAll1()
        - Board 엔티티만 지정하면 join으로 한 번에 User 정보까지 가져오지 않는다는 것이다. 
        - 기본이 EAGER이기 때문에 각각의 Board가 참조하고 있는 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행된다.
-       - User가 영속객체이기 때문에 1차 캐시가 되서 User를 가져오기 위해 게시물 전체 5개에 대한 select는 하지 않는다.
-       - **성능이슈**: 대용량 게시판에선 문제가 될 수 있다.
-       - 해결 방법은 **Inner Join을 직접 사용하는 방법**과 **Fetch Join** 을 사용하는 것이다.
+       - **JPQLBoardRepositoryTest의 test04FindAll1 내용 참고**
        - from(), orderBy(), Q클래스 desc(), fetch() 함수 사용법
         
      + test05FindAll2
        - QueryDslBoardRepository.findAll2()
-       - Inner Join을 사용한다.
-       - 쿼리상으로 Join이 걸리지만 select에 User를 올릴 수 없기 떄문에 Inner Join도 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행되는 문제가 있다.
+       - Inner Join을 사용해서 test04의 문제를 해결한다.
+       - **JPQLBoardRepositoryTest의 test05FindAll2 내용 참고**
        - from(), innerJoin(), orderBy(), fetch() 함수 사용법
        
      + test06FindAll3
        - QueryDslBoardRepository.findAll3()
        - Fecth Join을 사용한다.
-       - Fecth Join은 Inner Join의 성능 문제를 해결 할 수 있다.
-       - 실제 실행되는 쿼리를 보면 select절에 user table의 컬럼이 프로젝션 된다.
+       - **JPQLBoardRepositoryTest의 test05FindAll3 내용 참고**
        - from(), innerJoin(), fetchJoin(), orderBy(), fetch() 함수 사용법
 
      + test07FindAll3
@@ -327,8 +348,8 @@
        - JpaBoardQryDslRepositoryImpl.findAllByOrderByRegDateDesc3()은 test05의 findAllByOrderByRegDateDesc2()에 Projection 기능을 추가하였다.
        - QueryDSL Inner Join을 사용한다.
        - Projections.fields()를 통해 setter릃 활용한다.
-       - 주의할 것은 Projection 리스트에 User의 속성이 있으면 단방향에서는 fetch join을 할 수 없다.(test02에서도 마찬 가지이다.)
-       - Inner Join 으로만으로 문제 해결이 가능하다.
+       - 주의할 것은 Projection을 사용하면 fetch join되는 엔티티는 별칭을 가질 수 없기 때문에 fetch join을 사용할 수 없다.(test02에서도 마찬 가지이다.)
+       - Inner Join만으로도 이 문제는 해결된다.(엔티티 타입을 한개만 select에 지정한 Inner Join과는 다르다.)
        
      + test07FindAllByOrderByRegDateDesc3
        - JpaBoardQryDslRepositoryImpl.findAllByOrderByRegDateDesc3(page, size)는 test06의 findAllByOrderByRegDateDesc3()에 Paging 기능을 오버로딩 하였다.

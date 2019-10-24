@@ -94,7 +94,7 @@ public class JpqlBoardRepository {
 
     // 조회4: Inner Join List
     public List<Board> findAll2(){
-        String qlString = "select b from Board b inner join b.user order by b.regDate desc";
+        String qlString = "select b from Board b inner join b.user u order by b.regDate desc";
         TypedQuery<Board> query = em.createQuery(qlString, Board.class);
 
         return query.getResultList();
