@@ -1,10 +1,10 @@
 package me.kickscar.practices.jpa03.model03.dto;
 
-public class UserOrderCountDto {
+public class OrderCountOfUserDto {
     private Long userNo;
     private Long orderCount;
 
-    public UserOrderCountDto(Long userNo, Long orderCount){
+    public OrderCountOfUserDto(Long userNo, Long orderCount){
         this.userNo = userNo;
         this.orderCount = orderCount;
     }

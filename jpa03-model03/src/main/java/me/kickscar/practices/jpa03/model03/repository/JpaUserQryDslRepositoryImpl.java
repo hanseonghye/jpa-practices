@@ -1,14 +1,12 @@
 package me.kickscar.practices.jpa03.model03.repository;
 
-
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import me.kickscar.practices.jpa03.model03.domain.Order;
+import me.kickscar.practices.jpa03.model03.domain.Orders;
 import me.kickscar.practices.jpa03.model03.domain.User;
 import me.kickscar.practices.jpa03.model03.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-
 
 import java.util.List;
 
@@ -17,7 +15,7 @@ import static me.kickscar.practices.jpa03.model03.domain.QUser.user;
 public class JpaUserQryDslRepositoryImpl extends QuerydslRepositorySupport implements JpaUserQryDslRepository {
 
     @Autowired
-    private JPAQueryFactory query;
+    private JPAQueryFactory queryFactory;
 
     public JpaUserQryDslRepositoryImpl() {
         super(User.class);
@@ -25,7 +23,7 @@ public class JpaUserQryDslRepositoryImpl extends QuerydslRepositorySupport imple
 
     @Override
     public UserDto findById2(Long no){
-        return query
+        return queryFactory
                 .select(Projections.bean(UserDto.class, user.no, user.name))
                 .from(user)
                 .where(user.no.eq(no))
@@ -34,7 +32,8 @@ public class JpaUserQryDslRepositoryImpl extends QuerydslRepositorySupport imple
 
     @Override
     public Boolean update(User argUser) {
-        return query.update(user)
+        return queryFactory
+                .update(user)
                 .where(user.no.eq(argUser.getNo()))
                 .set(user.name, argUser.getName())
                 .set(user.email, argUser.getEmail())
@@ -46,7 +45,7 @@ public class JpaUserQryDslRepositoryImpl extends QuerydslRepositorySupport imple
 
     @Override
     public List<User> findAllCollectionJoinProblem(){
-        return (List<User>)query
+        return (List<User>)queryFactory
                 .select(user)
                 .from(user)
                 .innerJoin(user.orders)
@@ -54,7 +53,7 @@ public class JpaUserQryDslRepositoryImpl extends QuerydslRepositorySupport imple
     }
 
     public List<User> findAllCollectionJoinProblemSolved(){
-        return (List<User>)query
+        return (List<User>)queryFactory
                 .selectDistinct(user)
                 .from(user)
                 .innerJoin(user.orders)
@@ -62,10 +61,23 @@ public class JpaUserQryDslRepositoryImpl extends QuerydslRepositorySupport imple
     }
 
     public List<User> findAllCollectionJoinAndNplusOneProblemSolved(){
-        return (List<User>)query
+        return (List<User>)queryFactory
                 .selectDistinct(user)
                 .from(user)
-                .innerJoin(user.orders).fetchJoin()
+                .innerJoin(user.orders)
+                .fetchJoin()
                 .fetch();
+    }
+
+    @Override
+    public List<Orders> findOrdersByNo(Long no) {
+        return queryFactory
+                .selectDistinct(user)
+                .from(user)
+                .innerJoin(user.orders)
+                .fetchJoin()
+                .where(user.no.eq(no))
+                .fetchOne()
+                .getOrders();
     }
 }

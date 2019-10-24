@@ -31,7 +31,7 @@ public class User {
 	private RoleType role;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)  // @OneToMany 에서는 기본이 FetchType.LAZY 이다.
-	private List<Order> orders = new ArrayList<Order>();
+	private List<Orders> orders = new ArrayList<Orders>();
 
 	public Long getNo() {
 		return no;
@@ -81,11 +81,11 @@ public class User {
 		this.role = role;
 	}
 
-	public List<Order> getOrders() {
+	public List<Orders> getOrders() {
 		return orders;
 	}
 
-	public void setOrders(List<Order> orders) {
+	public void setOrders(List<Orders> orders) {
 		this.orders = orders;
 	}
 

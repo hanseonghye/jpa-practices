@@ -98,7 +98,7 @@
   2. ManyToOne 양방향(Bidirection) 매핑에서 OneToMany 방향에서는 Collection(List)가 연관필드이기 때문에 Join에서 발생할 수 있는 문제점들...
      - OneToMany의 켈렉션 조인(inner join, outer join, fetch join)의 문제점 이해 및 해결방법 이해
      - OneToMany의 Default Fetch Mode인 Lazy Loading 때문에 발생하는 N+1 문제 이해 및 해결방법 이해  
-     - Fetch Join + 페이징 API 에서 발생하는 메모리 페이징 이해 및 해결방법 이해 
+     - 페이징 자체가 불가능 하다.
 
 #### 1) 테스트 환경
 
@@ -117,7 +117,7 @@
 #### 2) Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
 
   1. __JpaUserRepository.java__
-     + User 엔티티(user 테이블)의 CRUD관련 메소드를 사용할 수 있는 인터 페이스다.
+     + User 엔티티(user 테이블)의 CRUD관련 메소드를 사용할 수 있는 인터페이스다.
      + 기본메소드
        - 상속 Hierachy:   
          JpaUserRepository -> JpaRepository -> PagingAndSortingRepository -> CrudRepository -> Repository
@@ -158,9 +158,9 @@
         - OneToMany Collection Join(inner, outer, fetch)에서 발생하는 문제에 대한 테스트 이다.
         - 테스트 대상 메소드는 JpaUserQryDslRepositoryImpl.findAllCollectionJoinProblem() 메소드다.
         - 기본메소드 findAll()의 Collection Join를 추가한 QueryDSL로 작성된 user를 전부다 찾아주는 메소드다.
-        - 테스트 코드 assert 에도 있지만, user 카운트가 order 카운트와 같은 문제가 있다.
+        - 테스트 코드 assert 에도 있지만, user 카운트가 orders 카운트와 같은 문제가 있다.
  
-          <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33004.png" width="500px" />
+          <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33004.png" width="800px" />
           <br>       
         
         - User와 Order가 조인되었기 때문에 연결된 Order의 개수만큼 User도 나오는 것이 당연하다.
@@ -197,5 +197,37 @@
         - N + 1 문제를 해결하기 위해  JpaUserQryDslRepositoryImpl.findAllCollectionJoinAndNplusOneProblemSolved() 메소드를 구현했다.
         - 이름은 길지만 innerJoin() + fetchJoin() 으로 작성된 QueryDSL 컬렉션 페치 조인한다.
         - 테스트 통과 조건인 1번 쿼리수가 나왔다.
+        - test method에 @Transactional 를 사용하지 않은 것도 주목하자. Proxy 객체를 사용하지 않을 때는 영속성이 필요 없기 때문에 @Transactional을 사용하지 않아도 된다.
         - OneToMany에서 객체그래프를 통해 컬렉션 접근 시, 발생하는 조인문제와 N+1 Lazy 로딩 문제를 해결하기 위해서는 selectDistinct(), fecthJoin()을 사용하면 된다.
         - Lazy로 객체 그래프를 통해 컬렉션에 접근하는 것이 반드시 좋지 못한 것은 아니다. 상황에 따라 선택해야 한다. 
+
+      + test08findOrdersByNo
+        - 최적화된 findAllCollectionJoinAndNplusOneProblemSolved() 기반으로 특정 사용자의 주문내역을 조회하는 메소드 findOrdersByNo(no)를 테스트 한다.
+
+           <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33005.png" width="800px" />
+           <br>       
+           
+        - 쿼리를 보면 비교적 만족스럽다.
+        - 결과를 유도하는 과정을 보면 페이징은 불가능해 보인다.(Order By 필드도 얘매하고 사실, 페이징 API를 사용하면 무시된다.) 
+        - 페이징이 필요하면 반대편 ManyToOne Order Repository에서 하는 것이 자연스럽고 구햔도 가능하다.
+
+  
+#### 3) Spring Data JPA OrderRepository Test : Spring Data JPA 기반 Repository
+        
+  1. __JpaOrderRepository.java__
+     + Order 엔티티(orders 테이블)의 CRUD관련 메소드를 사용할 수 있는 인터페이스다.
+     + 기본메소드
+       - 상속을 통해 상위 인터페이스 JpaRepository, PagingAndSortingRepository, CrudRepositor 들의 메소드들을 별다른 구현없이 사용 가능하다.
+     + 쿼리메소드
+       - findByEmailAndPassword(String, String) 메소드가 그 예이다.
+
+  2. __JpaOrderQryDslRepository.java__
+     + findById2(no)는 기본메소드 findById(no)의 성능문제와 비즈니스 요구사항 때문에 QueryDSL로 직접 구현해야 하는 메소드이다.
+     + update(user)는 영속객체를 사용한 update의 성능문제 때문에 jpa03-model02의 JpaUserRepository에 @Query 어노테이션을 사용해서 JPQL를 직접 사용했는데 메소드 파라미터에 문제가 있어 QueryDSL로 직접 구현해야 하는 메소드이다. 
+
+  7. __JpaOrderQryDslRepositoryImp.java__
+     + JpaUserQryDslRepository 인터페이스의 메소드를 QueryDSL로 구현한다.
+       
+  8. __JpaOrderRepositoryTest.java__
+
+        
