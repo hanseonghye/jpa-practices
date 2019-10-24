@@ -94,9 +94,11 @@
 
 #### 0) 요약: 다루는 기술적 내용
 
-  1. Spring Data JPA 기반의 QueryDSL 통합 레포지토리만 작성했다.
-  2. ManyToOne 양방향(Bidirection) 매핑에서 OneToMany 방향의 left join(컬렉션 조인), fetch join 등의 이슈등을 주로 다루고 해결방법을 제시한다.
-
+  1. QueryDSL 통합하는 Spring Data JPA 기반의 레포지토리 작성방법
+  2. ManyToOne 양방향(Bidirection) 매핑에서 OneToMany 방향에서는 Collection(List)가 연관필드이기 때문에 Join에서 발생할 수 있는 문제점들...
+     - OneToMany의 켈렉션 조인(inner join, outer join, fetch join)의 문제점 이해 및 해결방법 이해
+     - OneToMany의 Default Fetch Mode인 Lazy Loading 때문에 발생하는 N+1 문제 이해 및 해결방법 이해  
+     - Fetch Join + 페이징 API 에서 발생하는 메모리 페이징 이해 및 해결방법 이해 
 
 #### 1) 테스트 환경
 
@@ -125,7 +127,7 @@
        - findByEmailAndPassword(String, String) 메소드가 그 예이다.
 
   2. __JpaUserQryDslRepository.java__
-     + 기본메소드나 쿼리메소드가 성능이슈가 발생하거나 자동 구현이 불가능한 경우 직접 메소드를 직접 만들어 JPQL를 실행해야 한다.
+     + 기본메소드나 쿼리메소드가 성능이슈가 발생하거나 자동으로 제공받지 못하면 직접 메소드를 직접 만들어 JPQL를 실행해야 한다.
      + @Query에 JPQL를 직접 넣는 방법이 있으나 문자열 기반이고 기능상 제약이 많다. QueryDSL을 통합하는 방식을 많이 선호한다.
      + 이를 위해, 구현해야하는 QueryDSL기반 메소드를 정의해 놓은 인터페이스다.
      + 그리고 애플리케이션에서 직접 사용해야 하는 인터페이스 JpaUserRepository가 이를 상속한다.
@@ -143,9 +145,57 @@
        <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33003.png" width="500px" />
        <br>
        
-
-
-#### 3) QueryDSL Repository Test
-
-#### 4) Spring Data JPA(JpaRepository) Repository Test
-
+  4. __JpaUserRepositoryTest.java__
+      
+      + test01Save()
+        - 기본 메소드 CrudRepository.save(S)
+        
+      + test02Update
+        - QueryDSL 기반 메소드 직접 구현하고 JpaUserRepository 인터페이스와 통합
+        - JpaQryDslUserRepositoryImp.update(user)
+    
+      + test03OneToManyCollectionJoinProblem
+        - OneToMany Collection Join(inner, outer, fetch)에서 발생하는 문제에 대한 테스트 이다.
+        - 테스트 대상 메소드는 JpaUserQryDslRepositoryImpl.findAllCollectionJoinProblem() 메소드다.
+        - 기본메소드 findAll()의 Collection Join를 추가한 QueryDSL로 작성된 user를 전부다 찾아주는 메소드다.
+        - 테스트 코드 assert 에도 있지만, user 카운트가 order 카운트와 같은 문제가 있다.
+ 
+          <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33004.png" width="500px" />
+          <br>       
+        
+        - User와 Order가 조인되었기 때문에 연결된 Order의 개수만큼 User도 나오는 것이 당연하다.
+        - 이는 따지고 보면 문제가 아니다. 관계형데이터베이스와 객체지향프로그래밍 차이에서 발생하는 문제점이라 볼 수 있다.
+    
+      + test04OCollectionJoinProblemSolved
+        - Collection Join 문제 해결방법은 의외로 간단하다. distinct를 사용해 관계형데이터베이스에서 문제를 해결한다.
+        - JpaUserQryDslRepositoryImpl.findAllCollectionJoinProblemSolved() 메소드를 보면 QueryDSL의 selectDistinct() 함수로 해결한다.
+        - OneToMany Collection 조인 outer, inner, fetch join 모두 해당되는 내용으로 반드시 selectDistinct() 함수를 사용해야 한다.
+        
+      + test05NplusOneProblem
+        - N+1 문제를 테스트 한다.
+        - 테스트 코드는 총 Order 카운트를 먼저 가져온 다음, 전체 User List에서 개별 User 객체의 Order List의 사이즈를 모두 더해 같은 지 보는 것이다.
+        - 당연히 같을 것이다. 테스트 통과 조건은 실행된 쿼리수와 전체 User를 가져오기 위해 실행된 쿼리(1)과 Lazy 때문에 각 User 별로 Order List를 가져오기 위해 실행된 쿼리 수(N)과 합이 같은 것이다.
+        - 각 User 별로 Order List를 가져오기 위해 쿼리가 실행됐을 거라 추측할 수 있는 근거는 Lazy 때문에 User 엔티티 객체의 List<Order> Orders는 Proxy 객체로 실제로 DB에서 가져온 Order가 담긴 List가 아니다.
+        - Proxy 객체이면 List의 사이즈를 가져올 때 쿼리가 들어 갈 것이기 때문에 쿼리 카운팅을 할 수 있다.
+        
+          ```
+            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(orders)){
+                qryCount++;
+            }
+                    
+          ```     
+        - PersistenceUnitUtil.isLoaded(Entity) 반환이 false이면 초기화 되지 않은 Proxy객체로 지연로딩 중인 것이다.
+        - 테스트 결과는 N+1번으로 쿼리가 실행된 것을 확인할 수 있다. (실제 쿼리 로그를 세어 보아도 확인된다.)
+      
+      + test06NplusOneProblemNotSolvedYet
+        - Collection Join 문제를 해결한 findAllCollectionJoinProblemSolved() 메소드로 전체 User List를 가져와서 N+1 문제를 검증하는 테스트 코드를 돌려본다.
+        - User List의 User의 Order List의 Order가 Proxy라면 test05NplusOneProblem() 태스트와 마찬가지로 N + 1번 퀄리가 수행됐을 것이다.
+        - N + 1번 나오기 때문에 아직 문제가 해결되지 못했다.
+        - findAllCollectionJoinProblemSolved() 는 left join을 사용한다.
+        
+      + test07NplusOneProblemSolved
+        - N + 1 문제를 해결하기 위해  JpaUserQryDslRepositoryImpl.findAllCollectionJoinAndNplusOneProblemSolved() 메소드를 구현했다.
+        - 이름은 길지만 innerJoin() + fetchJoin() 으로 작성된 QueryDSL 컬렉션 페치 조인한다.
+        - 테스트 통과조건인 1번 쿼리수가 나왔다.
+        - OneToMany에서 객체그래프를 통해 컬렉션 접근 시, 발생하는 조인문제와 N+1 Lazy 로딩 문제를 해결하기 위해서는 selectDistinct(), fecthJoin()을 사용하면 된다.
+        - Lazy로 개체 그래프를 통해 컬렉션에 접근하는 것이 반드시 좋지 못한 것은 아니다. 상황에 따라 선택해야 한다. 

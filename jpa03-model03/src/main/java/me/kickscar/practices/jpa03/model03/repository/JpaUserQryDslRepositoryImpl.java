@@ -3,12 +3,14 @@ package me.kickscar.practices.jpa03.model03.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import me.kickscar.practices.jpa03.model03.domain.Order;
 import me.kickscar.practices.jpa03.model03.domain.User;
 import me.kickscar.practices.jpa03.model03.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+
+import java.util.List;
 
 import static me.kickscar.practices.jpa03.model03.domain.QUser.user;
 
@@ -40,5 +42,30 @@ public class JpaUserQryDslRepositoryImpl extends QuerydslRepositorySupport imple
                 .set(user.gender, argUser.getGender())
                 .set(user.role, argUser.getRole())
                 .execute() == 1L;
+    }
+
+    @Override
+    public List<User> findAllCollectionJoinProblem(){
+        return (List<User>)query
+                .select(user)
+                .from(user)
+                .innerJoin(user.orders)
+                .fetch();
+    }
+
+    public List<User> findAllCollectionJoinProblemSolved(){
+        return (List<User>)query
+                .selectDistinct(user)
+                .from(user)
+                .innerJoin(user.orders)
+                .fetch();
+    }
+
+    public List<User> findAllCollectionJoinAndNplusOneProblemSolved(){
+        return (List<User>)query
+                .selectDistinct(user)
+                .from(user)
+                .innerJoin(user.orders).fetchJoin()
+                .fetch();
     }
 }

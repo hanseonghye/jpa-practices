@@ -98,7 +98,8 @@ public class User {
 				", password='" + password + '\'' +
 				", gender=" + gender +
 				", role=" + role +
-				", orders=" + orders +
+				// debuging 에 문제 있음
+				// ", orders=" + orders +
 				'}';
 	}
 }
