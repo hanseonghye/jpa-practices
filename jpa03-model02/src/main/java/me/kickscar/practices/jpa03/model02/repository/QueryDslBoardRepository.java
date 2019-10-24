@@ -86,6 +86,7 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
     // 조회3: Fetch List
     public List<Board> findAll1() {
         return (List<Board>) queryFactory
+                .select(board)
                 .from(board)
                 .orderBy(board.regDate.desc())
                 .fetch();
@@ -94,6 +95,7 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
     // 조회4: Inner Join List
     public List<Board> findAll2() {
         return (List<Board>) queryFactory
+                .select(board)
                 .from(board)
                 .innerJoin(board.user)
                 .orderBy(board.regDate.desc())
@@ -103,6 +105,7 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
     // 조회5: Fetch Join List
     public List<Board> findAll3() {
         return (List<Board>) queryFactory
+                .select(board)
                 .from(board)
                 .innerJoin(board.user).fetchJoin()
                 .orderBy(board.regDate.desc())
@@ -112,6 +115,7 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
     // 조회6: Fetch Join List: Paging
     public List<Board> findAll3(Integer page, Integer size) {
         return (List<Board>) queryFactory
+                .select(board)
                 .from(board)
                 .innerJoin(board.user).fetchJoin()
                 .offset(page * size)
@@ -124,6 +128,7 @@ public class QueryDslBoardRepository extends QuerydslRepositorySupport {
     // 조회7: Fetch Join List: Paging: LIKE 검색
     public List<Board> findAll3(String keyword, Integer page, Integer size) {
         return (List<Board>) queryFactory
+                .select(board)
                 .from(board)
                 .innerJoin(board.user).fetchJoin()
                 .where(board.title.contains(keyword).or(board.contents.contains(keyword)))

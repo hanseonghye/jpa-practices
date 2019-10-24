@@ -5,19 +5,21 @@ import me.kickscar.practices.jpa03.model03.domain.GenderType;
 import me.kickscar.practices.jpa03.model03.domain.Orders;
 import me.kickscar.practices.jpa03.model03.domain.RoleType;
 import me.kickscar.practices.jpa03.model03.domain.User;
+import me.kickscar.practices.jpa03.model03.dto.OrderCountOfUserDto;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpaRepositoryTestConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class JpaUerRepositoryTest {
+public class JpaOrdersRepositoryTest {
 
     @PersistenceContext
     private EntityManager em;
@@ -113,112 +115,67 @@ public class JpaUerRepositoryTest {
     }
 
     @Test
-    @Transactional
-    @Rollback(false)
-    public void test02Update() {
-        User user = new User();
-        user.setNo(1L);
-        user.setEmail("dooly3@kickscar.me");
-        user.setName("둘리3");
-        user.setPassword("3");
-        user.setGender(GenderType.MALE);
-        user.setRole(RoleType.USER);
+    public void test02FindAllByUserNo() {
+        long expected = 5L;
+        final Long userNo = 1L;
 
-        assertTrue(userRepository.update(user));
+        List<Orders> list = orderRepository.findAllByUserNo(userNo);
+        assertEquals(expected, orderRepository.countAllByUserNo(userNo).longValue());
     }
 
     @Test
-    @Transactional
-    public void test03OneToManyCollectionJoinProblem() {
-        assertEquals(orderRepository.count(), userRepository.findAllCollectionJoinProblem().size());
+    public void test03FindAllByUserNo() {
+        long expected = 5L;
+        final Long userNo = 1L;
+
+        List<Orders> list = orderRepository.findAllByUserNo(userNo, new Sort(Sort.Direction.DESC, "regDate"));
+        assertEquals(expected, orderRepository.countAllByUserNo(userNo).longValue());
     }
 
     @Test
-    @Transactional
-    public void test04OCollectionJoinProblemSolved() {
-        assertEquals(userRepository.count(), userRepository.findAllCollectionJoinProblemSolved().size());
+    public void test04FindAllByUserNo2() {
+        long expected = 5L;
+        final Long userNo = 1L;
+
+        List<Orders> list = orderRepository.findAllByUserNo2(userNo);
+        assertEquals(expected, orderRepository.countAllByUserNo(userNo).longValue());
     }
 
     @Test
-    @Transactional
-    public void test05NplusOneProblem() {
-        Integer qryCount = 0;
-        Long ordersCountActual = 0L;
+    public void test05FindAllByUserNo2() {
+        long expected = 5L;
+        final Long userNo = 1L;
 
-        Long ordersCountExpected = orderRepository.count();
-        Long N = userRepository.count();
+        List<Orders> list = orderRepository.findAllByUserNo2(userNo, new Sort(Sort.Direction.DESC, "regDate").and(new Sort(Sort.Direction.DESC, "totalPrice")));
+        assertEquals(expected, orderRepository.countAllByUserNo(userNo).longValue());
+    }
 
-        qryCount++;
-        List<User> users = userRepository.findAll();
+    @Test
+    public void test06FindAllByUserNo2() {
+        Integer page = 0;
+        final Integer size = 3;
+        final Long userNo = 1L;
 
-        for(User user : users) {
-            List<Orders> orders = user.getOrders();
+        List<Orders> list = orderRepository.findAllByUserNo2(userNo, PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
+        assertEquals(3L, list.size());
 
-            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(orders)){
-                qryCount++;
-            }
-            ordersCountActual += orders.size();
+        list = orderRepository.findAllByUserNo2(userNo, PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
+        assertEquals(2L, list.size());
 
+        list = orderRepository.findAllByUserNo2(userNo, PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
+        assertEquals(0L, list.size());
+    }
+
+    @Test
+    public void test07CountAllGroupByUser() {
+        Long totalOrdersCount = 0L;
+        final Long totalOrdersCountExpected = orderRepository.count();
+
+        List<OrderCountOfUserDto> list = orderRepository.countAllGroupByUser();
+        for(OrderCountOfUserDto dto: list){
+            totalOrdersCount += dto.getOrderCount();
         }
 
-        assertEquals(ordersCountExpected, ordersCountActual);
-        assertEquals(N+1, qryCount.longValue());
+        assertEquals(totalOrdersCountExpected, totalOrdersCount);
     }
-
-    @Test
-    @Transactional
-    public void test06NplusOneProblemNotSolvedYet() {
-        Integer qryCount = 0;
-        Long ordersCountActual = 0L;
-
-        Long ordersCountExpected = orderRepository.count();
-        Long N = userRepository.count();
-
-        qryCount++;
-        List<User> users = userRepository.findAllCollectionJoinProblemSolved();
-
-        for(User user : users) {
-            List<Orders> orders = user.getOrders();
-
-            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(orders)){
-                qryCount++;
-            }
-            ordersCountActual += orders.size();
-        }
-
-        assertEquals(ordersCountExpected, ordersCountActual);
-        assertEquals(N+1, qryCount.longValue());
-    }
-
-    @Test
-    public void test07NplusOneProblemSolved() {
-        Integer qryCount = 0;
-        Long ordersCountActual = 0L;
-
-        Long ordersCountExpected = orderRepository.count();
-        Long N = userRepository.count();
-
-        qryCount++;
-        List<User> users = userRepository.findAllCollectionJoinAndNplusOneProblemSolved();
-
-        for(User user : users) {
-            List<Orders> orders = user.getOrders();
-
-            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(orders)){
-                qryCount++;
-            }
-            ordersCountActual += orders.size();
-        }
-
-        assertEquals(ordersCountExpected, ordersCountActual);
-        assertEquals(1, qryCount.longValue());
-    }
-
-    @Test
-    public void test08findOrdersByNo() {
-        assertEquals(5, userRepository.findOrdersByNo(1L).size());
-
-    }
-
-
 }

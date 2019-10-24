@@ -122,7 +122,7 @@
        - Inner Join을 사용하여 test04의 문제를 해결한다.
        
          ```
-          select b from Board b inner join b.user u order by b.regDate desc
+          select b from Board b inner join b.user u orders by b.regDate desc
          
          ```
        - 쿼리상으로 Inner Join이 걸리지만 test04의 문제가 되었던 User를 해결하기 위해서는 select에 User를 올려야 한다.
@@ -139,7 +139,7 @@
        - 하지만 약간의 문제가 있다.
        
          ```
-          select b from Board b join fetch b.user order by b.regDate desc
+          select b from Board b join fetch b.user orders by b.regDate desc
          
          ```
        - fetch b.user 에서 엔티티에 별칭(alias)를 쓸 수 없는 것이 원칙이다. (Hibernate는 허용)

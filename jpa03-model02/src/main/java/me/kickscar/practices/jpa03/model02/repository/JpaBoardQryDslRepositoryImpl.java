@@ -1,7 +1,5 @@
 package me.kickscar.practices.jpa03.model02.repository;
 
-
-
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -40,6 +38,7 @@ public class JpaBoardQryDslRepositoryImpl extends QuerydslRepositorySupport impl
     @Override
     public List<Board> findAllByOrderByRegDateDesc2() {
         return (List<Board>) queryFactory
+                .select(board)
                 .from(board)
                 .innerJoin(board.user).fetchJoin()
                 .orderBy(board.regDate.desc())

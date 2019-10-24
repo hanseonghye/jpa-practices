@@ -29,6 +29,7 @@ public class QueryDslGuestbookRepository extends QuerydslRepositorySupport {
     // 조회1
     public List<Guestbook> findAll1(){
         return (List<Guestbook>) queryFactory
+                .select(guestbook)
                 .from(guestbook)
                 .orderBy(guestbook.regDate.desc())
                 .fetch();
