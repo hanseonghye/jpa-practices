@@ -11,14 +11,14 @@
    <br>
    
    1. __보통은 서비스에서 방향성을 찾는 경우가 많다.__
-      + 쇼핑몰 관리자 페이지에서 주문조회에서 주문에 사용자 정보가 나와야 한다. (Order -> User, Navigational Association)  
-      + 회원의 경우, 마이페이지에서 자신의 주문리스트를 확인해 보는 서비스의 비지니스 로직이 필요하다. (Order <- User, Navigational Association) 
+      + 쇼핑몰 관리자 페이지에서 주문조회에서 주문에 사용자 정보가 나와야 한다. (Orders -> User, Navigational Association)  
+      + 회원의 경우, 마이페이지에서 자신의 주문리스트를 확인해 보는 서비스의 비지니스 로직이 필요하다. (Orders <- User, Navigational Association) 
       + 쇼핑몰의 주문<->회원 관계매핑은 양방향(Bidirection) 이다.  
    
    2. __양방향에서는 연관관계의 주인을 따져야 한다.__
-      + 외래키가 있는 Order 엔티티의 user 필드가 이 관계의 주인이 된다.
-      + 이 말은 외래키 세팅은 Order 엔티티의 user 필드를 세팅할때만 변한다는 말이다.(그러니 관계의 주인인 거지!)
-      + 반대편의 List<Order> 에 아무리 값을 설정해도 무시된다. (여긴 참조만 하는 것이지 관계설정에 아무런 영향을 미치지 못한다. 그래서 주인이 아니다.)
+      + 외래키가 있는 Orders 엔티티의 user 필드가 이 관계의 주인이 된다.
+      + 이 말은 외래키 세팅은 Orders 엔티티의 user 필드를 세팅할때만 변한다는 말이다.(그러니 관계의 주인인 거지!)
+      + 반대편의 List<Orders> 에 아무리 값을 설정해도 무시된다. (여긴 참조만 하는 것이지 관계설정에 아무런 영향을 미치지 못한다. 그래서 주인이 아니다.)
       + 사실상, 외래키 설정을 하는 ManyToOne 에서 관계 설정은 끝난 것이다.
       + 양방향으로 OneToMany를 하나 더 설정하는 것은 서비스 비즈니스 로직의 필요에 따라 객체 탐색의 편의성 때문에 하는 것이다.
 
@@ -27,10 +27,10 @@
 
 
 
-#### 2) Entity Class: User, Order
+#### 2) Entity Class: User, Orders
 
    1. __User 엔티티 매핑 참고__
-   2. __Order 엔티티 매핑 참고__
+   2. __Orders 엔티티 매핑 참고__
    3. __연관관계 매핑__
    
       + ManyToOne(User 엔티티)
@@ -45,12 +45,12 @@
         ```
         - ManytoOne, OneToOne에서 Default Fetch Mode는 EAGER 이다.  
       
-      + OneToMany(Order 엔티티)  
+      + OneToMany(Orders 엔티티)  
         ```
              .
              .
 	    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-	    private List<Order> orders = new ArrayList<Order>();
+	    private List<Orders> orders = new ArrayList<Orders>();
              .
              .
         ```
@@ -60,7 +60,7 @@
       + 객체 관계 설정에 주의 할점
         - 영속성과 상관 없이 순수 객체들과의 관계도 고려한 엔티티 클래스 작성을 해야 한다.
         - 양방향 관계이기 때문에 순수 객체에서도 양방향 관계를 맺어주는 것이 좋다.
-        - 관계를 맺는 주인 필드가 세팅되는 Order.setUser() 코드에서 양방향 관계를 맺는 안전한 코드 예시이다.
+        - 관계를 맺는 주인 필드가 세팅되는 Orders.setUser() 코드에서 양방향 관계를 맺는 안전한 코드 예시이다.
         
           ```
             public void setUser(User user) {
@@ -77,7 +77,7 @@
         
           ```
           public String toString() {
-             return "Order{" +
+             return "Orders{" +
                 "no=" + no +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
@@ -163,7 +163,7 @@
           <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33004.png" width="800px" />
           <br>       
         
-        - User와 Order가 조인되었기 때문에 연결된 Order의 개수만큼 User도 나오는 것이 당연하다.
+        - User와 Orders가 조인되었기 때문에 연결된 Orders의 개수만큼 User도 나오는 것이 당연하다.
         - 이는 따지고 보면 문제가 아니다. 관계형데이터베이스와 객체지향프로그래밍 차이에서 발생하는 문제점이라 볼 수 있다.
     
       + test04OCollectionJoinProblemSolved
@@ -174,10 +174,10 @@
         
       + test05NplusOneProblem
         - N+1 문제를 테스트 한다.
-        - 테스트 코드는 총 Order 카운트를 먼저 가져온 다음, 전체 User List에서 개별 User 객체의 Order List의 사이즈를 모두 더해 같은 지 보는 것이다.
+        - 테스트 코드는 총 Orders 카운트를 먼저 가져온 다음, 전체 User List에서 개별 User 객체의 Orders List의 사이즈를 모두 더해 같은 지 보는 것이다.
         - 당연히 같을 것이다.
-        - 테스트 통과조건은 실행된 쿼리수와 전체 User를 가져오기 위한 쿼리수(1)와 Lazy 때문에 각 User 별로 Order List를 가져오기 위해 실행된 쿼리수(N)과 합이 같은 것이다.
-        - 각 User 별로 Order List를 가져오기 위해 쿼리가 실행됐을 거라 추측할 수 있는 근거를 이해하는 것이 중요하다.
+        - 테스트 통과조건은 실행된 쿼리수와 전체 User를 가져오기 위한 쿼리수(1)와 Lazy 때문에 각 User 별로 Orders List를 가져오기 위해 실행된 쿼리수(N)과 합이 같은 것이다.
+        - 각 User 별로 Orders List를 가져오기 위해 쿼리가 실행됐을 거라 추측할 수 있는 근거를 이해하는 것이 중요하다.
         - Lazy 때문에 User 엔티티 객체의 List<Orders>는 Proxy 객체로 실제로 DB에서 가져온 Orders가 담긴 List가 아니다.
         - Proxy 객체이면 result.size() 또는 result.get(0) 등. Orders 엔티티 객체에 접근하려고 할 때, 쿼리가 실행될 것이기 때문에 쿼리수를 카운팅을 할 수 있다.
         - 다음은 이 상태임을 체크하는 코드다.
@@ -193,7 +193,7 @@
       
       + test06NplusOneProblemNotSolvedYet
         - Collection Join 문제를 해결한 findAllCollectionJoinProblemSolved() 메소드로 전체 User List를 가져와서 N+1 문제를 검증하는 테스트 코드를 돌려본다.
-        - User List의 User의 Order List의 Order가 Proxy라면 test05NplusOneProblem() 태스트와 마찬가지로 N+1번 쿼리가 수행됐을 것이다.
+        - User List의 User의 Orders List의 Orders가 Proxy라면 test05NplusOneProblem() 태스트와 마찬가지로 N+1번 쿼리가 수행됐을 것이다.
         - N+1번 나오기 때문에 아직 문제가 해결되지 못했다.
         
       + test07NplusOneProblemSolved
@@ -212,13 +212,13 @@
            
         - 쿼리를 보면 만족스럽다.
         - 결과를 유도하는 과정을 이해했으면 페이징 자체가 컬레션조인에서는 의미가 없고 가능하지 않을 것 같다는 느낌이 와야한다.(사실, 페이징 API를 사용하면 무시된다.) 
-        - 페이징이 필요하면 반대편 ManyToOne Order Repository에서 하는 것이 자연스럽고 구현도 가능하다.(Order Repository에 구현해 놓았다.)
+        - 페이징이 필요하면 반대편 ManyToOne Orders Repository에서 하는 것이 자연스럽고 구현도 가능하다.(Orders Repository에 구현해 놓았다.)
 
   
-#### 3) Spring Data JPA OrderRepository Test : Spring Data JPA 기반 Repository
+#### 3) Spring Data JPA OrdersRepository Test : Spring Data JPA 기반 Repository
         
-  1. __JpaOrderRepository.java__
-     + Order 엔티티(orders 테이블)의 CRUD관련 메소드를 사용할 수 있는 인터페이스다.
+  1. __JpaOrdersRepository.java__
+     + Orders 엔티티(orders 테이블)의 CRUD관련 메소드를 사용할 수 있는 인터페이스다.
      + 기본메소드
        - 상속을 통해 상위 인터페이스 JpaRepository, PagingAndSortingRepository, CrudRepositor 들의 메소드들을 별다른 구현없이 사용 가능한 메소드다.
        - 부모 인터페이스의 메소드들을 보면 꽤 많다. 신뢰있는 영속성 엔티티 객체 핸들링을 보장해 준다.
@@ -227,7 +227,7 @@
        - findAllByUserNo(userNo, sort)
        - countAllByUserNo(userNo)
 
-  2. __JpaOrderQryDslRepository.java__
+  2. __JpaOrdersQryDslRepository.java__
      + 쿼리메소드 findAllByUserNo()가 2회 쿼리가 실행되는 것에 불만이 있다면 다음 메소드들로 대체할 수 있다.
      + QueryDSL로 작성했으며 Sort, Pageablefmf QueryDSL로 바꾸는 코드는 볼 만 하다.
        - findAllByUserNo2(userNo);
@@ -235,10 +235,10 @@
        - findAllByUserNo2(userNo, pageable);
      + countAllGroupByUser()는 QueryDSL에서 GroupBy를 사용하는 예제 메소드이다. 
     
-  3. __JpaOrderQryDslRepositoryImp.java__
+  3. __JpaOrdersQryDslRepositoryImp.java__
      + JpaUserQryDslRepository 인터페이스의 메소드를 QueryDSL로 구현한다.
        
-  4. __JpaOrderRepositoryTest.java__
+  4. __JpaOrdersRepositoryTest.java__
      + test01Save()
        - 기본 메소드 CrudRepository.save(S) 테스트 및 테스트 데이터 생성
      
