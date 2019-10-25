@@ -55,6 +55,7 @@ public class JpaBoardQryDslRepositoryImpl extends QuerydslRepositorySupport impl
                 .fetch();
     }
 
+    @Override
     public List<BoardDto> findAllByOrderByRegDateDesc3(Integer page, Integer size) {
         return queryFactory
                 .select(Projections.fields(BoardDto.class, board.no, board.hit, board.title, board.contents, board.regDate, board.user.name.as("userName")))
@@ -66,6 +67,7 @@ public class JpaBoardQryDslRepositoryImpl extends QuerydslRepositorySupport impl
                 .fetch();
     }
 
+    @Override
     public List<BoardDto> findAll3(Pageable pageable) {
         JPAQuery<BoardDto> query = queryFactory
                 .select(Projections.fields(BoardDto.class, board.no, board.hit, board.title, board.contents, board.regDate, board.user.name.as("userName")))
@@ -84,6 +86,7 @@ public class JpaBoardQryDslRepositoryImpl extends QuerydslRepositorySupport impl
         return query.fetch();
     }
 
+    @Override
     public List<BoardDto> findAll3(String keyword, Pageable pageable) {
         JPAQuery<BoardDto> query = queryFactory
                 .select(Projections.fields(BoardDto.class, board.no, board.hit, board.title, board.contents, board.regDate, board.user.name.as("userName")))
