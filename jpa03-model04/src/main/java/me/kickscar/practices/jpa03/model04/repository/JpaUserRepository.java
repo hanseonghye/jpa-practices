@@ -4,5 +4,4 @@ import me.kickscar.practices.jpa03.model04.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface JpaUserRepository extends JpaRepository<User, Long> {
-    public User findByEmailAndPassword(String email, String password);
 }

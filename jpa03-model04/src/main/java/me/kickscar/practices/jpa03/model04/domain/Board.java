@@ -1,6 +1,7 @@
 package me.kickscar.practices.jpa03.model04.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,8 +45,8 @@ public class Board {
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "no")
-    private List<Comment> comments;
+    @JoinColumn(name = "board_no")
+    private List<Comment> comments = new ArrayList<Comment>();
 
     public Long getNo() {
         return no;

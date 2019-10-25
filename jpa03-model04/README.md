@@ -38,7 +38,7 @@
              .
              .
           @OneToMany(fetch = FetchType.LAZY)
-          @JoinColumn(name = "no")
+          @JoinColumn(name = "board_no")
           private List<Comment> comments;
              .
              .
@@ -46,7 +46,7 @@
         - OneToMany 단방향의 특이점  
           외래키 관리를 Many쪽(Comment)에서 해야하는데, 단방향이기 때문에 Comment에 매핑 필드가 없다는 것이다.  
           그래도 관계 주인필드인 Board.comments가 외래키 관리를 해야 한다.     
-          그래서 @JoinColumn name에 Comment 엔티티의 PK(no)를 꼭 지정해야 한다.
+          그래서 @JoinColumn name에 Comment 엔티티의 FK(board_no)를 꼭 지정해야 한다.
 
         - 하지만, 스키마 생성 DDL를 보면, Many쪽인 Comment 테이블에 Board에 대한 FK를 둔다(당연하지만;;)
         
@@ -63,10 +63,12 @@
 
 ### 02. SpringBoot Test Case
 
+
 #### 0) 요약: 다루는 기술적 내용
 
-  1. 
-  2. 
+  1. OneToMany Unidirectional 단점 이해
+  2. 성능 및 비지니스 요구 따른 레포지토리 메소드 다양화 하기
+
 
 #### 1) 테스트 환경
 
@@ -85,20 +87,54 @@
 #### 2) Spring Data JPA BoardRepository Test : Spring Data JPA 기반 Repository
 
   1. __JpaBoardRepository.java__
+     + 기본메소드와 쿼리메소드 
 
   2. __JpaBoardQryDslRepository.java__
+     + 추가/성능 개선이 필요한 쿼리메소드 정의
 
   3. __JpaBoardQryDslRepositoryImp.java__
+     + 추가/성능 개선이 필요한 쿼리메소드 구현
        
   4. __JpaBoardRepositoryTest.java__
-
+     + test01Save
+     
+       - 코멘트 저장하는 방법 이해
+     
+       ```
+        User user1 = new User();
+        user1.setName("둘리");
+        user1.setPassword("1234");
+        user1.setEmail("dooly@kickscar.me");
+        user1.setGender(GenderType.MALE);
+        user1.setRole(RoleType.USER);
+        userRepository.save(user1);
+       
+        Board board1 = new Board();
+        board1.setTitle("제목1");
+        board1.setContents("내용1");
+        board1.setUser(user1);
+        boardRepository.save(board1);
+       
+        Comment comment1 = new Comment();
+        comment1.setContents("댓글1");
+       
+        commentRepository.save(comment1);
+        board1.getComments().add(comment1);                     
+       ```
+       - Many쪽 Comment Entity가 외래키 관리를 하지 않기 때문에 Insert(Save)후, FK Update를 반대편 Entity(Board)를 통해 해야 한다.
+       - 실제 코드는 기본 메소드 save(Entity)를 오버로딩한 JpaCommentQryDslRepositoryImp.save(boardNo, Comment)를 호출하여 저장한다.
+       - 영속객체를 함께 전달하지만 setter 자체가 없다.(있었으면 함께 넘기지도 않았을 것이다) 
+     
   
 #### 3) Spring Data JPA CommentRepository Test : Spring Data JPA 기반 Repository
         
   1. __JpaCommentRepository.java__
+     + 기본메소드와 쿼리메소드 
 
   2. __JpaCommentQryDslRepository.java__
+     + 추가/성능 개선이 필요한 쿼리메소드 정의
     
   3. __JpaCommentQryDslRepositoryImp.java__
+     + 추가/성능 개선이 필요한 쿼리메소드 구현
        
   4. __JpaCommentRepositoryTest.java__
