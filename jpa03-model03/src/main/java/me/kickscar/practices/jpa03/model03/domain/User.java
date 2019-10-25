@@ -30,7 +30,7 @@ public class User {
 	@Column(name = "role", nullable = false)
 	private RoleType role;
 
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)  // @OneToMany 에서는 기본이 FetchType.LAZY 이다.
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<Orders> orders = new ArrayList<Orders>();
 
 	public Long getNo() {

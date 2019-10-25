@@ -116,38 +116,39 @@ public class JpaOrdersRepositoryTest {
 
     @Test
     public void test02FindAllByUserNo() {
-        long expected = 5L;
         final Long userNo = 1L;
 
         List<Orders> list = orderRepository.findAllByUserNo(userNo);
-        assertEquals(expected, orderRepository.countAllByUserNo(userNo).longValue());
+
+        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
+        assertEquals(orderRepository.countAllByUserNo(userNo).longValue(), list.size());
     }
 
     @Test
     public void test03FindAllByUserNo() {
-        long expected = 5L;
         final Long userNo = 1L;
-
         List<Orders> list = orderRepository.findAllByUserNo(userNo, new Sort(Sort.Direction.DESC, "regDate"));
-        assertEquals(expected, orderRepository.countAllByUserNo(userNo).longValue());
+
+        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
+        assertEquals(orderRepository.countAllByUserNo(userNo).longValue(), list.size());
     }
 
     @Test
     public void test04FindAllByUserNo2() {
-        long expected = 5L;
         final Long userNo = 1L;
-
         List<Orders> list = orderRepository.findAllByUserNo2(userNo);
-        assertEquals(expected, orderRepository.countAllByUserNo(userNo).longValue());
+
+        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
+        assertEquals(orderRepository.countAllByUserNo(userNo).longValue(), list.size());
     }
 
     @Test
     public void test05FindAllByUserNo2() {
-        long expected = 5L;
         final Long userNo = 1L;
-
         List<Orders> list = orderRepository.findAllByUserNo2(userNo, new Sort(Sort.Direction.DESC, "regDate").and(new Sort(Sort.Direction.DESC, "totalPrice")));
-        assertEquals(expected, orderRepository.countAllByUserNo(userNo).longValue());
+
+        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
+        assertEquals(orderRepository.countAllByUserNo(userNo).longValue(), list.size());
     }
 
     @Test
@@ -176,6 +177,7 @@ public class JpaOrdersRepositoryTest {
             totalOrdersCount += dto.getOrderCount();
         }
 
+        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
         assertEquals(totalOrdersCountExpected, totalOrdersCount);
     }
 }

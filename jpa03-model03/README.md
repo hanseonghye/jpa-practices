@@ -157,7 +157,7 @@
       + test03OneToManyCollectionJoinProblem
         - OneToMany Collection Join(inner, outer, fetch)에서 발생하는 문제에 대한 테스트 이다.
         - 테스트 대상 메소드는 JpaUserQryDslRepositoryImpl.findAllCollectionJoinProblem() 메소드다.
-        - 기본메소드 findAll()의 Collection Join를 추가한 QueryDSL로 작성된 user를 전부다 찾아주는 메소드다.
+        - 기본메소드 findAll()의 Collection Join(inner join)를 추가한 QueryDSL로 작성된 user를 전부다 찾아주는 메소드다.
         - 테스트 코드 assert 에도 있지만, user 카운트가 orders 카운트와 같은 문제가 있다.
  
           <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33004.png" width="800px" />
@@ -168,15 +168,19 @@
     
       + test04OCollectionJoinProblemSolved
         - Collection Join 문제 해결방법은 의외로 간단하다. distinct를 사용해 관계형데이터베이스에서 문제를 해결한다.
+        - findAllCollectionJoinProblemSolved()는 left join을 사용한다.
         - JpaUserQryDslRepositoryImpl.findAllCollectionJoinProblemSolved() 메소드를 보면 QueryDSL의 selectDistinct() 함수로 해결한다.
         - OneToMany Collection 조인 outer, inner, fetch join 모두 해당되는 내용으로 반드시 selectDistinct() 함수를 사용해야 한다.
         
       + test05NplusOneProblem
         - N+1 문제를 테스트 한다.
         - 테스트 코드는 총 Order 카운트를 먼저 가져온 다음, 전체 User List에서 개별 User 객체의 Order List의 사이즈를 모두 더해 같은 지 보는 것이다.
-        - 당연히 같을 것이다. 테스트 통과 조건은 실행된 쿼리수와 전체 User를 가져오기 위해 실행된 쿼리(1)과 Lazy 때문에 각 User 별로 Order List를 가져오기 위해 실행된 쿼리 수(N)과 합이 같은 것이다.
-        - 각 User 별로 Order List를 가져오기 위해 쿼리가 실행됐을 거라 추측할 수 있는 근거는 Lazy 때문에 User 엔티티 객체의 List<Order> Orders는 Proxy 객체로 실제로 DB에서 가져온 Order가 담긴 List가 아니다.
-        - Proxy 객체이면 List의 사이즈를 가져올 때 쿼리가 들어 갈 것이기 때문에 쿼리 카운팅을 할 수 있다.
+        - 당연히 같을 것이다.
+        - 테스트 통과조건은 실행된 쿼리수와 전체 User를 가져오기 위한 쿼리수(1)와 Lazy 때문에 각 User 별로 Order List를 가져오기 위해 실행된 쿼리수(N)과 합이 같은 것이다.
+        - 각 User 별로 Order List를 가져오기 위해 쿼리가 실행됐을 거라 추측할 수 있는 근거를 이해하는 것이 중요하다.
+        - Lazy 때문에 User 엔티티 객체의 List<Orders>는 Proxy 객체로 실제로 DB에서 가져온 Orders가 담긴 List가 아니다.
+        - Proxy 객체이면 result.size() 또는 result.get(0) 등. Orders 엔티티 객체에 접근하려고 할 때, 쿼리가 실행될 것이기 때문에 쿼리수를 카운팅을 할 수 있다.
+        - 다음은 이 상태임을 체크하는 코드다.
         
           ```
             if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(orders)){
@@ -185,21 +189,20 @@
                     
           ```     
         - PersistenceUnitUtil.isLoaded(Entity) 반환이 false이면 초기화 되지 않은 Proxy객체로 지연로딩 중인 것이다.
-        - 테스트 결과는 N+1번으로 쿼리가 실행된 것을 확인할 수 있다. (실제 쿼리 로그를 세어 보아도 확인된다.)
+        - 테스트 결과는 N+1번으로 쿼리가 실행된 것을 확인할 수 있다. (실제 쿼리로그를 세어 보아도 확인된다.)
       
       + test06NplusOneProblemNotSolvedYet
         - Collection Join 문제를 해결한 findAllCollectionJoinProblemSolved() 메소드로 전체 User List를 가져와서 N+1 문제를 검증하는 테스트 코드를 돌려본다.
-        - User List의 User의 Order List의 Order가 Proxy라면 test05NplusOneProblem() 태스트와 마찬가지로 N + 1번 쿼리가 수행됐을 것이다.
-        - N + 1번 나오기 때문에 아직 문제가 해결되지 못했다.
-        - findAllCollectionJoinProblemSolved() 는 left join을 사용한다.
+        - User List의 User의 Order List의 Order가 Proxy라면 test05NplusOneProblem() 태스트와 마찬가지로 N+1번 쿼리가 수행됐을 것이다.
+        - N+1번 나오기 때문에 아직 문제가 해결되지 못했다.
         
       + test07NplusOneProblemSolved
-        - N + 1 문제를 해결하기 위해  JpaUserQryDslRepositoryImpl.findAllCollectionJoinAndNplusOneProblemSolved() 메소드를 구현했다.
-        - 이름은 길지만 innerJoin() + fetchJoin() 으로 작성된 QueryDSL 컬렉션 페치 조인한다.
-        - 테스트 통과 조건인 1번 쿼리수가 나왔다.
-        - test method에 @Transactional 를 사용하지 않은 것도 주목하자. Proxy 객체를 사용하지 않을 때는 영속성이 필요 없기 때문에 @Transactional을 사용하지 않아도 된다.
+        - N+1 문제를 해결하기 위해  JpaUserQryDslRepositoryImpl.findAllCollectionJoinAndNplusOneProblemSolved() 메소드를 작성했다.
+        - 이름은 길지만 innerJoin() + fetchJoin() 으로 작성된 QueryDSL 컬렉션페치조인을 한다.
+        - 테스트 통과 조건인 1번 쿼리수가 나왔다!
+        - @Transactional 를 사용하지 않은 것도 주목하자. Proxy 객체를 사용하지 않을 때는 영속성이 필요없기 때문에 사용하지 않아도 된다.(영속성과 트랜잭션과의 관계 이해 필요)
         - OneToMany에서 객체그래프를 통해 컬렉션 접근 시, 발생하는 조인문제와 N+1 Lazy 로딩 문제를 해결하기 위해서는 selectDistinct(), fecthJoin()을 사용하면 된다.
-        - Lazy로 객체 그래프를 통해 컬렉션에 접근하는 것이 반드시 좋지 못한 것은 아니다. 상황에 따라 선택해야 한다. 
+        - Lazy로 객체그래프를 통해 컬렉션에 접근하는 것이 좋지 못한 것은 아니다. 상황에 따라서는 성능에 도움이 되는 것도 기억해야 하고 Global Fetch 전략도 실무에서는 보통 LAZY임도 알아야 한다.
 
       + test08findOrdersByNo
         - 최적화된 findAllCollectionJoinAndNplusOneProblemSolved() 기반으로 특정 사용자의 주문내역을 조회하는 메소드 findOrdersByNo(no)를 테스트 한다.
@@ -207,9 +210,9 @@
            <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33005.png" width="800px" />
            <br>       
            
-        - 쿼리를 보면 비교적 만족스럽다.
-        - 결과를 유도하는 과정을 보면 페이징은 불가능해 보인다.(Order By 필드도 얘매하고 사실, 페이징 API를 사용하면 무시된다.) 
-        - 페이징이 필요하면 반대편 ManyToOne Order Repository에서 하는 것이 자연스럽고 구햔도 가능하다.
+        - 쿼리를 보면 만족스럽다.
+        - 결과를 유도하는 과정을 이해했으면 페이징 자체가 컬레션조인에서는 의미가 없고 가능하지 않을 것 같다는 느낌이 와야한다.(사실, 페이징 API를 사용하면 무시된다.) 
+        - 페이징이 필요하면 반대편 ManyToOne Order Repository에서 하는 것이 자연스럽고 구현도 가능하다.(Order Repository에 구현해 놓았다.)
 
   
 #### 3) Spring Data JPA OrderRepository Test : Spring Data JPA 기반 Repository
@@ -217,17 +220,58 @@
   1. __JpaOrderRepository.java__
      + Order 엔티티(orders 테이블)의 CRUD관련 메소드를 사용할 수 있는 인터페이스다.
      + 기본메소드
-       - 상속을 통해 상위 인터페이스 JpaRepository, PagingAndSortingRepository, CrudRepositor 들의 메소드들을 별다른 구현없이 사용 가능하다.
-     + 쿼리메소드
-       - findByEmailAndPassword(String, String) 메소드가 그 예이다.
+       - 상속을 통해 상위 인터페이스 JpaRepository, PagingAndSortingRepository, CrudRepositor 들의 메소드들을 별다른 구현없이 사용 가능한 메소드다.
+       - 부모 인터페이스의 메소드들을 보면 꽤 많다. 신뢰있는 영속성 엔티티 객체 핸들링을 보장해 준다.
+     + 쿼리메소드 - 당연하지만, 쿼리메소드들도 오버로딩을 사용해서 만들어 낼 수 있다. 
+       - findAllByUserNo(userNo)
+       - findAllByUserNo(userNo, sort)
+       - countAllByUserNo(userNo)
 
   2. __JpaOrderQryDslRepository.java__
-     + findById2(no)는 기본메소드 findById(no)의 성능문제와 비즈니스 요구사항 때문에 QueryDSL로 직접 구현해야 하는 메소드이다.
-     + update(user)는 영속객체를 사용한 update의 성능문제 때문에 jpa03-model02의 JpaUserRepository에 @Query 어노테이션을 사용해서 JPQL를 직접 사용했는데 메소드 파라미터에 문제가 있어 QueryDSL로 직접 구현해야 하는 메소드이다. 
-
-  7. __JpaOrderQryDslRepositoryImp.java__
+     + 쿼리메소드 findAllByUserNo()가 2회 쿼리가 실행되는 것에 불만이 있다면 다음 메소드들로 대체할 수 있다.
+     + QueryDSL로 작성했으며 Sort, Pageablefmf QueryDSL로 바꾸는 코드는 볼 만 하다.
+       - findAllByUserNo2(userNo);
+       - findAllByUserNo2(userNo, sort);
+       - findAllByUserNo2(userNo, pageable);
+     + countAllGroupByUser()는 QueryDSL에서 GroupBy를 사용하는 예제 메소드이다. 
+    
+  3. __JpaOrderQryDslRepositoryImp.java__
      + JpaUserQryDslRepository 인터페이스의 메소드를 QueryDSL로 구현한다.
        
-  8. __JpaOrderRepositoryTest.java__
-
-        
+  4. __JpaOrderRepositoryTest.java__
+     + test01Save()
+       - 기본 메소드 CrudRepository.save(S) 테스트 및 테스트 데이터 생성
+     
+     + test02FindAllByUserNo
+       - 쿼리메소드 findAllByUserNo(userNo)를 테스트 한다.
+       - ManyToOne Fetch는 EAGER가 default이기 때문에 Orders들을 가져온 후, Orders의 user를 세팅하기 위해 select쿼리가 바로 실행된다.
+       - Orders를 가져오는 데, outer join을 사용하지만 select에는 user가 없다.
+       - PersistenceUnitUtil().isLoaded(Entity)로 영속 Entity 객체임이 바로 확인된다.
+      
+     + test03FindAllByUserNo
+       - 쿼리메소드 findAllByUserNo(userNo, sort)를 테스트 한다.
+       - test02와 같고 sorting(Order By) 여부만 테스트한다.
+       - 테스트 통과 조건에 sorting을 넣지 않았다(쿼리 로그로 Order By절이 추가되었는 지 확인)
+       
+     + test04FindAllByUserNo2
+       - test03, test03의 2번 쿼리 실행을 해결한 QueryDSL로 작성한 findAllByUserNo2() 이다.
+       - innerJoin()은 조인은 되지만 문제가 select에 User 필드를 포함하지 않는 것이다.
+       - fetchJoin()을 함께 해야 한다.
+       - 쿼리 확인 할 것
+     
+     + test05FindAllByUserNo2
+       - findAllByUserNo2()를 오버로딩해서 Sort를 받아 Order By를 하는 메소드 findAllByUserNo2(userNo, sort)를 테스트 한다.
+       - QueryDSL에 Sort를 적용하는 방법 예시다.
+       - Order By 필드를 여러 개 적용하는 방법도 테스트 코드에 있다.
+       - 외부에서 sorting 필드를 세팅할 수 있는 장점이 있다.
+     
+     + test06FindAllByUserNo2    
+       - findAllByUserNo2()를 오버로딩해서 Pageable를 받아 Order By와 limit을 함께 구현한 메소드 findAllByUserNo2(userNo, pageable)를 테스트 한다.
+       - QueryDSL에 Pageable를 적용하는 방법 예시다.
+       - 외부에서 Paging Size, Index, Sorting Field들을 세팅할 수 있는 장점이 있는 매우 유용한 방법이라 할 수 있다.
+       
+     + test07CountAllGroupByUser
+       - QueryDSL의 groupBy() 사용 예시 메소드 countAllGroupByUser()를 테스트 한다.
+       - Group By뿐만 아니라 집계함수등이 사용되면(counting만 하는 것은 제외) 일단 Entity를 select에 올릴 수 없기 때문에 Projection과 DTO 사용을 먼저 생각해야 한다.
+       - 테스트 통과 조건은 전체 Orders 수를 counting하고 사용자별 Orders 수를 저장한 DTO 들을 순회하면서 더한 값과 같은지 따져보는 것이다.
+       - 참고로 Having도 QeuryDSL에서 사용 가능하다.

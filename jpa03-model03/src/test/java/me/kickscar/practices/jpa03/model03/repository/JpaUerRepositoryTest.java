@@ -152,12 +152,12 @@ public class JpaUerRepositoryTest {
         List<User> users = userRepository.findAll();
 
         for(User user : users) {
-            List<Orders> orders = user.getOrders();
+            List<Orders> result = user.getOrders();
 
-            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(orders)){
+            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(result)){
                 qryCount++;
             }
-            ordersCountActual += orders.size();
+            ordersCountActual += result.size();
 
         }
 
@@ -178,12 +178,12 @@ public class JpaUerRepositoryTest {
         List<User> users = userRepository.findAllCollectionJoinProblemSolved();
 
         for(User user : users) {
-            List<Orders> orders = user.getOrders();
+            List<Orders> result = user.getOrders();
 
-            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(orders)){
+            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(result)){
                 qryCount++;
             }
-            ordersCountActual += orders.size();
+            ordersCountActual += result.size();
         }
 
         assertEquals(ordersCountExpected, ordersCountActual);
@@ -202,12 +202,12 @@ public class JpaUerRepositoryTest {
         List<User> users = userRepository.findAllCollectionJoinAndNplusOneProblemSolved();
 
         for(User user : users) {
-            List<Orders> orders = user.getOrders();
+            List<Orders> result = user.getOrders();
 
-            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(orders)){
+            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(result)){
                 qryCount++;
             }
-            ordersCountActual += orders.size();
+            ordersCountActual += result.size();
         }
 
         assertEquals(ordersCountExpected, ordersCountActual);
