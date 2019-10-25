@@ -274,4 +274,4 @@
        - QueryDSL의 groupBy() 사용 예시 메소드 countAllGroupByUser()를 테스트 한다.
        - Group By뿐만 아니라 집계함수등이 사용되면(counting만 하는 것은 제외) 일단 Entity를 select에 올릴 수 없기 때문에 Projection과 DTO 사용을 먼저 생각해야 한다.
        - 테스트 통과 조건은 전체 Orders 수를 counting하고 사용자별 Orders 수를 저장한 DTO 들을 순회하면서 더한 값과 같은지 따져보는 것이다.
-       - 참고로 Having도 QeuryDSL에서 사용 가능하다.
+       - 참고로 Having도 QueryDSL에서 사용 가능하다.
