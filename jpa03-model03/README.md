@@ -157,14 +157,14 @@
       + test03OneToManyCollectionJoinProblem
         - OneToMany Collection Join(inner, outer, fetch)에서 발생하는 문제에 대한 테스트 이다.
         - 테스트 대상 메소드는 JpaUserQryDslRepositoryImpl.findAllCollectionJoinProblem() 메소드다.
-        - 기본메소드 findAll()의 Collection Join(inner join)를 추가한 QueryDSL로 작성된 user를 전부다 찾아주는 메소드다.
+        - 기본메소드 findAll()의 Collection Join(inner join)를 추가한 QueryDSL로 작성된 user를 전부 다 찾아주는 메소드다.
         - 테스트 코드 assert 에도 있지만, user 카운트가 orders 카운트와 같은 문제가 있다.
  
           <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/33004.png" width="800px" />
           <br>       
         
-        - User와 Orders가 조인되었기 때문에 연결된 Orders의 개수만큼 User도 나오는 것이 당연하다.
-        - 이는 따지고 보면 문제가 아니다. 관계형데이터베이스와 객체지향프로그래밍 차이에서 발생하는 문제점이라 볼 수 있다.
+          1) User와 Orders가 조인되었기 때문에 연결된 Orders의 개수만큼 User도 나오는 것이 당연하다.
+          2) 이는 따지고 보면 문제가 아니다. 관계형데이터베이스와 객체지향프로그래밍 차이에서 발생하는 문제점이라 볼 수 있다.
     
       + test04OCollectionJoinProblemSolved
         - Collection Join 문제 해결방법은 의외로 간단하다. distinct를 사용해 관계형데이터베이스에서 문제를 해결한다.
@@ -176,20 +176,20 @@
         - N+1 문제를 테스트 한다.
         - 테스트 코드는 총 Orders 카운트를 먼저 가져온 다음, 전체 User List에서 개별 User 객체의 Orders List의 사이즈를 모두 더해 같은 지 보는 것이다.
         - 당연히 같을 것이다.
-        - 테스트 통과조건은 실행된 쿼리수와 전체 User를 가져오기 위한 쿼리수(1)와 Lazy 때문에 각 User 별로 Orders List를 가져오기 위해 실행된 쿼리수(N)과 합이 같은 것이다.
+        - 테스트 통과 조건은 실행된 쿼리수와 전체 User를 가져오기 위한 쿼리수(1)와 Lazy 때문에 각 User 별로 Orders List를 가져오기 위해 실행된 쿼리수(N)과 합이 같은 것이다.
         - 각 User 별로 Orders List를 가져오기 위해 쿼리가 실행됐을 거라 추측할 수 있는 근거를 이해하는 것이 중요하다.
-        - Lazy 때문에 User 엔티티 객체의 List<Orders>는 Proxy 객체로 실제로 DB에서 가져온 Orders가 담긴 List가 아니다.
-        - Proxy 객체이면 result.size() 또는 result.get(0) 등. Orders 엔티티 객체에 접근하려고 할 때, 쿼리가 실행될 것이기 때문에 쿼리수를 카운팅을 할 수 있다.
-        - 다음은 이 상태임을 체크하는 코드다.
+          1) Lazy 때문에 User 엔티티 객체의 List<Orders>는 Proxy 객체로 실제로 DB에서 가져온 Orders가 담긴 List가 아니다.  
+          2) Proxy 객체이면 result.size() 또는 result.get(0) 등, Orders 엔티티 객체에 접근하려고 할 때 쿼리가 실행될 것이기 때문에 쿼리수를 카운팅을 할 수 있다.  
+          3) 다음은 이 상태임을 체크하는 코드다.  
         
-          ```
-            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(orders)){
-                qryCount++;
-            }
+             ```
+               if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(orders)){
+                  qryCount++;
+               }
                     
-          ```     
-        - PersistenceUnitUtil.isLoaded(Entity) 반환이 false이면 초기화 되지 않은 Proxy객체로 지연로딩 중인 것이다.
-        - 테스트 결과는 N+1번으로 쿼리가 실행된 것을 확인할 수 있다. (실제 쿼리로그를 세어 보아도 확인된다.)
+             ```     
+          4) PersistenceUnitUtil.isLoaded(Entity) 반환이 false이면 초기화 되지 않은 Proxy객체로 지연로딩 중인 것이다.  
+         - 테스트 결과는 N+1번으로 쿼리가 실행된 것을 확인할 수 있다. (실제 쿼리로그를 세어 보아도 확인된다.)
       
       + test06NplusOneProblemNotSolvedYet
         - Collection Join 문제를 해결한 findAllCollectionJoinProblemSolved() 메소드로 전체 User List를 가져와서 N+1 문제를 검증하는 테스트 코드를 돌려본다.
