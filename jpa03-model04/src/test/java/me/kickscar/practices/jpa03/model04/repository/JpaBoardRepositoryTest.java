@@ -58,21 +58,8 @@ public class JpaBoardRepositoryTest {
         board2.setUser(user1);
         boardRepository.save(board2);
 
-        Comment comment1 = new Comment();
-        comment1.setContents("댓글1");
-        commentRepository.save(1L, comment1);
-
-        Comment comment2 = new Comment();
-        comment2.setContents("댓글2");
-        commentRepository.save(1L, comment2);
-
-        Comment comment3 = new Comment();
-        comment3.setContents("댓글3");
-        commentRepository.save(2L, comment3);
-
-        Comment comment4 = new Comment();
-        comment4.setContents("댓글4");
-        commentRepository.save(2L, comment4);
+        commentRepository.save(1L, new Comment("댓글1"));
+        commentRepository.save(2L, new Comment("댓글2"), new Comment("댓글3"));
 
         //============================================
 
@@ -96,22 +83,9 @@ public class JpaBoardRepositoryTest {
         board4.setUser(user2);
         boardRepository.save(board4);
 
-        Comment comment5 = new Comment();
-        comment5.setContents("댓글5");
-        commentRepository.save(3L, comment5);
+        commentRepository.save(3L, new Comment("댓글4"), new Comment("댓글5"), new Comment("댓글6"));
+        commentRepository.save(4L, new Comment("댓글7"), new Comment("댓글8"), new Comment("댓글9"), new Comment("댓글10"));
 
-        Comment comment6 = new Comment();
-        comment6.setContents("댓글6");
-        commentRepository.save(3L, comment6);
-
-        Comment comment7 = new Comment();
-        comment7.setContents("댓글7");
-        commentRepository.save(4L, comment7);
-
-        Comment comment8 = new Comment();
-        comment8.setContents("댓글8");
-        commentRepository.save(4L, comment8);
-
-        assertEquals(8L, commentRepository.count());
+        assertEquals(10L, commentRepository.count());
     }
 }

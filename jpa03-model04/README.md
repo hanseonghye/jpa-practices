@@ -44,17 +44,16 @@
              .
         ```
         - OneToMany 단방향의 특이점  
-          외래키 관리를 Many쪽(Comment)에서 해야하는데, 단방향이기 때문에 Comment에 매핑 필드가 없다는 것이다.  
-          그래도 관계 주인필드인 Board.comments가 외래키 관리를 해야 한다.     
-          그래서 @JoinColumn name에 Comment 엔티티의 FK(board_no)를 꼭 지정해야 한다.
-
-        - 하지만, 스키마 생성 DDL를 보면, Many쪽인 Comment 테이블에 Board에 대한 FK를 둔다(당연하지만;;)
+          1) 외래키 관리를 Many쪽(Comment)에서 해야하는데, 단방향이기 때문에 Comment에 매핑 필드가 없다는 것이다.  
+          2) 그래도 관계 주인필드인 Board.comments가 외래키 관리를 해야 한다.     
+          3) 그래서 @JoinColumn name에 Comment 엔티티의 FK(board_no)를 꼭 지정해야 한다.  
+          4) 하지만, 스키마 생성 DDL를 보면, Many쪽인 Comment 테이블에 Board에 대한 FK를 둔다(당연하지만;;)  
         
-          <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/34003.png" width="500px" />
-          <br>
+             <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/34004.png" width="500px" />
+             <br>
                 
-        - @JoinColumn를 하지 않으면 JPA의 Join Table 전략이 적용되어 연결 테이블을 중간에 두고 연관관계를 관리한다.  
-        - OneToMany 에서는 Default Fetch Mode는 LAZY 이다.
+          5) @JoinColumn를 하지 않으면 JPA의 Join Table 전략이 적용되어 연결 테이블을 중간에 두고 연관관계를 관리한다.    
+          6) OneToMany 에서는 Default Fetch Mode는 LAZY 이다.  
       
       + 객체 관계 설정에 주의 할점
         - 단점을 분명하게 인지할 것: 외래키 관리를 다른 테이블에서 한다. (Many 쪽에서 하지 않는다.) 이는 다른 테이블에 FK가 있으면 Insert 작업 시, 추가적으로 Update를 해야 한다.
@@ -98,33 +97,55 @@
   4. __JpaBoardRepositoryTest.java__
      + test01Save
      
-       - 코멘트 저장하는 방법 이해
+       - **코멘트 저장하는 방법 이해(How to Persist Many Side's Entity for OneToMany Unidirectional Model)**
      
-       ```
-        User user1 = new User();
-        user1.setName("둘리");
-        user1.setPassword("1234");
-        user1.setEmail("dooly@kickscar.me");
-        user1.setGender(GenderType.MALE);
-        user1.setRole(RoleType.USER);
-        userRepository.save(user1);
+         ```
+         User user = new User();
+         user.setName("둘리");
+         user.setPassword("1234");
+         user.setEmail("dooly@kickscar.me");
+         user.setGender(GenderType.MALE);
+         user.setRole(RoleType.USER);
+         userRepository.save(user1);
        
-        Board board1 = new Board();
-        board1.setTitle("제목1");
-        board1.setContents("내용1");
-        board1.setUser(user1);
-        boardRepository.save(board1);
+         Board board = new Board();
+         board.setTitle("제목");
+         board.setContents("내용");
+         board.setUser(user);
+         boardRepository.save(board);
        
-        Comment comment1 = new Comment();
-        comment1.setContents("댓글1");
+         Comment comment = new Comment();
+         comment.setContents("댓글");
        
-        commentRepository.save(comment1);
-        board1.getComments().add(comment1);                     
-       ```
-       - Many쪽 Comment Entity가 외래키 관리를 하지 않기 때문에 Insert(Save)후, FK Update를 반대편 Entity(Board)를 통해 해야 한다.
-       - 실제 코드는 기본 메소드 save(Entity)를 오버로딩한 JpaCommentQryDslRepositoryImp.save(boardNo, Comment)를 호출하여 저장한다.
-       - 영속객체를 함께 전달하지만 setter 자체가 없다.(있었으면 함께 넘기지도 않았을 것이다) 
-     
+         commentRepository.save(comment);
+         board.getComments().add(comment);
+                              
+         ```
+         
+         1) Many쪽 Comment 엔티티가 외래키 관리를 하지 않기 때문에 Insert(Save)후, FK Update를 해야하며 반대편 Board 엔티티를 통해 한다.  
+         2) 실제 코드는 기본 메소드 save(Entity)를 오버로딩한 JpaCommentQryDslRepositoryImp.save(boardNo, comments)를 구현하였다.  
+         3) save(boardNo, comments) 메소드를 보면, Comment 엔티티에 board의 no를 세팅할 필드가 없고 당연히 setter 자체가 없기 때문에 두 개로 나눠 함께 전달한다.  
+         4) comments 파라미터는 Variable Arguments(Varargs)를 사용하여 여러 Comment 엔티티 객체를 전달할 수 있도록 하였다.  
+       
+         ```
+         commentRepository.save(1L, new Comment("댓글1"));
+         commentRepository.save(2L, new Comment("댓글2"), new Comment("댓글3"));
+         
+         ```
+
+         5) OneToMain Unidirectional의 단점은 다음 ManyToOne Bidirectional 으로 바꿨을 때 예상되는 코드와 비교해 보면 명확히 알 수 있다.
+
+         ```
+         Comment comment = new Comment();
+         comment.setBoardNo(1L);
+         comment.setContents("댓글");
+       
+         commentRepository.save(comment);
+         
+         ```
+         6) OneToMain Unidirection의 단점은 다음 ManyToOne Bidirection 으로 바꿨을 때 예상되는 코드와 비교해 보면 명확히 알 수 있다.
+       
+       
   
 #### 3) Spring Data JPA CommentRepository Test : Spring Data JPA 기반 Repository
         

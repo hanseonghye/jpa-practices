@@ -25,6 +25,13 @@ public class Comment {
     @JoinColumn( name = "user_no" )
     private User user;
 
+    public Comment(){
+    }
+
+    public Comment(String contents){
+        this.contents = contents;
+    }
+
     public Long getNo() {
         return no;
     }

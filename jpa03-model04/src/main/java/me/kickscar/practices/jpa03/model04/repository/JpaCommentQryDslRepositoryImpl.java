@@ -21,13 +21,14 @@ public class JpaCommentQryDslRepositoryImpl extends QuerydslRepositorySupport im
     }
 
     @Override
-    public void save(Long boardNo, Comment comment) {
+    public void save(Long boardNo, Comment ...comments) {
         EntityManager em = getEntityManager();
-        em.persist(comment);
 
         Board board = em.find(Board.class, boardNo);
-        board.getComments().add(comment);
 
-        em.persist(board);
+        for(Comment comment :  comments) {
+            em.persist(comment);
+            board.getComments().add(comment);
+        }
     }
 }
