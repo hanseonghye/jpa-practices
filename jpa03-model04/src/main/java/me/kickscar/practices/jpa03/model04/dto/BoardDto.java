@@ -1,6 +1,9 @@
 package me.kickscar.practices.jpa03.model04.dto;
 
+import me.kickscar.practices.jpa03.model04.domain.Comment;
+
 import java.util.Date;
+import java.util.List;
 
 public class BoardDto {
     private Long no;
@@ -8,7 +11,9 @@ public class BoardDto {
     private String title;
     private String contents;
     private Date regDate;
+
     private String userName;
+    private List<Comment> comments;
 
     public Long getNo() {
         return no;
@@ -56,6 +61,14 @@ public class BoardDto {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
     @Override

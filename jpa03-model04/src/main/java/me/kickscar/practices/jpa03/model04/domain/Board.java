@@ -40,7 +40,7 @@ public class Board {
     @Column( name = "depth", nullable = false )
 	private Integer depth;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn( name = "user_no" )
     private User user;
 

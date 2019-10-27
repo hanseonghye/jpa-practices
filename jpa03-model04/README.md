@@ -1,9 +1,9 @@
 ## Model04 : 일대다(OneToMany) - 단방향
 
 
-### 01. Domain
+### 1. Domain
 
-#### 1) 테이블 연관관계 VS 객체 연관관계
+#### 1-1. 테이블 연관관계 VS 객체 연관관계
 
    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/34001.png" width="500px" />
    <br>
@@ -26,7 +26,7 @@
       + JPA 2.0 부터 지원
 
 
-#### 2) Entity Class: Board, Comment
+#### 1-2. Entity Class: Board, Comment
 
    1. __Board 엔티티 매핑 참고__
    2. __Comment 엔티티 매핑 참고__
@@ -60,16 +60,17 @@
         - **OneToMany Unidirectional을 써야 하다면 ManyToOne Bidirectional를 사용하는 것을 보통 추천한다**  
 
 
-### 02. SpringBoot Test Case
+### 2. SpringBoot Test Case
 
 
-#### 0) 요약: 다루는 기술적 내용
+#### 2-1. 요약: 다루는 기술적 내용
 
   1. OneToMany Unidirectional 단점 이해
-  2. 성능 및 비지니스 요구 따른 레포지토리 메소드 다양화 하기
+  2. Global Fetch 전략 LAZY에 대한 이해
+  3. 성능 및 비지니스 요구 따른 레포지토리 메소드 최적화 하기
 
 
-#### 1) 테스트 환경
+#### 2-2. 테스트 환경
 
   1. __Java SE 1.8__  
   2. __Spring Boot Starter Web 2.1.8.RELEASE (Spring Core, Context, Web ... etc 5.19.RELEASE)__   
@@ -83,7 +84,7 @@
  10. __Gradle 5.4__    
 
 
-#### 2) Spring Data JPA BoardRepository Test : Spring Data JPA 기반 Repository
+#### 2-3. Spring Data JPA BoardRepository Test : Spring Data JPA 기반 Repository
 
   1. __JpaBoardRepository.java__
      + 기본메소드와 쿼리메소드 
@@ -95,59 +96,190 @@
      + 추가/성능 개선이 필요한 쿼리메소드 구현
        
   4. __JpaBoardRepositoryTest.java__
+  
      + test01Save
      
-       - **코멘트 저장하는 방법 이해(How to Persist Many Side's Entity for OneToMany Unidirectional Model)**
+        - **코멘트 저장하는 방법 이해(How to Persist Many Side's Entity for OneToMany Unidirectional Model)**
      
-         ```
-         User user = new User();
-         user.setName("둘리");
-         user.setPassword("1234");
-         user.setEmail("dooly@kickscar.me");
-         user.setGender(GenderType.MALE);
-         user.setRole(RoleType.USER);
-         userRepository.save(user1);
+            ```
+                User user = new User();
+                user.setName("둘리");
+                user.setPassword("1234");
+                user.setEmail("dooly@kickscar.me");
+                user.setGender(GenderType.MALE);
+                user.setRole(RoleType.USER);
+                userRepository.save(user1);
        
-         Board board = new Board();
-         board.setTitle("제목");
-         board.setContents("내용");
-         board.setUser(user);
-         boardRepository.save(board);
+                Board board = new Board();
+                board.setTitle("제목");
+                board.setContents("내용");
+                board.setUser(user);
+                boardRepository.save(board);
        
-         Comment comment = new Comment();
-         comment.setContents("댓글");
+                Comment comment = new Comment();
+                comment.setContents("댓글");
        
-         commentRepository.save(comment);
-         board.getComments().add(comment);
-                              
-         ```
+                commentRepository.save(comment);
+                board.getComments().add(comment);
+            ```
          
-         1) Many쪽 Comment 엔티티가 외래키 관리를 하지 않기 때문에 Insert(Save)후, FK Update를 해야하며 반대편 Board 엔티티를 통해 한다.  
-         2) 실제 코드는 기본 메소드 save(Entity)를 오버로딩한 JpaCommentQryDslRepositoryImp.save(boardNo, comments)를 구현하였다.  
-         3) save(boardNo, comments) 메소드를 보면, Comment 엔티티에 board의 no를 세팅할 필드가 없고 당연히 setter 자체가 없기 때문에 두 개로 나눠 함께 전달한다.  
-         4) comments 파라미터는 Variable Arguments(Varargs)를 사용하여 여러 Comment 엔티티 객체를 전달할 수 있도록 하였다.  
-       
-         ```
-         commentRepository.save(1L, new Comment("댓글1"));
-         commentRepository.save(2L, new Comment("댓글2"), new Comment("댓글3"));
+            1) Many쪽 Comment 엔티티가 외래키 관리를 하지 않기 때문에 Insert(Save)후, FK Update를 해야하며 반대편 Board 엔티티를 통해 한다.  
+      
+        - 실제 코드는 기본 메소드 save(Entity)를 오버로딩한 JpaCommentQryDslRepositoryImp.save(boardNo, comments) 이다.  
+          
+            ```
+                commentRepository.save(1L, new Comment("댓글1"));
+                commentRepository.save(2L, new Comment("댓글2"), new Comment("댓글3"));
+            ```
+            
+            1) save(boardNo, comments) 메소드를 보면, Comment 엔티티에 board의 no를 세팅할 필드가 없고 당연히 setter 자체가 없기 때문에 두 개로 나눠 함께 전달한다.  
+            2) comments 파라미터는 Variable Arguments(Varargs)를 사용하여 여러 Comment 엔티티 객체를 전달할 수 있도록 하였다.  
+            3) 실행된 Update 쿼리 로그    
          
-         ```
+                ```
+                    Hibernate: 
+                    /* create one-to-many row me.kickscar.practices.jpa03.model04.domain.Board.comments */ update
+                        comment 
+                    set
+                        board_no=? 
+                    where
+                        no=?         
+                ```
 
-         5) OneToMain Unidirectional의 단점은 다음 ManyToOne Bidirectional 으로 바꿨을 때 예상되는 코드와 비교해 보면 명확히 알 수 있다.
+        - OneToMain Unidirectional의 단점은 다음 ManyToOne Bidirectional 으로 바꿨을 때 예상되는 코드와 비교해 보면 명확히 알 수 있다.
 
-         ```
-         Comment comment = new Comment();
-         comment.setBoardNo(1L);
-         comment.setContents("댓글");
+            ```
+                Comment comment = new Comment();
+                comment.setBoardNo(1L);
+                comment.setContents("댓글");
        
-         commentRepository.save(comment);
+                commentRepository.save(comment);
+            ```
+     
+     + test02SaveEagerProblem
+     
+        - Comment 엔티티 저장에서 ManyToOne 기본 페치전략 EAGER의 문제점 테스트
+        - **글로벌 Fecth 전략 - LAZY(지연로딩)**
+            1) EAGER : ManyToOne, OnetoOne
+            2) LAZY : OneToMany
+            3) 보통 위의 기본 페치전략을 유지하지 않는다. 특히, EAGER 페치전략을 LAZY로 세팅하는 것이 기본이다.
+        - 테스트 코드
+            
+            ```
+                Board board = em.find(Board.class, boardNo);    
+            ```
+            
+            Board 엔티티를 DB로부터 Fetch하여 영속화 시키기 위해 실행된 쿼리는   
+            
+            ```
+                Hibernate: 
+                    select
+                        board0_.no as no1_0_0_,
+                        board0_.contents as contents2_0_0_,
+                        board0_.hit as hit3_0_0_,
+                        board0_.reg_date as reg_date4_0_0_,
+                        board0_.title as title5_0_0_,
+                        board0_.user_no as user_no6_0_0_,
+                        user1_.no as no1_2_1_,
+                        user1_.email as email2_2_1_,
+                        user1_.gender as gender3_2_1_,
+                        user1_.name as name4_2_1_,
+                        user1_.password as password5_2_1_,
+                        user1_.role as role6_2_1_ 
+                    from
+                        board board0_ 
+                    left outer join
+                        user user1_ 
+                            on board0_.user_no=user1_.no 
+                    where
+                        board0_.no=?            
+            ```
+            
+            1) Board -> User(ManyToOne Unidirectional) 기본 Fetch 모드가 EAGER이기 때문에 User Entity와 Outer Join이 자동으로 실행된 것을 알 수 있다.  
+            
+        - LAZY로 바꾸고 실행된 쿼리 로그를 보자.
+            
+            1) Entity 매핑 수정
+             
+                ```
+                    @ManyToOne(fetch = FetchType.LAZY)
+                    @JoinColumn( name = "user_no" )
+                    private User user;
+                ```
+            
+                테스트 실행 후, 쿼리로그 확인     
+             
+                ```
+                Hibernate: 
+                    select
+                        board0_.no as no1_0_0_,
+                        board0_.contents as contents2_0_0_,
+                        board0_.hit as hit3_0_0_,
+                        board0_.reg_date as reg_date4_0_0_,
+                        board0_.title as title5_0_0_,
+                        board0_.user_no as user_no6_0_0_ 
+                    from
+                        board board0_ 
+                    where
+                        board0_.no=?
+                ```
+            
+            2) Join이 실행되지 않았으며 테스트도 통과한다.  
+     
+     + test03BoardListLazyProblem
+     
+        - 쿼리메소드 JpaBoardRepository.findAllByOrderByRegDateDesc()를 기본으로 사용해 게시물 리스트를 가져온다. 
+        - 테스트 코드는 LAZY 로딩의 문제 N+1를 테스트 한다.
+        - 게시판 리스트를 가져오기 위한 쿼리(1) 그리고 User 이름을 가져올 때 쿼리(2 == N)이 실행됨을 알 수 있다.(쿼리 로그참고) 즉, LAZY 로딩 N+1문제가 발생한다.  
+          1) EAGER -> LAZY로 페치전략 수정 후, 코멘트 저장시 발생한 성능 이슈 1개가 해결되었다고 끝난 것이 아니다. 
+          2) 페치전략 수정으로 발생할 수 있는 성능 이슈 N+1 게시판 리스트, 글보기 등의 비즈니스 로직을 해결해야 한다.
+     
+     + test04BoardListLazyProblemSolved()
+     
+        - N+1 문제를 해결하기 위한 **성능 및 비지니스 요구 따른 레포지토리 메소드 최적화 하기** 테스트이다.
+        - JpaBoardQryDslRepositoryImpl.findAll3(pageable) 메소드를 테스트한다.
+        - 해결을 위한 방법은 JPQL(QueryDSL)로 해결할 수 있다. 
+            1) QueryDSL 경우에는 innerJoin(), fetchJoin()를 사용해 개선할 수 있다(jpa03-model02 참고)
+            2) 게시판 리스트에서는 User 정보가 다 필요없는 경우가 많다. 이름과 번호 정도일 것이다. 이때는 Projection과 DTO를 사용해야 한다.
+            3) 문제는 Projection을 하면 Join Fetch를 할 수 없다.
+            4) 이유는 Fetch Join은 기본적으로 select에 1개 이상의 Entity가 올 수 없다.(Fetch Join 뒤의 Entity에 별칭을 줄 수 없는 것이 기본이다.)
+            5) 하지만, QueryDSL에서는 innerJoin() 만으로도 Fetch Join의 쿼리가 가능하다.(jpa03-model02 참고)
+        - 테스트 실행과 쿼리 로그 
+            
+            ```
+                select
+                    board0_.no as col_0_0_,
+                    board0_.hit as col_1_0_,
+                    board0_.title as col_2_0_,
+                    board0_.contents as col_3_0_,
+                    board0_.reg_date as col_4_0_,
+                    user1_.name as col_5_0_ 
+                from
+                    board board0_ 
+                inner join
+                    user user1_ 
+                        on board0_.user_no=user1_.no 
+                order by
+                    board0_.reg_date desc limit ?                  
+            ```
+          
+     + test05BoardViewLazyProblem
+        - JpaBoardQryDslRepositoryImpl.findBy2(no) 메소드를 테스트 한다.
+        - 앞의 Board->User(ManyToOne) Lazy로딩 문제를 해결한 메소드 이지만 쿼리 로그를 보면 마음에 들지 않는다.
+        
+            ```
+            
+            ```
+          
+        - jpa03-mode02에서는 Board, User 2개의 엔티티만 있을 때 findBy2(no)로 Lazy로딩 문제를 해결할 수 있었다.
+        - jpa03-mode04에서는 새로운 Comment Entity가 Board와의 OneToMany Unidirectional 관계로 등장하여 findBy2(no)의 새로운 성능 이슈 문제를 일으켰다.
+        - 성능 및 비지니스 요구 따른 레포지토리 메소드 최적화를 수행해야 하는 것은 개발중에 발생할 수도 있지만 서비스 중에도 발생할 수 있다.
+        - 문제는 서비스 중에 비지니스의 요구 사항의 변경이 발생하면 이런 이슈를 발견 못할 가능성이 많다. 따라서 JPA는 사전에 충분한 경험이 있는 팀이 수행해서 사전에 성능 이슈를 발견하고 최적화 작업을 하는 것이 맞다.
+        - 그리고 쿼리 로그를 계속 모니터링 하는 것도 언급할 필요없이 중요하다.  
          
-         ```
-         6) OneToMain Unidirection의 단점은 다음 ManyToOne Bidirection 으로 바꿨을 때 예상되는 코드와 비교해 보면 명확히 알 수 있다.
-       
-       
+         
   
-#### 3) Spring Data JPA CommentRepository Test : Spring Data JPA 기반 Repository
+#### 2-4. Spring Data JPA CommentRepository Test : Spring Data JPA 기반 Repository
         
   1. __JpaCommentRepository.java__
      + 기본메소드와 쿼리메소드 

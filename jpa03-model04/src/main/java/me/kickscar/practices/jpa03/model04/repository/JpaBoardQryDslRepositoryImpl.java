@@ -36,6 +36,17 @@ public class JpaBoardQryDslRepositoryImpl extends QuerydslRepositorySupport impl
     }
 
     @Override
+    public BoardDto findById3(Long no) {
+        return queryFactory
+                .select(Projections.fields(BoardDto.class, board.no, board.hit, board.title, board.contents, board.regDate, board.user.name.as("userName"), board.comments))
+                .from(board)
+                .innerJoin(board.user)
+//                .innerJoin(board.comments)
+                .where(board.no.eq(no))
+                .fetchOne();
+    }
+
+    @Override
     public List<BoardDto> findAll3(Pageable pageable) {
         JPAQuery<BoardDto> query = queryFactory
                 .select(Projections.fields(BoardDto.class, board.no, board.hit, board.title, board.contents, board.regDate, board.user.name.as("userName")))

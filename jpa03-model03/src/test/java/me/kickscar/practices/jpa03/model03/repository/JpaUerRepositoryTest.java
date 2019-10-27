@@ -158,7 +158,6 @@ public class JpaUerRepositoryTest {
                 qryCount++;
             }
             ordersCountActual += result.size();
-
         }
 
         assertEquals(ordersCountExpected, ordersCountActual);
@@ -219,6 +218,4 @@ public class JpaUerRepositoryTest {
         assertEquals(5, userRepository.findOrdersByNo(1L).size());
 
     }
-
-
 }

@@ -2,18 +2,23 @@ package me.kickscar.practices.jpa03.model04.repository;
 
 import me.kickscar.practices.jpa03.model04.config.JpaRepositoryTestConfig;
 import me.kickscar.practices.jpa03.model04.domain.*;
+import me.kickscar.practices.jpa03.model04.dto.BoardDto;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -61,7 +66,7 @@ public class JpaBoardRepositoryTest {
         commentRepository.save(1L, new Comment("댓글1"));
         commentRepository.save(2L, new Comment("댓글2"), new Comment("댓글3"));
 
-        //============================================
+        //==============================================================
 
         User user2 = new User();
         user2.setName("마이콜");
@@ -88,4 +93,61 @@ public class JpaBoardRepositoryTest {
 
         assertEquals(10L, commentRepository.count());
     }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test02SaveEagerProblem01() {
+        commentRepository.save(1L, new Comment("댓글11"));
+        assertEquals(11L, commentRepository.count());
+    }
+
+    @Test
+    @Transactional
+    public void test03BoardListLazyProblem() {
+        Integer qryCount = 0;
+        Long N = userRepository.count();
+
+        qryCount++;
+        List<Board> boards = boardRepository.findAllByOrderByRegDateDesc();
+
+        for(Board board : boards) {
+            User user = board.getUser();
+
+            if(!em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(user)){
+                qryCount++;
+            }
+            System.out.println(user);
+        }
+
+        assertEquals(N+1, qryCount.longValue());
+    }
+
+    @Test
+    public void test04BoardListLazyProblemSolved(){
+        final Integer size = 2;
+        Integer page = 0;
+        List<BoardDto> boardDtos = null;
+
+        boardDtos = boardRepository.findAll3(PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
+        assertEquals(2, boardDtos.size());
+
+        boardDtos = boardRepository.findAll3(PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
+        assertEquals(2, boardDtos.size());
+
+        boardDtos = boardRepository.findAll3(PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
+        assertEquals(0, boardDtos.size());
+    }
+
+    @Test
+    @Transactional
+    public void test05FindBy3(){
+        BoardDto board = boardRepository.findById3(1L);
+
+        List<Comment> list = board.getComments();
+        System.out.println(list.size());
+
+        assertEquals(1L, board.getNo().longValue());
+    }
+
 }
