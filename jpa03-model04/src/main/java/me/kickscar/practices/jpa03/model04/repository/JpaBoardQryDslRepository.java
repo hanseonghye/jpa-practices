@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface JpaBoardQryDslRepository {
     public BoardDto findById2(Long no);
-    public BoardDto findById3(Long no);
+    public Board findById3(Long no);
+    public BoardDto findById4(Long no);
 
     public List<BoardDto> findAll3(Pageable pageable);
     public List<BoardDto> findAll3(String keyword, Pageable pageable);

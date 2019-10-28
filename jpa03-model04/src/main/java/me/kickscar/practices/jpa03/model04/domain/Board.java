@@ -139,8 +139,9 @@ public class Board {
                 ", groupNo=" + groupNo +
                 ", orderNo=" + orderNo +
                 ", depth=" + depth +
-                ", user=" + user +
-                ", comments=" + comments +
+                // test를 위해 주석 처리
+                // ", user=" + user +
+                // ", comments=" + comments +
                 '}';
     }
 }

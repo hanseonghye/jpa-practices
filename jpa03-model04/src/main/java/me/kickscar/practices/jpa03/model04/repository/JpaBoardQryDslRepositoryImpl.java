@@ -36,7 +36,20 @@ public class JpaBoardQryDslRepositoryImpl extends QuerydslRepositorySupport impl
     }
 
     @Override
-    public BoardDto findById3(Long no) {
+    public Board findById3(Long no) {
+        return queryFactory
+                .selectDistinct(board)
+                .from(board)
+                .innerJoin(board.user)
+                .fetchJoin()
+                .innerJoin(board.comments)
+                .fetchJoin()
+                .where(board.no.eq(no))
+                .fetchOne();
+    }
+
+    @Override
+    public BoardDto findById4(Long no) {
         return queryFactory
                 .select(Projections.fields(BoardDto.class, board.no, board.hit, board.title, board.contents, board.regDate, board.user.name.as("userName"), board.comments))
                 .from(board)
