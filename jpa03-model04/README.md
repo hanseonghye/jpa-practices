@@ -52,9 +52,9 @@
         - **OneToMany Unidirectional을 써야 하다면 ManyToOne Bidirectional를 사용하는 것을 보통 추천한다**  
 
 
-###2. SpringBoot Test Case
+### 2. SpringBoot Test Case
 
-####2-1. 요약: 다루는 기술적 내용
+#### 2-1. 요약: 다루는 기술적 내용
 1. OneToMany Unidirectional 단점 이해
 2. Global Fetch 전략 LAZY에 대한 이해
 3. 성능 및 비지니스 요구 따른 레포지토리 메소드 최적화 하기
