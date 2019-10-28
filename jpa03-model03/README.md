@@ -203,6 +203,7 @@
         - @Transactional 를 사용하지 않은 것도 주목하자. Proxy 객체를 사용하지 않을 때는 영속성이 필요없기 때문에 사용하지 않아도 된다.(영속성과 트랜잭션과의 관계 이해 필요)
         - OneToMany에서 객체그래프를 통해 컬렉션 접근 시, 발생하는 조인문제와 N+1 Lazy 로딩 문제를 해결하기 위해서는 selectDistinct(), fecthJoin()을 사용하면 된다.
         - Lazy로 객체그래프를 통해 컬렉션에 접근하는 것이 좋지 못한 것은 아니다. 상황에 따라서는 성능에 도움이 되는 것도 기억해야 하고 Global Fetch 전략도 실무에서는 보통 LAZY임도 알아야 한다.
+        - **N+1 문제는 LAZY, EAGER의 공통문제다. N번 쿼리가 언제 일어나는가? 문제이지 N번 쿼리는 일어난다. 단지, LAZY 보다는 EAGER가 지연로딩을 해도 상관없는 비즈니스나 뷰에 N번을 무조건 하기 때문에 문제가 될 가능성이 많다.**     
 
       + test08findOrdersByNo
         - 최적화된 findAllCollectionJoinAndNplusOneProblemSolved() 기반으로 특정 사용자의 주문내역을 조회하는 메소드 findOrdersByNo(no)를 테스트 한다.
