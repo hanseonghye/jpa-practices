@@ -63,9 +63,6 @@ public class JpaBoardRepositoryTest {
         board2.setUser(user1);
         boardRepository.save(board2);
 
-        commentRepository.save(1L, new Comment("댓글1"));
-        commentRepository.save(2L, new Comment("댓글2"), new Comment("댓글3"));
-
         //==============================================================
 
         User user2 = new User();
@@ -88,8 +85,28 @@ public class JpaBoardRepositoryTest {
         board4.setUser(user2);
         boardRepository.save(board4);
 
-        commentRepository.save(3L, new Comment("댓글4"), new Comment("댓글5"), new Comment("댓글6"));
-        commentRepository.save(4L, new Comment("댓글7"), new Comment("댓글8"), new Comment("댓글9"), new Comment("댓글10"));
+        //==============================================================
+
+        User user3 = new User();
+        user3.setName("또치");
+        user3.setPassword("1234");
+        user3.setEmail("ddochi@kickscar.me");
+        user3.setGender(GenderType.MALE);
+        user3.setRole(RoleType.USER);
+        userRepository.save(user3);
+
+        User user4 = new User();
+        user4.setName("도우넛");
+        user4.setPassword("1234");
+        user4.setEmail("donut@kickscar.me");
+        user4.setGender(GenderType.MALE);
+        user4.setRole(RoleType.USER);
+        userRepository.save(user4);
+
+        commentRepository.save(1L, new Comment(user1, "댓글1"));
+        commentRepository.save(2L, new Comment(user1, "댓글2"), new Comment(user2, "댓글3"));
+        commentRepository.save(3L, new Comment(user1, "댓글4"), new Comment(user2, "댓글5"), new Comment(user3, "댓글6"));
+        commentRepository.save(4L, new Comment(user1,"댓글7"), new Comment(user2, "댓글8"), new Comment(user3, "댓글9"), new Comment(user4, "댓글10"));
 
         assertEquals(10L, commentRepository.count());
     }
@@ -98,7 +115,8 @@ public class JpaBoardRepositoryTest {
     @Transactional
     @Rollback(false)
     public void test02SaveEagerProblem01() {
-        commentRepository.save(1L, new Comment("댓글11"));
+        User user = userRepository.findById(4L).get();
+        commentRepository.save(1L, new Comment(user, "댓글11"));
         assertEquals(11L, commentRepository.count());
     }
 
@@ -106,7 +124,7 @@ public class JpaBoardRepositoryTest {
     @Transactional
     public void test03BoardListLazyProblem() {
         Integer qryCount = 0;
-        Long N = userRepository.count();
+        Long N = 2L;
 
         qryCount++;
         List<Board> boards = boardRepository.findAllByOrderByRegDateDesc();
@@ -141,13 +159,16 @@ public class JpaBoardRepositoryTest {
 
     @Test
     @Transactional
-    public void test05FindBy3(){
-        BoardDto board = boardRepository.findById3(1L);
+    public void test05BoardViewLazyProblem01(){
+        Board board = boardRepository.findById(1L).get();
+        assertEquals("제목1", board.getTitle());
 
-        List<Comment> list = board.getComments();
-        System.out.println(list.size());
+        User user = board.getUser();
+        assertEquals("둘리", user.getName());
 
-        assertEquals(1L, board.getNo().longValue());
+        List<Comment> comments = board.getComments();
+        System.out.println(comments);
+
     }
 
 }
