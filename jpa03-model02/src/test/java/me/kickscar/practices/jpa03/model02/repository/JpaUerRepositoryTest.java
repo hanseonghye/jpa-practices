@@ -1,6 +1,6 @@
 package me.kickscar.practices.jpa03.model02.repository;
 
-import me.kickscar.practices.jpa03.model02.config.JpaRepositoryTestConfig;
+import me.kickscar.practices.jpa03.model02.config.JpaConfig;
 import me.kickscar.practices.jpa03.model02.domain.GenderType;
 import me.kickscar.practices.jpa03.model02.domain.RoleType;
 import me.kickscar.practices.jpa03.model02.domain.User;
@@ -21,7 +21,7 @@ import javax.persistence.PersistenceContext;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {JpaRepositoryTestConfig.class})
+@SpringBootTest(classes = {JpaConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JpaUerRepositoryTest {
 

@@ -1,6 +1,6 @@
 package me.kickscar.practices.jpa03.model01.repository;
 
-import me.kickscar.practices.jpa03.model01.config.JpaRepositoryTestConfig;
+import me.kickscar.practices.jpa03.model01.config.JpaConfig;
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {JpaRepositoryTestConfig.class})
+@SpringBootTest(classes = {JpaConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)  // JUnit4.11 부터 지원
 public class JpaGuestbookRepositoryTest {
 

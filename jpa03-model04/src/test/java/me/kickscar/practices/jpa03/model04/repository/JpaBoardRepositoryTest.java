@@ -1,6 +1,6 @@
 package me.kickscar.practices.jpa03.model04.repository;
 
-import me.kickscar.practices.jpa03.model04.config.JpaRepositoryTestConfig;
+import me.kickscar.practices.jpa03.model04.config.JpaConfig;
 import me.kickscar.practices.jpa03.model04.domain.*;
 import me.kickscar.practices.jpa03.model04.dto.BoardDto;
 import me.kickscar.practices.jpa03.model04.dto.CommentDto;
@@ -23,7 +23,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {JpaRepositoryTestConfig.class})
+@SpringBootTest(classes = {JpaConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JpaBoardRepositoryTest {
 

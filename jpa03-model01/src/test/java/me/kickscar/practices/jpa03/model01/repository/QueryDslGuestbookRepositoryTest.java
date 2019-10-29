@@ -1,6 +1,6 @@
 package me.kickscar.practices.jpa03.model01.repository;
 
-import me.kickscar.practices.jpa03.model01.config.JpqlRepositoryTestConfig;
+import me.kickscar.practices.jpa03.model01.config.JpqlConfig;
 import me.kickscar.practices.jpa03.model01.domain.Guestbook;
 import me.kickscar.practices.jpa03.model01.dto.GuestbookDto;
 import org.junit.FixMethodOrder;
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {JpqlRepositoryTestConfig.class})
+@SpringBootTest(classes = {JpqlConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)  // JUnit4.11 부터 지원
 public class QueryDslGuestbookRepositoryTest {
 

@@ -1,6 +1,6 @@
 package me.kickscar.practices.jpa03.model02.repository;
 
-import me.kickscar.practices.jpa03.model02.config.JpqlRepositoryTestConfig;
+import me.kickscar.practices.jpa03.model02.config.JpqlConfig;
 import me.kickscar.practices.jpa03.model02.domain.Board;
 import me.kickscar.practices.jpa03.model02.domain.GenderType;
 import me.kickscar.practices.jpa03.model02.domain.RoleType;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {JpqlRepositoryTestConfig.class})
+@SpringBootTest(classes = {JpqlConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class QueryDslBoardRepositoryTest {
 

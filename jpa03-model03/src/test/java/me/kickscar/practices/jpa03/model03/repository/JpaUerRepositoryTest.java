@@ -1,6 +1,6 @@
 package me.kickscar.practices.jpa03.model03.repository;
 
-import me.kickscar.practices.jpa03.model03.config.JpaRepositoryTestConfig;
+import me.kickscar.practices.jpa03.model03.config.JpaConfig;
 import me.kickscar.practices.jpa03.model03.domain.GenderType;
 import me.kickscar.practices.jpa03.model03.domain.Orders;
 import me.kickscar.practices.jpa03.model03.domain.RoleType;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {JpaRepositoryTestConfig.class})
+@SpringBootTest(classes = {JpaConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JpaUerRepositoryTest {
 

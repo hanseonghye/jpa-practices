@@ -1,6 +1,6 @@
 package me.kickscar.practices.jpa03.model02.repository;
 
-import me.kickscar.practices.jpa03.model02.config.JpqlRepositoryTestConfig;
+import me.kickscar.practices.jpa03.model02.config.JpqlConfig;
 import me.kickscar.practices.jpa03.model02.domain.GenderType;
 import me.kickscar.practices.jpa03.model02.domain.RoleType;
 import me.kickscar.practices.jpa03.model02.domain.User;
@@ -21,7 +21,7 @@ import javax.persistence.PersistenceContext;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {JpqlRepositoryTestConfig.class})
+@SpringBootTest(classes = {JpqlConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JpqlUserRepositoryTest {
 
