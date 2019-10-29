@@ -100,6 +100,7 @@
                 boardRepository.save(board);
        
                 Comment comment = new Comment();
+                comment.setUser(user);
                 comment.setContents("댓글");
        
                 commentRepository.save(comment);
@@ -110,12 +111,13 @@
         - 실제 코드는 기본 메소드 save(entity)를 오버로딩한 JpaCommentQryDslRepositoryImp.save(boardNo, comments) 이다.  
           
             ```
-                commentRepository.save(1L, new Comment("댓글1"));
-                commentRepository.save(2L, new Comment("댓글2"), new Comment("댓글3"));
+                commentRepository.save(1L, new Comment(user1, "댓글1"));
+                commentRepository.save(2L, new Comment("댓글2"), new Comment(user2, "댓글3"));
             ```
             1) save(boardNo, comments) 메소드를 보면, Comment 엔티티에 board의 no를 세팅할 필드가 없고 당연히 setter 자체가 없기 때문에 두 개로 나눠 함께 전달한다.  
-            2) comments 파라미터는 Variable Arguments(Varargs)를 사용하여 여러 Comment 엔티티 객체를 전달할 수 있도록 하였다.  
-            3) 실행된 Update 쿼리 로그    
+            2) 테스트를 위해서 comments 파라미터는 Variable Arguments(Varargs)를 사용하여 여러 Comment 엔티티 객체를 전달할 수 있도록 하였다.
+            3) 코멘트를 작성한 User 영속객체를 전달해야 한다.  
+            4) 실행된 Update 쿼리 로그    
          
                 ```
                     Hibernate: 
@@ -131,23 +133,24 @@
 
             ```
                 Comment comment = new Comment();
-                comment.setBoardNo(1L);
+                comment.setBoard(board);
+                comment.setUser(user);
                 comment.setContents("댓글");
        
                 commentRepository.save(comment);
             ```
     2) test02SaveEagerProblem
         - Comment 엔티티 저장에서 ManyToOne 기본 페치전략 EAGER의 문제점 테스트
-        - **글로벌 Fecth 전략 - LAZY(지연로딩)**
-            - EAGER : ManyToOne, OnetoOne
-            - LAZY : OneToMany
-            - 보통 위의 기본 페치전략을 유지하지 않는다. 특히, EAGER 페치전략을 LAZY로 해서 애플리케이션 전체 페치전략을 LAZY로 유지하는 것이 기본이다.
+        - 글로벌 Fecth 전략 - LAZY(지연로딩)
+            1) JPA에서 기본 페치 전략은 EAGER(ManyToOne, OnetoOne), LAZY(OneToMany) 이다.
+            2) ManyToOne, OneToOne 에서는 츨로벌 페티 전략 Lazy로 변경하는 것이 보통이다.
+            3) 하지만 글로벌 페티 전략이 Lazy이지 꼭 강제 사항은 아니다. 비즈니스 로직과 상황에 따라 Eager도 적용할 수 있다.
         - 테스트 코드
             ```
                 Board board = em.find(Board.class, boardNo);    
             ```
             
-            - Board 엔티티를 DB로부터 Fetch하여 영속화 시키기 위해 실행된 쿼리는,   
+            Board 엔티티를 DB로부터 Fetch하여 영속화 시키기 위해 실행된 쿼리는,   
             
             ```
                 Hibernate: 
@@ -205,7 +208,7 @@
             4) 성능 향상을 기대할 수 있다. 
     3) test03BoardListLazyProblem
         - 쿼리메소드 JpaBoardRepository.findAllByOrderByRegDateDesc()를 사용해서 게시물 리스트를 가져오는 테스트이다. 
-        - 테스트 코드는 LAZY로딩 시, 발생하는 N+1 문제를 확인해 본다.
+        - 테스트 코드는 LAZY로딩 시, 발생하는 Lazy의 N+1 문제를 확인해 본다.
         - 게시판 리스트를 가져오기 위한 쿼리(1) 그리고 게시글이 있는 User 이름을 가져오기 위한 쿼리(2 == N)이 실행됨을 알 수 있다.(쿼리 로그참고) 즉, LAZY로딩의 N+1 문제가 발생한다.  
             1) EAGER -> LAZY로 페치전략 수정 후, 코멘트 저장시 발생한 성능 이슈 1개가 해결되었다고 성능이 개선되었을 것이라 기대하면 안된다. 
             2) 페치전략 수정으로 발생할 수 있는 성능 이슈는 N+1 문제로 일어날 수 있는 게시판 리스트, 글보기 등 다른 비즈니스 로직에서 성능 문제가 발생할 수 있기 때문이다.
@@ -237,44 +240,374 @@
                     board0_.reg_date desc limit ?                  
             ```
           
-    5) test05BoardViewLazyProblem(01~04)
+    5) test05BoardViewLazyProblem(01~02)
         - 이 테스트도 **성능 및 비지니스 요구 따른 레포지토리 메소드 최적화 하기** 를 다루는 테스트이다.
-        - 이 테스트에서는 가능한 쿼리 한방으로 게시글보기 화면에 맞는 데이터를 다 갖추도록 노력하겠지만, 성능과 최적화를 다루면서 유의 할 점이 있다.
-            1) 복잡한 조인 쿼리가 여러번 나눠서 가져오는 select(Lazy)보다 성능을 보장할 수 없다는 것
-            2) 너무 화면에 맞춘 레포지토리 메소드 작성은 Repository 계층이 Presentation(View) 계층과 과한 결합을 할 수 있다는 점이다.
-            3) Service 계층에 적당한 Lazy를 사용해서 Presentation(View)에 맞는 DTO를 제공하는 것이 맞는 경우도 있다.
-        - 앞의 test03BoardListLazyProblem는 게시판 리스트에서 Board->User ManyToOne 매핑시 기본페치 전략을 EAGER -> LAZY로 수정 시 발생하는 문제를 다루었다면
-        - 이 테스트는 기본페치 전략 EAGER -> LAZY로 변경 문제에다가 Board->Comment OneToMany 기본페치 전략 LAZY에 대한 문제을 복합적으로 다루어야 한다.
-        - Comment 엔티티가 추가되면서 게시판 글보기 비즈니스 로직 관련 엔티티가 Board, User, Comment 3개가 되었기 때문이다.
-        - 문제는 이미 해결되어 있다.
-            1) ManyToOne Bidirectional 에서 One쪽 Collection Fetch Join을 다루고 해결방법을 설명하였다.(jpa03-model03 참고) 
-            2) jpa03-model03의 JpaUserQryDslRepositoryImpl.findOrdersByNo() 에서는 selectDistinct(), fetchJoin()을 사용해서 이 문제를 해결했다.
-            3) User는 Board로 Order는 Comment로 바꿔보면 쉽게 이해할 수 있을 것이다.
-            4) Board->User 기본페치 전략 EAGER -> LAZY 변경으로 발생한 문제는 test03BoardListLazyProblem에서 해결한 방법을 적용하면 된다.
-            5) 당연히, QueryDSL 통합하는 방식으로 문제 해결을 해야 한다.(기본메소드, 쿼리메소드로는 성능문제를 해결할 수 없다는 점을 빨리 깨달으면 깨달을 수록 좋다. 그렇다고 무용지물은 아니다. 둘을 어디에 써야 하는가 아는 것도 JPA에 경험이 조금 필요하다.)
-        - 문제를 하나 하나씩 해결해 보자.
-            1) test05BoardViewLazyProblem01 - 기본메소드 findByID(no)
-        
-            ```
+        - 이 테스트에서는 가능한 쿼리 1회로 게시글 보기 화면에 맞는 데이터를 다 가져오는 데 집중하는 것이지만, 성능과 최적화를 다룰때 유의할 점이 있다.
+            1) 복잡한 조인 쿼리가 여러번 나눠서 가져오는 select(Lazy)보다 성능 향상을 늘 보장하지 않는다는 것이다.
+            2) 너무 View에 맞춘 Repository 메소드 작성은 Repository 계층과 Presentation(View) 계층의 결합도가 높아진다는 단점이 있다.
+            3) Service 계층에 적당한 Lazy를 사용해서 Presentation(View)에 맞는 DTO를 제공하는 것이 합리적인 경우가 경험에 의하면 더 많다.
+        - JPA 이해와 QuryDSL 테크닉 연습을 위해 쿼리 1회로 모두 가져올 수 있도록 시도해 보고 위에서 제기한 문제는 케이스별로 개발시 고려해야 할 사항으로 남겨둔다.
+            1) test05BoardViewLazyProblem01 - 기본메소드 findByID(no) 사용
             
-            ```
-          
-        - jpa03-mode02에서는 Board, User 2개의 엔티티만 있을 때 findBy2(no)로 Lazy로딩 문제를 해결할 수 있었다.
-        - jpa03-mode04에서는 새로운 Comment Entity가 Board와의 OneToMany Unidirectional 관계로 등장하여 findBy2(no)의 새로운 성능 이슈 문제를 일으켰다.
-        - 성능 및 비지니스 요구 따른 레포지토리 메소드 최적화를 수행해야 하는 것은 개발중에 발생할 수도 있지만 서비스 중에도 발생할 수 있다.
-        - 문제는 서비스 중에 비지니스의 요구 사항의 변경이 발생하면 이런 이슈를 발견 못할 가능성이 많다. 따라서 JPA는 사전에 충분한 경험이 있는 팀이 수행해서 사전에 성능 이슈를 발견하고 최적화 작업을 하는 것이 맞다.
-        - 그리고 쿼리 로그를 계속 모니터링 하는 것도 언급할 필요없이 중요하다.  
+                + 게시글 가져오기
+                    ```
+                        Board board = boardRepository.findById(1L).get();
+                        assertEquals("제목1", board.getTitle());
+               
+                    ```            
+                    실행된 쿼리  
+                    ```
+                        Hibernate: 
+                            select
+                                board0_.no as no1_0_0_,
+                                board0_.contents as contents2_0_0_,
+                                board0_.hit as hit3_0_0_,
+                                board0_.reg_date as reg_date4_0_0_,
+                                board0_.title as title5_0_0_,
+                                board0_.user_no as user_no6_0_0_ 
+                            from
+                                board board0_ 
+                            where
+                                board0_.no=?
+                    ```
+                
+                + 사용자 가져오기
+                    ```
+                        User user = board.getUser();
+                        assertEquals("둘리", user.getName());
+                  
+                    ```
+                    실행된 쿼리  
+                    ```
+                        Hibernate: 
+                            select
+                                user0_.no as no1_2_0_,
+                                user0_.email as email2_2_0_,
+                                user0_.gender as gender3_2_0_,
+                                user0_.name as name4_2_0_,
+                                user0_.password as password5_2_0_,
+                                user0_.role as role6_2_0_ 
+                            from
+                                user user0_ 
+                            where
+                                user0_.no=?
+                  
+                    ```
+                + 코멘트 가져오기
+                    ```
+                        List<Comment> comments = board.getComments();
+                        assertEquals(2L, comments.size());
+                        
+                    ```
+                    실행된 쿼리
+                    ```
+                        Hibernate: 
+                            select
+                                comments0_.board_no as board_no5_1_0_,
+                                comments0_.no as no1_1_0_,
+                                comments0_.no as no1_1_1_,
+                                comments0_.contents as contents2_1_1_,
+                                comments0_.reg_date as reg_date3_1_1_,
+                                comments0_.user_no as user_no4_1_1_,
+                                user1_.no as no1_2_2_,
+                                user1_.email as email2_2_2_,
+                                user1_.gender as gender3_2_2_,
+                                user1_.name as name4_2_2_,
+                                user1_.password as password5_2_2_,
+                                user1_.role as role6_2_2_ 
+                            from
+                                comment comments0_ 
+                            left outer join
+                                user user1_ 
+                                    on comments0_.user_no=user1_.no 
+                            where
+                                comments0_.board_no=?                          
+                    ```
+                    1) Comment와 User entity를 ManyToOne Fecth.EAGER 기본 모드상태에서 테스트라 자동으로 Join이 걸렸다.      
+                    2) Service 계층은 @Transaction이 적용되는 계층(테스트 케이스와 같은 위치)으로 LAZY를 사용해서 데이터를 모아 DTO에 담아 Controller, View로 전달하는 것이 보통이다.
+                    3) 하지만 서비스에 문제가 발생되면 고쳐야 한다.(보통 JPA 개발에서 쿼리 로그, DBMS 로그 또는 메모리 모니터링을 통해 튜닝작업을 하는 것이 기본이다.)
+        
+            2) test06BoardViewLazyProblem02 - QueryDSL 통합 findById3(no) 사용
+                + 메소드 코드
+                    ```
+                        return queryFactory
+                                .selectDistinct(board)
+                                .from(board)
+                                .innerJoin(board.user)
+                                .fetchJoin()
+                                .innerJoin(board.comments)
+                                .fetchJoin()
+                                .where(board.no.eq(no))
+                                .fetchOne();    
+                    ```
+                    1) LAZY로딩이 발생하는 부분을 fetch join으로 해결하고 있는 모습이다
+                    2) 앞에서 다루었던 Board -> Comment OneToMany(기본 페치 전략 Lazy) Collection Join의 문제를 해결하기 위해 selectDistinct()도 사용하고 있다.
+                    3) 추가된 부분은 Board -> User ManyToOne 클로벌 페치 전략 Lazy 로딩 부분을 Fetch Join으로 수정한 부분이다.
+                    
+                + 실행된 쿼리
+                    ```
+                        Hibernate: 
+                                select
+                                    distinct board0_.no as no1_0_0_,
+                                    user1_.no as no1_2_1_,
+                                    comments2_.no as no1_1_2_,
+                                    board0_.contents as contents2_0_0_,
+                                    board0_.hit as hit3_0_0_,
+                                    board0_.reg_date as reg_date4_0_0_,
+                                    board0_.title as title5_0_0_,
+                                    board0_.user_no as user_no6_0_0_,
+                                    user1_.email as email2_2_1_,
+                                    user1_.gender as gender3_2_1_,
+                                    user1_.name as name4_2_1_,
+                                    user1_.password as password5_2_1_,
+                                    user1_.role as role6_2_1_,
+                                    comments2_.contents as contents2_1_2_,
+                                    comments2_.reg_date as reg_date3_1_2_,
+                                    comments2_.user_no as user_no4_1_2_,
+                                    comments2_.board_no as board_no5_1_0__,
+                                    comments2_.no as no1_1_0__ 
+                                from
+                                    board board0_ 
+                                inner join
+                                    user user1_ 
+                                        on board0_.user_no=user1_.no 
+                                inner join
+                                    comment comments2_ 
+                                        on board0_.no=comments2_.board_no 
+                                where
+                                    board0_.no=?
+                        Hibernate: 
+                            select
+                                user0_.no as no1_2_0_,
+                                user0_.email as email2_2_0_,
+                                user0_.gender as gender3_2_0_,
+                                user0_.name as name4_2_0_,
+                                user0_.password as password5_2_0_,
+                                user0_.role as role6_2_0_ 
+                            from
+                                user user0_ 
+                            where
+                                user0_.no=?
+                        Hibernate: 
+                            select
+                                user0_.no as no1_2_0_,
+                                user0_.email as email2_2_0_,
+                                user0_.gender as gender3_2_0_,
+                                user0_.name as name4_2_0_,
+                                user0_.password as password5_2_0_,
+                                user0_.role as role6_2_0_ 
+                            from
+                                user user0_ 
+                            where
+                                user0_.no=?
+                    ```
+                    1) Board, User(게시글 작성자), Comment 엔티티와 selectDistinct() 가 사용되어 게시글 번호에 맞는 Board 엔티티 객체가 Comment Collection(List) 까지 잘 Fecth 되었다.
+                    2) 문제는 List에 있는 Comment 엔티티 객체의 User를 EAGER로 가져올 때 발생한다. Comment 수(N) 만큼 쿼리가 실행되는 EAGER N+1 문제가 발생한다.
+                    3) Comment 2개에 대한 User 엔티티를 가져오기 위해 select 쿼리 2번이 실행된 것을 확인 할 수 있다.
+                      
+    6) test07BoardViewLazySolved01
+        - test05BoardViewLazyProblem(01~02)의 문제는 SQL에서는 Board, User(글작성자), Comment, User(코멘트작성자)를 Join하고 Board가 중복되기 때문에 Distinct를 사용하면 된다.
+        - 복잡성을 피하기 위해 서브쿼리를 생각해 볼 수 있지만(서브쿼리 자체는 성능에 좋지 않다) 그리고 QueryDSL 서브쿼리는 select, where, having에만 허용하고 from 절에 놓을 수가 없는 점도 유의해야 한다.
+        - Native SQL을 사용해도 된다. Native SQL은 비즈니스에 특화된 성능에 문제없는 소설같은 쿼리 작성에 맞다. 여기에 사용할 정도로 복잡하거나 특별나지도 않다.
+        - 하지만, 복잡성을 피하기 위해 일단, BoardDto와 List<CommentDto> 를 조인 페치하는 2개의 메소드로 나누어 테스트하고 최종적으로 합친다.    
+        - DTO 정의
+            1) BoardDto
+               ```
+                public class BoardDto {
+                        .
+                        .
+                    private Long no;
+                    private Integer hit;
+                    private String title;
+                    private String contents;
+                    private Date regDate;
+                    private String userName;
+                    private List<CommentDto> comments;
+                        .
+                        .
+                }
+                ```
+            2) CommentDto
+                ```
+                    public class CommentdDto {
+                             .
+                             .
+                        private Long no;
+                        private String contents;
+                        private Date regDate;
+                        private String userName;
+                             .
+                             .
+                    }
+                ```
+               
+        - JpaBoardQryDslRepositoryImpl.findById3(no) 테스트
+            1) 메소드 코드
+                ```
+                    return queryFactory
+                        .select(Projections.fields(BoardDto.class, board.no, board.hit, board.title, board.contents, board.regDate, board.user.name.as("userName")))
+                        .from(board)
+                        .innerJoin(board.user)
+                        .where(board.no.eq(no))
+                        .fetchOne();
+                
+                ```
+                    + Board, User 엔티티를 innerJoin과 Projection을 사용한다.
+                    + 다시 얘기하지만, fetchJoin()은 Projection()과 함께 사용할 수 없다.
 
-JPA는 개별적 모델에 대한 전체적인 모델 매핑 지식, 다양한 객체지향쿼리 작성법 숙지, 영속성컨텍스트와 트랜잭션 개념과 SQL에 대한 이해와 RDBMS 스키마 모델링 경험등 이런 지식과 경험이 축적되어야 한다.
+            2) 실행 쿼리
+                ```
+                    select
+                        board0_.no as col_0_0_,
+                        board0_.hit as col_1_0_,
+                        board0_.title as col_2_0_,
+                        board0_.contents as col_3_0_,
+                        board0_.reg_date as col_4_0_,
+                        user1_.name as col_5_0_ 
+                    from
+                        board board0_ 
+                    inner join
+                        user user1_ 
+                            on board0_.user_no=user1_.no 
+                    where
+                        board0_.no=?
+                       
+                ```
+            
+        - JpaBoardQryDslRepositoryImpl.findCommentsByNo(no) 테스트
+            1) 메소드 코드
+                ```
+                    return queryFactory
+                        .select(Projections.bean(CommentDto.class, comment.no, comment.contents, comment.user.name.as("userName")))
+                        .from(board)
+                        .innerJoin(board.comments, comment)
+                        .innerJoin(comment.user)
+                        .where(board.no.eq(no))
+                        .fetch();
+                ```
+                    + Comment Collection을 가져오지만 OneToMany Unidirectional이기 때문에 board no값을 파라미터를 이용할 때는 Comment 엔티티를 사용할 수 없다.
+                    + innerJoin(board.comments, comment)에서 comment는 별칭이라 보면 된다.(별칭으로 사용할 쿼리 타입)
+                    + JPQL로 작성했을 때 코드를 보면 훨씬 이해가 쉽다.(CommentDto 프로젝션 생략)
+                        ```
+                            String qlString = "select b.comments from Board b join fetch b.comments c join fetch c.user where b.no=:no"
+                            
+                        ```
+                    + Projections.bean, Projections.fields, Projections.constructor 중에 bean을 생성하는 방법(생성자, setter 모두 지원)으로 프로젝션한다.
+                    + comment.user.name.as("userName") 에서 commentDto의 필드에 맞게 Alias하는 것도 잊지말자.
+            
+            2) 실행 쿼리
+            ```
+                select
+                    comments1_.no as col_0_0_,
+                    comments1_.contents as col_1_0_,
+                    user2_.name as col_2_0_ 
+                from
+                    board board0_ 
+                inner join
+                    comment comments1_ 
+                        on board0_.no=comments1_.board_no 
+                inner join
+                    user user2_ 
+                        on comments1_.user_no=user2_.no 
+                where
+                    board0_.no=?
+            ```
+        - BoardDto 완성하기
+            ```
+                board.setComments(comments);
+
+            ```
+            출력결과           
+            ```
+                BoardDto{no=3, hit=0, title='제목3', contents='내용3', regDate=2019-10-19 11:59:59.59, userName='마이콜', comments=[CommentDto{no=4, contents='댓글4', regDate=null, userName='둘리'}, CommentDto{no=5, contents='댓글5', regDate=null, userName='마이콜'}, CommentDto{no=6, contents='댓글6', regDate=null, userName='또치'}]}
+
+            ```
+        - 글로벌 페치모드가 LAZY이지만 @Transactional을 사용하지 않고 있다는 점도 주목하자.
+                          
+    7) test08BoardViewLazySolved02
+        - JpaBoardQryDslRepositoryImpl.findById3(no), JpaBoardQryDslRepositoryImpl.findCommentsByNo(no) 두 메소드의 QueryDSL를 합치는 것은 사실상 불가능하다.
+            1) Projection 2개를 합치는 것은 사실상 from절에 두 메소드 결과중 하나가 있어야 하는 것인데, QueryDSL은 from절 서브쿼리를 지원하지 않는다.
+            2) Distinct는 OneToMany findById3()에 한 번만 적용되는데, findCommentsByNo(no) 결과도 Board 엔티티로 Distinct를 해야 한다. 이는 불가능하다.
+            3) 위의 2가지 이유로 불가능하다.  
+        - 하지만, JpaBoardQryDslRepositoryImpl.findById(no)는 select에 영속엔티티만 사용했는데 이는 가능하다.
+            1) 구현코드
+                ```
+                    return queryFactory
+                            .selectDistinct(board)
+                            .from(board)
+                            .innerJoin(board.user)
+                            .fetchJoin()
+                            .leftJoin(board.comments, comment)
+                            .fetchJoin()
+                            .leftJoin(comment.user)
+                            .fetchJoin()
+                            .where(board.no.eq(no))
+                            .fetchOne();               
+                ```
+                + 주의 할 것은 comment가 없는 게시글도 나와야 하기 때문에 innerJoin() 대신 leftJoin() Outer Join을 사용했다.
+                + 엔티티를 select에 올릴 때에는 Projection과 다르게 fetchJoin()를 사용해야 한다.
+            2) 실행쿼리
+                ```
+                    select
+                                distinct board0_.no as no1_0_0_,
+                                user1_.no as no1_2_1_,
+                                comments2_.no as no1_1_2_,
+                                user3_.no as no1_2_3_,
+                                board0_.contents as contents2_0_0_,
+                                board0_.hit as hit3_0_0_,
+                                board0_.reg_date as reg_date4_0_0_,
+                                board0_.title as title5_0_0_,
+                                board0_.user_no as user_no6_0_0_,
+                                user1_.email as email2_2_1_,
+                                user1_.gender as gender3_2_1_,
+                                user1_.name as name4_2_1_,
+                                user1_.password as password5_2_1_,
+                                user1_.role as role6_2_1_,
+                                comments2_.contents as contents2_1_2_,
+                                comments2_.reg_date as reg_date3_1_2_,
+                                comments2_.user_no as user_no4_1_2_,
+                                comments2_.board_no as board_no5_1_0__,
+                                comments2_.no as no1_1_0__,
+                                user3_.email as email2_2_3_,
+                                user3_.gender as gender3_2_3_,
+                                user3_.name as name4_2_3_,
+                                user3_.password as password5_2_3_,
+                                user3_.role as role6_2_3_ 
+                            from
+                                board board0_ 
+                            inner join
+                                user user1_ 
+                                    on board0_.user_no=user1_.no 
+                            left outer join
+                                comment comments2_ 
+                                    on board0_.no=comments2_.board_no 
+                            left outer join
+                                user user3_ 
+                                    on comments2_.user_no=user3_.no 
+                            where
+                                board0_.no=?                
+                ``` 
+                + Projection이 거의 모든 컬럼이 된 것이 불만이지만 쿼리 한 번으로 모든 엔티티를 로딩할 수 있다.
+        
+    8) 결론
+        - 다시 말하지만, LAZY로 select를 여러번 하는 것이 JOIN보다 빠른 것은 절대 아니다. 더 느릴 수 있다.
+        - 잘못된 EAGER 페치 전략으로 N+1 문제가 더 큰 문제다
+        - 하지만 LAZY가 만사일 순 없다. 게시판 리스트 같은 경우에는 LAZY가 더 문제일 수 있다.(이럴 때 Join을 사용한다.)
+        - JPA는 사전에 충분한 경험이 있는 팀이 수행해서 사전에 성능 이슈를 발견하고 최적화 작업을 하는 것이 중용하며 쿼리 로그를 계속 모니터링 하는 것도 언급할 필요없이 중요하다.
+        - 그리고 무엇보다 이런 이슈에 제대로 대처하기 위해서는 다음과 같은 지식과 경험이 축적되어야 한다.
+          1) 개별적 모델에 대한 전체적인 모델 매핑 지식
+          2) 다양한 객체지향쿼리 작성법 숙지
+          3) 영속성컨텍스트와 트랜잭션 개념
+          4) SQL에 대한 이해와 RDBMS 스키마 모델링 경험
+          5) 객체지향프로그래밍 경험
   
 #### 2-4. Spring Data JPA CommentRepository Test : Spring Data JPA 기반 Repository
-1. __JpaCommentRepository.java__
-    1) 기본메소드와 쿼리메소드 
-
-2. __JpaCommentQryDslRepository.java__
-    1) 추가/성능 개선이 필요한 쿼리메소드 정의
-
-3. __JpaCommentQryDslRepositoryImp.java__
-    1) 추가/성능 개선이 필요한 쿼리메소드 구현
-
-4. __JpaCommentRepositoryTest.java__
+1. __다음과 같은 인터페이스와 클래스로 구현되어 있다__
+    1) JpaCommentRepository.java
+    2) JpaCommentQryDslRepository.java
+    3) JpaCommentQryDslRepositoryImp.java
+    4) JpaCommentRepositoryTest.java
+2. __OneToMany Unidirectional Many쪽은 별다른 메소드를 두지 않는다.__
+    1) 관계의 주인이 아니기 때문에 객체탐색이 기본적으로 힘들다.
+    2) 저장, 삭제, 수정 정도의 메소드 구현이 가능하다.
+    3) 생략

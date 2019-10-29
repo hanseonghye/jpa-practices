@@ -3,6 +3,7 @@ package me.kickscar.practices.jpa03.model04.repository;
 import me.kickscar.practices.jpa03.model04.config.JpaRepositoryTestConfig;
 import me.kickscar.practices.jpa03.model04.domain.*;
 import me.kickscar.practices.jpa03.model04.dto.BoardDto;
+import me.kickscar.practices.jpa03.model04.dto.CommentDto;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +20,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.util.List;
-
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -106,9 +106,8 @@ public class JpaBoardRepositoryTest {
         commentRepository.save(1L, new Comment(user1, "댓글1"));
         commentRepository.save(2L, new Comment(user1, "댓글2"), new Comment(user2, "댓글3"));
         commentRepository.save(3L, new Comment(user1, "댓글4"), new Comment(user2, "댓글5"), new Comment(user3, "댓글6"));
-        commentRepository.save(4L, new Comment(user1,"댓글7"), new Comment(user2, "댓글8"), new Comment(user3, "댓글9"), new Comment(user4, "댓글10"));
 
-        assertEquals(10L, commentRepository.count());
+        assertEquals(6L, commentRepository.count());
     }
 
     @Test
@@ -116,8 +115,8 @@ public class JpaBoardRepositoryTest {
     @Rollback(false)
     public void test02SaveEagerProblem01() {
         User user = userRepository.findById(4L).get();
-        commentRepository.save(1L, new Comment(user, "댓글11"));
-        assertEquals(11L, commentRepository.count());
+        commentRepository.save(1L, new Comment(user, "댓글7"));
+        assertEquals(7L, commentRepository.count());
     }
 
     @Test
@@ -167,8 +166,29 @@ public class JpaBoardRepositoryTest {
         assertEquals("둘리", user.getName());
 
         List<Comment> comments = board.getComments();
-        System.out.println(comments);
-
+        assertEquals(2L, comments.size());
     }
 
+    @Test
+    public void test06BoardViewLazyProblem02(){
+        Board board = boardRepository.findById2(3L);
+    }
+
+    @Test
+    public void test07BoardViewLazySolved01(){
+        BoardDto board = boardRepository.findById3(4L);
+        assertEquals("제목4", board.getTitle());
+
+        List<CommentDto> comments = boardRepository.findCommentsByNo(4L);
+        assertEquals(0L, comments.size());
+
+        board.setComments(comments);
+        System.out.println(board);
+    }
+
+    @Test
+    public void test08BoardViewLazySolved02(){
+        Board board = boardRepository.findById4(4L);
+        System.out.println(board);
+    }
 }

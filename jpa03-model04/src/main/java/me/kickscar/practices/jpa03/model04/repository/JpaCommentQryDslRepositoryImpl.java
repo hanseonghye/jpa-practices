@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.util.List;
+
 import static me.kickscar.practices.jpa03.model04.domain.QComment.comment;
 
 public class JpaCommentQryDslRepositoryImpl extends QuerydslRepositorySupport implements JpaCommentQryDslRepository {
