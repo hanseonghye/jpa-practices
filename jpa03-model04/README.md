@@ -57,7 +57,8 @@
 #### 2-1. 요약: 다루는 기술적 내용
 1. OneToMany Unidirectional 단점 이해
 2. Global Fetch 전략 LAZY에 대한 이해
-3. 성능 및 비지니스 요구 따른 레포지토리 메소드 최적화 하기
+3. OneToMany Unidirectional에 대해 관계 매핑과 객체 탐색, 컬렉션 조인 외에 크게 다룰 것은 없다.
+4. 기존 Board, User에서 Comment 엔티티가 추가되면서 약간 복잡성을 가졌기 때문에 성능 및 비지니스 요구 따른 레포지토리 메소드 최적화 하기
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  
