@@ -30,7 +30,7 @@
 1. __User 엔티티 매핑 참고__
 2. __Orders 엔티티 매핑 참고__
 3. __연관관계 매핑__
-    1) ManyToOne(User 엔티티)
+    1) ManyToOne(Order 엔티티)
         
         ```
             .
@@ -43,7 +43,7 @@
         ```
         - ManytoOne, OneToOne에서 Default Fetch Mode는 EAGER 이다.  
       
-    2) OneToMany(Orders 엔티티)  
+    2) OneToMany(User 엔티티)  
         
         ```
              .
