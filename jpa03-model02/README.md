@@ -21,13 +21,13 @@
     3) 따라서 이 모델에서는 단방향(Unidirection) 으로 결정한다.(Board -> User)  
    
 3. __다중성은 방향성이 결정나면 쉽게 결정 할 수 있다.__
-    1) ManyToOne 똔느 OneToMany 또는 OneToOne를 결정하는 것은 쉽다. 참조를 해야하는 엔티티 기준으로 결정하면 된다.  
-    2) A -> B 인 경우 A기준이다. 따라서, Board -> User 단방향에서는 Board 기준이다.  
+    1) ManyToOne, OneToMany 또는 OneToOne를 결정하는 것은 쉽다. 참조를 해야하는 엔티티 기준으로 결정하면 된다.(뒤에 설명하지만 연관관계의 주인이 왼쪽에 온다.) 
+    2) A -> B 인 경우 A 기준이다. 따라서, Board -> User 단방향에서는 Board 기준이다.  
     3) 데이터 모델링 Relation에서, Board가 Many, User가 One 이므로 **ManyToOne** 이다.  
    
 4. __단방향에서는 연관관계의 주인을 따지지 않아도 된다.__
     1) 연관관계가 하나밖에 없기 때문에 관계 설정을 한 필드가 주인이다.
-    2) 이 필드에 값 설정에 따라 외래키가 변경되면 관계가 변경되기 때문에 이 필드가 관계의 주인이 되는 것이다.
+    2) 이 필드에 값 설정에 따라 외래키가 변경되면 관계가 변경되기 때문에 이 필드가 있는 엔티티가 관계의 주인이 되는 것이다.
 
 #### 1-2. Entity Class: User, Board
 1. __User.java 엔티티 매핑 참고__
@@ -196,7 +196,7 @@
         - Eager Fetch(@ManyToOne 기본 Fetch Mode)는 Proxy 객체 타입을 리턴하지 않는다. Lazy Fetch는 Proxy 객체를 리턴한다.(실제 User 객체가 아니다)
         - JPQL를 사용하면 User 정보를 가져오기 위해 Join 대신 Select 쿼리를 2번 실행한다. (로그 확인 할 것)
         - from(), where(), fetchOne() 함수 사용법  
-\   6) test04FindAll1
+    6) test04FindAll1
         - QueryDslBoardRepository.findAll1()
         - Board 엔티티만 지정하면 join으로 한 번에 User 정보까지 가져오지 않는다는 것이다. 
         - 기본이 EAGER이기 때문에 각각의 Board가 참조하고 있는 User의 정보를 얻어오기 위해 Select 쿼리가 개별적으로 실행된다.
@@ -215,7 +215,7 @@
     9) test07FindAll3
         - QueryDslBoardRepository.findAll3(page, size)
         - Fetch Join 적용
-        - Paging 적용(offset(), limit() 함수)
+        - Paging 적용을 위한 offset(), limit() 함수 사용법
         - from(), innerJoin(), fetchJoin(), orderBy(), offset(), limit(), fetch() 함수 사용법
         - page index 시작은 0
    10) test08FindAll3
