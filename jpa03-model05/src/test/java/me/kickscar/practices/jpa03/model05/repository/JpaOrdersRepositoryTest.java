@@ -25,13 +25,16 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpaConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class JpaUerRepositoryTest {
+public class JpaOrdersRepositoryTest {
 
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
     private JpaUserRepository userRepository;
+
+    @Autowired
+    private JpaOrdersRepository ordersRepository;
 
     @Test
     @Transactional
@@ -44,5 +47,42 @@ public class JpaUerRepositoryTest {
         user1.setGender(GenderType.MALE);
         user1.setRole(RoleType.USER);
         userRepository.save(user1);
+
+        User user2 = new User();
+        user2.setName("마이콜");
+        user2.setPassword("1234");
+        user2.setEmail("michol@kickscar.me");
+        user2.setGender(GenderType.MALE);
+        user2.setRole(RoleType.USER);
+        userRepository.save(user2);
+
+
+
+        ordersRepository.save(1L, new Orders("주문1"), new Orders("주문2"), new Orders("주문3"));
+
+        assertEquals(3L, ordersRepository.count());
    }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test02UpdateUserFails() {
+
+        User user = userRepository.findById(2L).get();
+        Orders orders = ordersRepository.findById(1L).get();
+
+        orders.setUser(user);
+
+        //System.out.println(orders);
+
+    }
+
+    @Test
+    @Transactional
+    public void test03UpdateUserFails() {
+
+        Orders orders = ordersRepository.findById(1L).get();
+        System.out.println(orders.getUser());
+
+    }
 }

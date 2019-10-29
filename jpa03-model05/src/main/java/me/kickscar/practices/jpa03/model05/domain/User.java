@@ -30,7 +30,7 @@ public class User {
 	@Column(name = "role", nullable = false)
 	private RoleType role;
 
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name = "user_no")
 	private List<Orders> orders = new ArrayList<Orders>();
 

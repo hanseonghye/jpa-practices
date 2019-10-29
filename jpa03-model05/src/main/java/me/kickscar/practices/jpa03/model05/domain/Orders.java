@@ -25,8 +25,15 @@ public class Orders {
     private Date regDate = new Date();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_no", insertable = false, updatable = false)
+    @JoinColumn(name = "user_no",  insertable = false, updatable = false)
     private User user;
+
+    public Orders(){
+    }
+
+    public Orders(String name){
+        this.name = name;
+    }
 
     public Long getNo() {
         return no;

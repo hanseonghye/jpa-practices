@@ -67,9 +67,27 @@
              .
         ```
         - ManytoOne, OneToOne에서 Default Fetch Mode는 EAGER (Global Fetch 전략 LAZY) 로 수정  
-      
-    3) 객체 관계 설정에 주의 할점
 
 
-### 2. SpringBoot Test Case
+#### 2-1. 요약: 다루는 기술적 내용
+1. OneToMany Bidirectional 단점 이해
+2. Order -> User Read Only 확인
+3. OneToMany 양방향(Bidirectioanal) 보다는 ManyToOne 양방향(Bidirectional) 사용 권고 
+
+
+#### 2-2. 테스트 환경
+ 1. __Java SE 1.8__  
+ 2. __Spring Boot Starter Web 2.1.8.RELEASE (Spring Core, Context, Web ... etc 5.19.RELEASE)__   
+ 3. __Spring Boot Starter Data JPA 2.1.8.RELEASE (Spring Data JPA 2.1.10.RELEASE)__
+ 4. __Hibernate 5.4.4.Final__
+ 5. __QueryDsl JPA 4.2.1__
+ 6. __QueryDsl APT 3.7.4__ 
+ 7. __H2 Database 1.4.197__  
+ 8. __JUnit 4.12__
+ 9. __Spring Boot Starter Test 2.1.8.RELEASE (Spring Test 5.1.9.RELEASE)__   
+10. __Gradle 5.4__    
+
+
+#### 2-3. Spring Data JPA OrderRepository Test : Spring Data JPA 기반 Repository
+
 
