@@ -608,6 +608,6 @@
     3) JpaCommentQryDslRepositoryImp.java
     4) JpaCommentRepositoryTest.java
 2. __OneToMany Unidirectional Many쪽은 별다른 메소드를 두지 않는다.__
-    1) 관계의 주인이 아니기 때문에 객체탐색이 기본적으로 힘들다.
+    1) 관계의 주인이 아니고 연관 필드가 때문에 객체 탐색이 기본적으로 힘들다.
     2) 저장, 삭제, 수정 정도의 메소드 구현이 가능하다.
-    3) 생략
+    3) 앞의 예제 참고
