@@ -31,6 +31,12 @@
     6) 사용하는 경우를 억지로 찾자면, OSIV에서 주문 조회 페이지 같은 View에서 주문자 변경 가능성을 차단할 수는 있겠다.
     7) 그런데, ManyToOne 양방향에서도 설정할 수 있기 때문에 그렇게 꼭 OneToMany 양방향만의 장점이라 볼 수 없다.
     8) **반드시 OneToMany 양방향(Bidirectioanal) 보다는 ManyToOne 양방향(Bidirectional) 사용을 권고한다.**
+    
+4. __생성 스키마 DDL__    
+    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/35002.png" width="600px" />
+    <br>
+    1) OneToMany 단방향과 같다.
+    2) Many쪽에 지정한 이름으로 FK가 설정되어 있음을 알 수 있다.
 
 #### 1-2. Entity Class: User, Orders
 1. __User 엔티티 매핑 참고__
