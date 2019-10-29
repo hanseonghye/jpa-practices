@@ -188,7 +188,12 @@ public class JpaBoardRepositoryTest {
 
     @Test
     public void test08BoardViewLazySolved02(){
-        Board board = boardRepository.findById4(4L);
-        System.out.println(board);
+        Board board4 = boardRepository.findById4(4L);
+        assertNotNull(board4);
+
+        Board board1 = boardRepository.findById4(1L);
+        assertEquals(1L, board1.getNo().longValue());
+        assertEquals("둘리", board1.getUser().getName());
+        assertEquals(2L, board1.getComments().size());
     }
 }
