@@ -1,4 +1,4 @@
-## Model05 : 일대다(OneToMany) - 양방향
+## Model05 : 일대다(OneToMany) - 양방향(Bidirectional)
 
 
 ### 1. Domain
@@ -33,7 +33,7 @@
     8) **반드시 OneToMany 양방향(Bidirectioanal) 보다는 ManyToOne 양방향(Bidirectional) 사용을 권고한다.**
     
 4. __생성 스키마 DDL__    
-    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/35002.png" width="600px" />
+    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/35003.png" width="600px" />
     <br>
     1) OneToMany 단방향과 같다.
     2) Many쪽에 지정한 이름으로 FK가 설정되어 있음을 알 수 있다.
