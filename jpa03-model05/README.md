@@ -25,7 +25,7 @@
 3. __양방향에서는 연관관계의 주인을 따져야 한다.__
     1) user 필드(FK)가 있는 Orders 엔티티가 이 관계의 주인이 된다.
     2) 하지만 OneToMany 양방향(Bidirectional)에서는 User 엔티티가 중인이 되어야 하지만 RDBMS와 특성과의 차이로 주인이 될 수 없다.
-    3) 대신, 양쪽에 @JoinColumn의 이름을 같게 하고 Many쪽의 관계 필드(user)는 읽기 전용으로 한다.
+    3) 대신, 양쪽에 @JoinColumn의 이름을 같게 하고 Many쪽의 관계 필드(user)는 읽기 전용으로 한다.(양쪽에서 관계를 컨트롤하는 것은 복잡하니깐...)
     4) **OneToMany 단방향(Unidirectional)에 반대편 Many에 읽기전용 연관 필드를 하나더 두는 관계** 라 볼수 있다.
     5) OneToMany Unidirectional의 저장 문제점을 그대로 가지고 있어 추천하지 않는다.
     6) 사용하는 경우를 억지로 찾자면, OSIV에서 주문 조회 페이지 같은 View에서 주문자 변경 가능성을 차단할 수는 있겠다.
@@ -65,8 +65,17 @@
             private User user;
              .
              .
+             .
+            public void setUser(User user) {
+                this.user = user;
+            //  if(!user.getOrders().contains(this)) {
+            //         user.getOrders().add(this);
+            //  }
+              .
+              .       
         ```
-        - ManytoOne, OneToOne에서 Default Fetch Mode는 EAGER (Global Fetch 전략 LAZY) 로 수정  
+        - ManytoOne, OneToOne에서 Default Fetch Mode는 EAGER (Global Fetch 전략 LAZY) 로 수정
+        - OneToMany 단방향(Unidirectioanl)과는 다르게 양방향에서는 두 군데서 업데이트 인서트가 되지 못하도록 Collection을 가져와 채우는 부분을 없애야 한다. 
 
 
 #### 2-1. 요약: 다루는 기술적 내용
@@ -89,5 +98,64 @@
 
 
 #### 2-3. Spring Data JPA OrderRepository Test : Spring Data JPA 기반 Repository
+1. __JpaUserRepositry__
+    1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
+    2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
+
+2. __JpaOrdersRepository.java__
+    1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
+    2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
+
+3. __JpaOrdersQryDslRepository__
+    1) QueryDSL 통합 인터페이스 이다.
+    2) Orders(주문) 저장 편의 메소드 save(Long userNo, Orders ...orders)를 정의 하였다.
+
+4. __JpaOrdersQryDslRepositoryImpl__
+    1) QueryDSL 통합 인터페이스 구현 클래스이다.
+    2) Orders(주문) 저장 편의 메소드 save(Long userNo, Orders ...orders)를 구현 하였다.
+
+5. __JpaOrdersRepositoryTest.java__
+    1) test01Save
+        + 테스트를 위해 2개 User와 3개 주문를 1개의 User로 세팅하여 저장한다.
+        + OneToMany 단방향(Unidirectional) 에서 다루었지만 저장 후, 업데이트 쿼리가 한 번 더 실행되는 단점을 OneToMany 양방향(Biidirectional)에서도 그대로 가지고 있다.
+        + 쿼리 로그를 보면 Insert(Save)후, FK Update 쿼리가 실행된 것을 볼 수 있다.
+              
+            ```
+                Hibernate: 
+                    /* insert me.kickscar.practices.jpa03.model05.domain.Orders
+                        */ insert 
+                        into
+                            orders
+                            (address, name, reg_date, total_price) 
+                        values
+                            (?, ?, ?, ?)
+                Hibernate: 
+                    /* create one-to-many row me.kickscar.practices.jpa03.model05.domain.User.orders */ update
+                        orders 
+                    set
+                        user_no=? 
+                    where
+                        no=?            
+            ```
+    2) test02UpdateUser
+        + PK 1L인 Orders를 가져와 영속화 시킨다.
+        + PK 2L("마이콜") 인 User를 가져와 영속화 시킨다.
+        + Orders에 영속화된 User 엔티티 객체를 세팅하여 업데이트 시킨다.
+    
+    3) test03UpdateUserResultFails
+        + OneToMany 양방향(Biidirectional)에서는 외래키 관리를 두 군데서 하기 때문에 Many(Orders)에서 User(FK)를 변경하는 것을 금지 시키고 One(관계주인, User)에서만 가능하도록 했다.
+        + test02UpdateUser에서는 Many(Orders)에 User 엔티티 객체를 세팅하여 업데이트 시켰는데 그 결과를 확인하는 테스트 이다.
+        + 테스트 통과 조건은 2L("마이콜")로 변경되지 않아야 한다.
+        + 변경 되지 않았다. ReadOnly 설정이 정상적으로 작동하는 것을 알 수 있다.
+    
+    4) 결론
+        + OneToMany 양방향(Biidirectional)는 ManyToOne 양방향(Biidirectional)과 완전 동일한 연관관계 이다.
+        + One쪽을 주인으로 보았지만, RDBMS의 특성상 주인의 관계설정 필드를 가지지 못하고 Many쪽에 두는 특이한 점이 OneToMany 단방향과 마찬가지로 가지고 있다.
+        + Many쪽에서는 JoinColumn 설정을 정상적으로 할 수 있지만, 와래키 관리 포인트가 두군데가 되어 One쪽에 그 설정을 맡기고 ReadOnly 설정을 하게된다.
+        + 결론적으로 OnToMany 단방향에다가 반대편에 탐색을 위한 필드(User)를 하나 추가 한 형태로 그 연관관계가 존재하지 않느다 보는 것이 맞다.
+        + 전반적으로 부자연스러운 매핑 설정을 계속 해야한다.
+        + ManyToOne 양방향(Bidirectional) 매핑을 사용하도록 하자.
+        
+    
 
 
