@@ -19,8 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpaConfig.class})
@@ -56,8 +55,6 @@ public class JpaOrdersRepositoryTest {
         user2.setRole(RoleType.USER);
         userRepository.save(user2);
 
-
-
         ordersRepository.save(1L, new Orders("주문1"), new Orders("주문2"), new Orders("주문3"));
 
         assertEquals(3L, ordersRepository.count());
@@ -66,23 +63,17 @@ public class JpaOrdersRepositoryTest {
     @Test
     @Transactional
     @Rollback(false)
-    public void test02UpdateUserFails() {
-
-        User user = userRepository.findById(2L).get();
+    public void test02UpdateUser() {
         Orders orders = ordersRepository.findById(1L).get();
 
+        User user = userRepository.findById(2L).get();
         orders.setUser(user);
-
-        //System.out.println(orders);
-
     }
 
     @Test
     @Transactional
-    public void test03UpdateUserFails() {
-
+    public void test03UpdateUserResultFails() {
         Orders orders = ordersRepository.findById(1L).get();
-        System.out.println(orders.getUser());
-
+        assertNotEquals("마이콜", orders.getUser().getName());
     }
 }
