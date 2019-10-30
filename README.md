@@ -37,8 +37,8 @@
 
 ## 2. 프로젝트 로컬 클론 & 모듈 임포트 & 실행/테스트 환경 설정 (IntelliJ IDEA)
 #### 1. Git Repository URL 선택  - **Clone** 
-    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/00001.png" width="600px" />
-    <br/>  
+<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/00001.png" width="600px" />
+<br/>  
    
 #### 2. Checkout from Version Control - **Yes**  
 <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/00002.png" width="600px" />
