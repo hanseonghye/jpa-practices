@@ -1,17 +1,15 @@
-## 01. 다양한 매핑 모델들의 JPQL, QueryDSL, JPARepository 기반 Repository 작성 예시
+## 1. 다양한 매핑 모델들의 JPQL, QueryDSL, JPARepository 기반 Repository 작성 예시
 
-
-### JPA01. 엔티티 매핑(Entity Mapping)
+### jpa01-entity-mapping Module: 엔티티 매핑(Entity Mapping)
 #### &nbsp;&nbsp;&nbsp;&nbsp;01. Member 엔티티 다양한 설정으로 매핑하기
 
-
-### JPA02. 영속성 관리 / 엔티티 생명주기
+### jpa02-persistence-context Module: 영속성 관리 / 엔티티 생명주기
 #### &nbsp;&nbsp;&nbsp;&nbsp;01. 영속성 켄텍스트(Persistence Context)
 #### &nbsp;&nbsp;&nbsp;&nbsp;02 ~ 04. 엔티티 조회/등록/수정/삭제 
 #### &nbsp;&nbsp;&nbsp;&nbsp;05. 준영속성
 
 
-### JPA03. 다양한 모델 매핑 및 다양한 Repository(JPQL, QueryDSL, JPARepository 기반)들 예제 코드
+### jpa03-modelxx Module: 다양한 연관관계 설명, JPA 프로그래밍 테크닉, Repository(JPQL, QueryDSL, Spring Data JPA)들 구현/테스트, 성능이슈에 따른 Repository 최적화 등등.. 
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model01. 단일(One)                      매핑        - 방명록
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model02. 다대일(@ManyToOne)              매핑(단방향) - 게시판(Board->User)
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model03. 다대일(@ManyToOne)              매핑(양방향) - 쇼핑몰(Order<->User)
@@ -100,6 +98,7 @@
   19) 나머지 모듈도 같은 방식으로... (jpa03 모듈들의 QueryDSL Gradle 플러그인 설정은 각 모듈 README.md 참고)
 
 ## 03. 프로젝트 로컬 클론 및 모듈 임포트 그리고 실행 환경 설정 방법 (Eclipse)
+    할 맘과 필요성이 아직 안생김....
 
 
 
