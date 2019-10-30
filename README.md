@@ -16,7 +16,7 @@
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model02. 다대일(@ManyToOne)              매핑(단방향) - 게시판(Board->User)
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model03. 다대일(@ManyToOne)              매핑(양방향) - 쇼핑몰(Order<->User)
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model04. 일대다(@OneToMany)              매핑(단방향) - 게시판(Board->Comment)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model05. 일대다(@OneToMany)              매핑(양방향) - X
+#### &nbsp;&nbsp;&nbsp;&nbsp;Model05. 일대다(@OneToMany)              매핑(양방향) - 쇼핑몰(User<->Order)
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model06. 일대일(@OneToOne)               매핑(단방향) - JBlog(User->Blog)
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model07. 일대일(@OneToOne)               매핑(양방향) - JBlog(User<->Blog)
 #### &nbsp;&nbsp;&nbsp;&nbsp;Model08. 다대다(@ManyToMany)             매핑(단방향) - 음반검색(Artist->Album)
