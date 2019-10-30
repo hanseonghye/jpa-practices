@@ -1,31 +1,41 @@
-## 1. 다양한 매핑 모델들의 JPQL, QueryDSL, JPARepository 기반 Repository 작성 예시
+## 1. JPA 다양한 매핑 모델과 JPQL(QueryDSL), Spring Data JPA 기반의 Repository 작성 방법 
 
-### jpa01-entity-mapping Module: 엔티티 매핑(Entity Mapping)
-#### &nbsp;&nbsp;&nbsp;&nbsp;01. Member 엔티티 다양한 설정으로 매핑하기
+### jpa01-entity-mapping Module
+#### 1. 다양한 엔티티 매핑 설명
+#### 2. 예제 코드: Member 엔티티 
 
-### jpa02-persistence-context Module: 영속성 관리 / 엔티티 생명주기
-#### &nbsp;&nbsp;&nbsp;&nbsp;01. 영속성 켄텍스트(Persistence Context)
-#### &nbsp;&nbsp;&nbsp;&nbsp;02 ~ 04. 엔티티 조회/등록/수정/삭제 
-#### &nbsp;&nbsp;&nbsp;&nbsp;05. 준영속성
+### jpa02-persistence-context Module
+#### 1. 영속성 켄텍스트(Persistence Context) 설명
+#### 2. 영속성 관리 / 엔티티 생명주기 설명
+#### 3. 예제 코드: 엔티티 조회/등록/수정/삭제 
+#### 4. 준영속성 설명
+
+### jpa03-modelxx Modules
+#### 1. 다루는 내용
+1) 다양한 연관관계 설명
+2) JPA 프로그래밍 테크닉
+3) Repository(JPQL, QueryDSL, Spring Data JPA 기반) 개별적 구현 방법 및 테스트
+4) 연관관계와 매핑 설정에 따른 성능이슈 설명 
+5) 성능 이슈를 해결할 수 있는 Repository 구현 방법
+6) Repository 최적화 방법과 JPA 프로그래밍에서 고민해야 하는 것들...
+
+#### 2.연관관계 모델
+ 1) 단일(One) - 방명록
+ 2) 다대일(ManyToOne) 단방향(Unidirectional) - 게시판  [Board -> User]
+ 3) 다대일(ManyToOne) 양방향(Bidirectional)  - 쇼핑몰  [Order <-> User]
+ 4) 일대다(OneToMany) 단방향(Unidirectional) - 게시판  [Board -> Comment]
+ 5) 일대다(OneToMany) 양방향(Bidirectional)  - 쇼핑몰  [User <->Order]
+ 6) 일대일(OneToOne) 단방향(Unidirectional) - JBlog [User -> Blog]
+ 7) 일대일(OneToOne) 양방향(Bidirectional)  - JBlog [User <-> Blog]
+ 8) 다대다(ManyToMany) 단방향(Unidirectional) - 음반검색 [Artist -> Album]
+ 9) 다대다(ManyToMany) 양방향(Bidirectional) - 음반검색 [Artis <-> Album ]
+10) 다대다(OneToMany + ManyToOne) - 쇼핑몰 [User -> Cart -> Product]
+11) 다대다(@neToMany + OneToMany) - 음반검색 [Artist -> Song <- Album]
+12) 복합키 - ?
+13) 식별관계 - JBlog
 
 
-### jpa03-modelxx Module: 다양한 연관관계 설명, JPA 프로그래밍 테크닉, Repository(JPQL, QueryDSL, Spring Data JPA)들 구현/테스트, 성능이슈에 따른 Repository 최적화 등등.. 
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model01. 단일(One)                      매핑        - 방명록
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model02. 다대일(@ManyToOne)              매핑(단방향) - 게시판(Board->User)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model03. 다대일(@ManyToOne)              매핑(양방향) - 쇼핑몰(Order<->User)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model04. 일대다(@OneToMany)              매핑(단방향) - 게시판(Board->Comment)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model05. 일대다(@OneToMany)              매핑(양방향) - 쇼핑몰(User<->Order)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model06. 일대일(@OneToOne)               매핑(단방향) - JBlog(User->Blog)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model07. 일대일(@OneToOne)               매핑(양방향) - JBlog(User<->Blog)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model08. 다대다(@ManyToMany)             매핑(단방향) - 음반검색(Artist->Album)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model09. 다대다(@ManyToMany)             매핑(양방향) - 음반검색(Artis<t->Album)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model10. 다대다(@OneToMany + @ManyToOne) 매핑       - 쇼핑몰(User->Cart->Product)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model11. 다대다(@OneToMany + @OneToMany) 매핑       - 음반검색(Artist->Song<-Album)
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model12. 복합키                          매핑       - ?
-#### &nbsp;&nbsp;&nbsp;&nbsp;Model13. 식별관계                         매핑       - JBlog
-
-
-## 02. 프로젝트 로컬 클론 및 모듈 임포트 그리고 실행 환경 설정 방법 (IntelliJ IDEA)
+## 2. 프로젝트 로컬 클론 & 모듈 임포트 & 실행/테스트 환경 설정 (IntelliJ IDEA)
   1) Git Repository URL 선택  - **Clone** 
   <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/00001.png" width="600px" />
   <br/>  
@@ -97,7 +107,9 @@
 
   19) 나머지 모듈도 같은 방식으로... (jpa03 모듈들의 QueryDSL Gradle 플러그인 설정은 각 모듈 README.md 참고)
 
-## 03. 프로젝트 로컬 클론 및 모듈 임포트 그리고 실행 환경 설정 방법 (Eclipse)
+
+
+## 3. 프로젝트 로컬 클론 & 모듈 임포트 & 실행/테스트 환경 설정 (Eclipse)
     할 맘과 필요성이 아직 안생김....
 
 
