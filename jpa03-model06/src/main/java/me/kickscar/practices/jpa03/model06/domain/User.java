@@ -21,7 +21,7 @@ public class User {
 	private Date joinDate = new Date();
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="blog_no")
+	@JoinColumn(name="blog_no", nullable = true)
 	private Blog blog;
 
 	public String getId() {
