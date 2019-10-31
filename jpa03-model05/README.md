@@ -73,10 +73,10 @@
               .
               .       
         ```
-        - ManytoOne, OneToOne에서 Default Fetch Mode는 EAGER (Global Fetch 전략 LAZY) 로 수정
-        - insertable = false, updatable = false를 두어 ReadOnly 필드로 세팅했다. User 변경을 하지 못한다(FK변경 금지)
-        - 하지만 User 조회는 가능하다.
-        - OneToMany 단방향(Unidirectioanl)과는 다르게 양방향에서는 두 군데서 업데이트 인서트가 되지 못하도록 setUser setter에 Collection을 가져와 채우는 부분을 없애야 한다. 
+        + ManytoOne, OneToOne에서 Default Fetch Mode는 EAGER (Global Fetch 전략 LAZY) 로 수정
+        + insertable = false, updatable = false를 두어 ReadOnly 필드로 세팅했다. User 변경을 하지 못한다(FK변경 금지)
+        + 하지만 User 조회는 가능하다.
+        + OneToMany 단방향(Unidirectioanl)과는 다르게 양방향에서는 두 군데서 업데이트 인서트가 되지 못하도록 setUser setter에 Collection을 가져와 채우는 부분을 없애야 한다. 
 
 
 #### 2-1. 요약: 다루는 기술적 내용

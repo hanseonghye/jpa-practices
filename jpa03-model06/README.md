@@ -1,4 +1,4 @@
-## Model06 : 일대일(OneToOne) - 단방향(Unidirectional)
+## Model06 : 일대일(OneToOne) - 단방향(Unidirectional), 주테이블에 외래키
 
 ### 1. Domain
 
@@ -13,11 +13,9 @@
 1. __보통은 서비스에서 방향성을 찾는 경우가 많다.__
     1) 블로그 한 개만을 개설할 수 있는 회원제 블로그 서비스
     2) 보통 블로그에 방문할 경우 blog.domain.com/userid 이런 식으로 접근하는 경우가 많다.
-    3) userid로 블로그 정보(블로그 이름, 블로그 소개, 카테고리, 포스트등) 가져와야 한다.
-    4) User -> Blog 연관관계로 User에서 Blog를 참조해야 한다.
-    5) 반대방향을 보면, User <- Blog 도 블로그 검색 결과리스트와 같은 기능이 필요하다면, 충분히 고려해 볼만 하다.
-    6) 하지만, 일대일(OneToOne) 양방향(Bidirectional)에서 적용해 본다.   
-    7) Model06에서는 단방향(Unidirectioanl)으로 결정한다. 
+    3) userid로 블로그 정보(블로그 이름, 블로그 소개, 카테고리, 포스트등) 가져와야 한다. User -> Blog 연관관계로 User에서 Blog를 참조해야 한다.
+    4) 반대방향을 보면, User <- Blog 도 블로그 검색 결과리스트와 같은 기능이 필요하다면, 충분히 고려해 볼만 하지만, 일대일(OneToOne) 양방향(Bidirectional)에서 적용해 본다.   
+    5) Model06에서는 단방향(Unidirectioanl)으로 결정한다. 
 
 2. __다중성은 방향성이 결정나면 쉽게 결정 할 수 있다.__
     1) User(1) -> Blog(1)
@@ -34,16 +32,10 @@
         + 하지만 일대일(OneToOne) 양방향(Bidirectional)에서는 가능하다.
         + 주로 전통적인 RBMS 스키마 모델링에서 선호한다.
         + 장점은 스키마를 유지하면서 OneToMany로 바꿀 수 있다(블로그를 한 개이상 개설하는 것으로 비즈니스가 변경되는 경우 좋다.)
-    
-4. __생성 스키마 DDL__    
-    <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/35003.png" width="600px" />
-    <br>
-    1) OneToMany 단방향과 같다.
-    2) Many쪽에 지정한 이름으로 FK가 설정되어 있음을 알 수 있다.
 
-#### 1-2. Entity Class: User, Orders
+#### 1-2. Entity Class: User, Blog
 1. __User 엔티티 매핑 참고__
-2. __Orders 엔티티 매핑 참고__
+2. __Blog 엔티티 매핑 참고__
 3. __연관관계 매핑__
     1) OneToOne(User 엔티티, 주테이블)
         
@@ -147,7 +139,7 @@
 5. __JpaOrdersRepositoryTest.java__
     1) test01Save
         + 테스트를 위해 2개 User와 3개 주문를 1개의 User로 세팅하여 저장한다.
-        + OneToMany 단방향(Unidirectional) 에서 다루었지만 저장 후, 업데이트 쿼리가 한 번 더 실행되는 단점을 OneToMany 양방향(Biidirectional)에서도 그대로 가지고 있다.
+        + OneToMany 단방향(Unidirectional) 에서 다루었지만 저장 후, 업데이트 쿼리가 한 번 더 실행되는 단점을 OneToMany 양방향(Bidirectional)에서도 그대로 가지고 있다.
         + 쿼리 로그를 보면 Insert(Save)후, FK Update 쿼리가 실행된 것을 볼 수 있다.
               
             ```

@@ -17,7 +17,7 @@
     3) 쇼핑몰의 주문<->회원 관계매핑은 양방향(Bidirection) 이다.  
    
 2. __양방향에서는 연관관계의 주인을 따져야 한다.__
-    1) user 필드(FK)가 있는 Orders 엔티티가 이 관계의 주인이 된다.
+    1) user 필드(FK)가 있는 Orders 엔티티의 Orders.user가 관계의 주인이 된다.
     2) 이 말은 외래키 세팅을 통한 관계의 변화는  Orders 엔티티의 user 필드를 세팅할때만 변한다는 말이다.(그러니 관계의 주인인 거지!)
     3) 반대편의 List<Orders> 에 아무리 값을 설정해도 무시된다. (여긴 참조만 하는 것이지 관계설정에 아무런 영향을 미치지 못한다. 그래서 주인이 아니다.)
     4) 사실상, 외래키 설정을 하는 ManyToOne 에서 연관관계 설정은 끝난 것이다.
@@ -54,6 +54,7 @@
              .
         ```
         - mappedBy = "user" 주인이 누구임을 설정하는 부분이다. 반대편 엔티티의 user 필드이다.
+        - mappedBy로 설정된 필드는 주인이 아님을 설정하는 것이다.
         - OneToMany 에서는 Default Fetch Mode는 LAZY 이다.
       
     3) 객체 관계 설정에 주의 할점
@@ -96,7 +97,7 @@
 2. ManyToOne 양방향(Bidirection) 매핑에서 OneToMany 방향에서는 Collection(List)가 연관필드이기 때문에 Join에서 발생할 수 있는 문제점들...
     1) OneToMany의 켈렉션 조인(inner join, outer join, fetch join)의 문제점 이해 및 해결방법 이해
     2) OneToMany의 Default Fetch Mode인 Lazy Loading 때문에 발생하는 N+1 문제 이해 및 해결방법 이해  
-    3) 페이징 자체가 불가능 하다.
+    3) 페이징 자체가 불가능 한 것을 이해하고 그 해결 방법
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  
