@@ -1,5 +1,7 @@
 package me.kickscar.practices.jpa03.model07.domain;
 
+import org.hibernate.FetchMode;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -20,7 +22,7 @@ public class User {
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date joinDate = new Date();
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="blog_no")
 	private Blog blog;
 
@@ -71,7 +73,8 @@ public class User {
 				", name='" + name + '\'' +
 				", password='" + password + '\'' +
 				", joinDate=" + joinDate +
-				", blog=" + blog +
+				// Global Fetch Strategy LAZY Test
+				// ", blog=" + blog +
 				'}';
 	}
 }
