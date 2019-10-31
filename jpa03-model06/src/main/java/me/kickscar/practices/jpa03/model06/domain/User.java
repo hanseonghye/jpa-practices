@@ -4,24 +4,24 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table( name = "user" )
+@Table(name="user")
 public class User {
 	@Id
-	@Column(name = "id", nullable = false, length = 24)
+	@Column(name="id", nullable=false, length=24)
 	private String id;
 
-	@Column(name = "name", nullable = false, length = 24)
+	@Column(name="name", nullable=false, length=24)
 	private String name;
 
-	@Column(name = "password", nullable = false, length = 64)
+	@Column(name="password", nullable=false, length=64)
 	private String password;
 
-	@Column(name = "join_date", nullable = false)
+	@Column(name="join_date", nullable=false)
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date joinDate = new Date();
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="blog_no", nullable = true)
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="blog_no", nullable=true)
 	private Blog blog;
 
 	public String getId() {

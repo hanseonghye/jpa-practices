@@ -124,56 +124,51 @@
     1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
     2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
 
-2. __JpaOrdersRepository.java__
+2. __JpaBlogRepository.java__
     1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
     2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
 
-3. __JpaOrdersQryDslRepository__
-    1) QueryDSL 통합 인터페이스 이다.
-    2) Orders(주문) 저장 편의 메소드 save(Long userNo, Orders ...orders)를 정의 하였다.
-
-4. __JpaOrdersQryDslRepositoryImpl__
-    1) QueryDSL 통합 인터페이스 구현 클래스이다.
-    2) Orders(주문) 저장 편의 메소드 save(Long userNo, Orders ...orders)를 구현 하였다.
-
-5. __JpaOrdersRepositoryTest.java__
+3. __JpaUserRepositoryTest.java__
     1) test01Save
-        + 테스트를 위해 2개 User와 3개 주문를 1개의 User로 세팅하여 저장한다.
-        + OneToMany 단방향(Unidirectional) 에서 다루었지만 저장 후, 업데이트 쿼리가 한 번 더 실행되는 단점을 OneToMany 양방향(Bidirectional)에서도 그대로 가지고 있다.
-        + 쿼리 로그를 보면 Insert(Save)후, FK Update 쿼리가 실행된 것을 볼 수 있다.
+        + 앞의 ManyToOne Many쪽 엔티티 저장과 같다.
+        + 차이점이 있다면, PK를 String 사용자 아이디로 매핑하였고 애플리케이션이 직접 할당하고 Unique하게 유지하겠다고 설정한 것이다.
+        + 따라서 @GeneratedValue 적용하지 않았다.(문자열 기본키는 적용해도 무시되거나 예외가 발생한다.)
+        + 당연히, DBMS에게 위임하는 @GeneratedValue(strategy=GenerationType.IDENTITY)도 무시된다.   
+        + 문제는 기본키 전략을 애플리케이션이 직접 할당으로 설정했을 때 JPA가 엔티티 객체를 저장할 때 실행하는 쿼리다.
               
             ```
                 Hibernate: 
-                    /* insert me.kickscar.practices.jpa03.model05.domain.Orders
-                        */ insert 
-                        into
-                            orders
-                            (address, name, reg_date, total_price) 
-                        values
-                            (?, ?, ?, ?)
-                Hibernate: 
-                    /* create one-to-many row me.kickscar.practices.jpa03.model05.domain.User.orders */ update
-                        orders 
-                    set
-                        user_no=? 
+                    select
+                        user0_.id as id1_1_0_,
+                        user0_.blog_no as blog_no5_1_0_,
+                        user0_.join_date as join_dat2_1_0_,
+                        user0_.name as name3_1_0_,
+                        user0_.password as password4_1_0_ 
+                    from
+                        user user0_ 
                     where
-                        no=?            
+                        user0_.id=?
+                Hibernate: 
+                    insert 
+                        into
+                            user
+                            (blog_no, join_date, name, password, id) 
+                        values
+                            (?, ?, ?, ?, ?)
             ```
-    2) test02UpdateUser
-        + PK 1L인 Orders를 가져와 영속화 시킨다.
-        + PK 2L("마이콜") 인 User를 가져와 영속화 시킨다.
-        + Orders에 영속화된 User 엔티티 객체를 세팅하여 업데이트 시킨다.
+            1) insert 앞에 해당 user를 찾는 부분이 나온다.
+            2) 이는 @GeneratedValue 생략 시, PK Unique를 위해 JPA가 영속화할 엔티티의 아이디로 미리 찾는 작업이다.
+            3) 참고로 @JoinColum의 nullable = false 가 기본이기 때문에 User.blog는 세팅안해도 정장하는 데는 문제가 없다.
+            4) 애플리케이션이 String PK 직접 할당하고 Unique하게 잘 유지하면 문제 없지만 툭별한 케이스가 아니면 @GeneratedValue와 DBMS에 맞는 생성전략을 사용할 것을 JPA는 권고한다.
+             
+    2) test02SaveBlog
+        + Blog 엔티티 객체를 저장한다.
+        + 이 블로그의 주인 user를 DB로 부터 영속화 시킨다. 
+        + user table의 FK blog_no을 업데이트 시키는 것을 로그를 통해 확인 가능하다.
     
-    3) test03UpdateUserResultFails
-        + OneToMany 양방향(Biidirectional)에서는 외래키 관리를 두 군데서 하기 때문에 Many(Orders)에서 User(FK)를 변경하는 것을 금지 시키고 One(관계주인, User)에서만 가능하도록 했다.
-        + test02UpdateUser에서는 Many(Orders)에 User 엔티티 객체를 세팅하여 업데이트 시켰는데 그 결과를 확인하는 테스트 이다.
-        + 테스트 통과 조건은 2L("마이콜")로 변경되지 않아야 한다.
-        + 변경 되지 않았다. ReadOnly 설정이 정상적으로 작동하는 것을 알 수 있다.
-    
-    4) 결론
-        + OneToMany 양방향(Biidirectional)는 ManyToOne 양방향(Biidirectional)과 완전 동일한 연관관계 이다.
-        + One쪽을 주인으로 보았지만, RDBMS의 특성상 주인의 관계설정 필드를 가지지 못하고 Many쪽에 두는 특이한 점이 OneToMany 단방향과 마찬가지로 가지고 있다.
-        + Many쪽에서는 JoinColumn 설정을 정상적으로 할 수 있지만, 와래키 관리 포인트가 두군데가 되어 One쪽에 그 설정을 맡기고 ReadOnly 설정을 하게된다.
-        + 결론적으로 OnToMany 단방향에다가 반대편에 탐색을 위한 필드(User)를 하나 추가 한 형태로 그 연관관계가 존재하지 않느다 보는 것이 맞다.
-        + 전반적으로 부자연스러운 매핑 설정을 계속 해야한다.
-        + ManyToOne 양방향(Bidirectional) 매핑을 사용하도록 하자.
+    3) test03FindById
+        + 영속화된 User 엔티티 객체로 부터 Blog 엔티티 객체를 가져오는 테스트이다.
+        + 글로벌 페치 전략 LAZY로 바꿨기 때문에 Proxy 객체 반환 확인 테스트를 한다.
+        + 기본 페치 전략 EAGER를 유지하고 있다면, blog 테이블과 outer join이 걸렸을 것이다(User.blog가 null를 허용하기 때문에)
+        + 테스트 코드를 보면 첫번째 Proxy 객체 확인에서는 초기화 되지 않은 Proxy객체로 지연로딩 중인 것을 확인할 수 있다. 
+        + 블로그의 이름을 반환한 다음부터는 Proxy객체가 초기화되어 로딩되었음을 확인할 수 있다.

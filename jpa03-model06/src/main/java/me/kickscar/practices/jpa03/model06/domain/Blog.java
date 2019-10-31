@@ -4,14 +4,14 @@ package me.kickscar.practices.jpa03.model06.domain;
 import javax.persistence.*;
 
 @Entity
-@Table( name = "blog" )
+@Table(name="blog")
 public class Blog {
     @Id
-    @Column(name = "no")
-    @GeneratedValue( strategy = GenerationType.IDENTITY  )
+    @Column(name="no")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long no;
 
-    @Column(name = "name", nullable = false, length = 200)
+    @Column(name="name", nullable=false, length=200)
     private String name;
 
     public Long getNo() {
