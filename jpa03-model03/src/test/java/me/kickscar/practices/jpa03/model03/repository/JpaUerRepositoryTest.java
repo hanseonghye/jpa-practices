@@ -35,7 +35,7 @@ public class JpaUerRepositoryTest {
     private JpaUserRepository userRepository;
 
     @Autowired
-    private JpaOrdersRepository orderRepository;
+    private JpaOrdersRepository ordersRepository;
 
     @Test
     @Transactional
@@ -52,27 +52,27 @@ public class JpaUerRepositoryTest {
         Orders orders1 = new Orders();
         orders1.setName("주문1");
         orders1.setUser(user1);
-        orderRepository.save(orders1);
+        ordersRepository.save(orders1);
 
         Orders orders2 = new Orders();
         orders2.setName("주문2");
         orders2.setUser(user1);
-        orderRepository.save(orders2);
+        ordersRepository.save(orders2);
 
         Orders orders3 = new Orders();
         orders3.setName("주문3");
         orders3.setUser(user1);
-        orderRepository.save(orders3);
+        ordersRepository.save(orders3);
 
         Orders orders4 = new Orders();
         orders4.setName("주문4");
         orders4.setUser(user1);
-        orderRepository.save(orders4);
+        ordersRepository.save(orders4);
 
         Orders orders5 = new Orders();
         orders5.setName("주문5");
         orders5.setUser(user1);
-        orderRepository.save(orders5);
+        ordersRepository.save(orders5);
 
         //================================
 
@@ -87,12 +87,12 @@ public class JpaUerRepositoryTest {
         Orders orders6 = new Orders();
         orders6.setName("주문6");
         orders6.setUser(user2);
-        orderRepository.save(orders6);
+        ordersRepository.save(orders6);
 
         Orders orders7 = new Orders();
         orders7.setName("주문7");
         orders7.setUser(user2);
-        orderRepository.save(orders7);
+        ordersRepository.save(orders7);
 
         //================================
 
@@ -105,11 +105,11 @@ public class JpaUerRepositoryTest {
         userRepository.save(user3);
 
         Orders orders8 = new Orders();
-        orders8.setName("주문6");
+        orders8.setName("주문8");
         orders8.setUser(user3);
-        orderRepository.save(orders8);
+        ordersRepository.save(orders8);
 
-        assertEquals(8L, orderRepository.count());
+        assertEquals(8L, ordersRepository.count());
     }
 
     @Test
@@ -130,7 +130,7 @@ public class JpaUerRepositoryTest {
     @Test
     @Transactional
     public void test03OneToManyCollectionJoinProblem() {
-        assertEquals(orderRepository.count(), userRepository.findAllCollectionJoinProblem().size());
+        assertEquals(ordersRepository.count(), userRepository.findAllCollectionJoinProblem().size());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class JpaUerRepositoryTest {
         Integer qryCount = 0;
         Long ordersCountActual = 0L;
 
-        Long ordersCountExpected = orderRepository.count();
+        Long ordersCountExpected = ordersRepository.count();
         Long N = userRepository.count();
 
         qryCount++;
@@ -170,7 +170,7 @@ public class JpaUerRepositoryTest {
         Integer qryCount = 0;
         Long ordersCountActual = 0L;
 
-        Long ordersCountExpected = orderRepository.count();
+        Long ordersCountExpected = ordersRepository.count();
         Long N = userRepository.count();
 
         qryCount++;
@@ -194,7 +194,7 @@ public class JpaUerRepositoryTest {
         Integer qryCount = 0;
         Long ordersCountActual = 0L;
 
-        Long ordersCountExpected = orderRepository.count();
+        Long ordersCountExpected = ordersRepository.count();
         Long N = userRepository.count();
 
         qryCount++;

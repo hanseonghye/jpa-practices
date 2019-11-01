@@ -22,8 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpaConfig.class})
@@ -37,7 +36,7 @@ public class JpaOrdersRepositoryTest {
     private JpaUserRepository userRepository;
 
     @Autowired
-    private JpaOrdersRepository orderRepository;
+    private JpaOrdersRepository ordersRepository;
 
     @Test
     @Transactional
@@ -54,27 +53,27 @@ public class JpaOrdersRepositoryTest {
         Orders orders1 = new Orders();
         orders1.setName("주문1");
         orders1.setUser(user1);
-        orderRepository.save(orders1);
+        ordersRepository.save(orders1);
 
         Orders orders2 = new Orders();
         orders2.setName("주문2");
         orders2.setUser(user1);
-        orderRepository.save(orders2);
+        ordersRepository.save(orders2);
 
         Orders orders3 = new Orders();
         orders3.setName("주문3");
         orders3.setUser(user1);
-        orderRepository.save(orders3);
+        ordersRepository.save(orders3);
 
         Orders orders4 = new Orders();
         orders4.setName("주문4");
         orders4.setUser(user1);
-        orderRepository.save(orders4);
+        ordersRepository.save(orders4);
 
         Orders orders5 = new Orders();
         orders5.setName("주문5");
         orders5.setUser(user1);
-        orderRepository.save(orders5);
+        ordersRepository.save(orders5);
 
         //================================
 
@@ -89,12 +88,12 @@ public class JpaOrdersRepositoryTest {
         Orders orders6 = new Orders();
         orders6.setName("주문6");
         orders6.setUser(user2);
-        orderRepository.save(orders6);
+        ordersRepository.save(orders6);
 
         Orders orders7 = new Orders();
         orders7.setName("주문7");
         orders7.setUser(user2);
-        orderRepository.save(orders7);
+        ordersRepository.save(orders7);
 
         //================================
 
@@ -107,72 +106,97 @@ public class JpaOrdersRepositoryTest {
         userRepository.save(user3);
 
         Orders orders8 = new Orders();
-        orders8.setName("주문6");
+        orders8.setName("주문8");
         orders8.setUser(user3);
-        orderRepository.save(orders8);
+        ordersRepository.save(orders8);
 
-        assertEquals(8L, orderRepository.count());
+        assertEquals(8L, ordersRepository.count());
     }
 
     @Test
-    public void test02FindAllByUserNo() {
-        final Long userNo = 1L;
+    @Transactional
+    @Rollback(false)
+    public void test02UpdateUser01(){
+        User user = userRepository.findById(3L).get();
+        Orders orders6 = ordersRepository.findById(6L).get();
 
-        List<Orders> list = orderRepository.findAllByUserNo(userNo);
+        user.getOrders().add(orders6);
 
-        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
-        assertEquals(orderRepository.countAllByUserNo(userNo).longValue(), list.size());
+        assertNotEquals(2L, ordersRepository.findAllByUserNo(3L).size());
     }
 
     @Test
-    public void test03FindAllByUserNo() {
+    @Transactional
+    @Rollback(false)
+    public void test03UpdateUser02(){
+        User user = userRepository.findById(3L).get();
+        Orders orders6 = ordersRepository.findById(6L).get();
+
+        orders6.setUser(user);
+
+        assertEquals(2L, ordersRepository.findAllByUserNo(3L).size());
+    }
+
+
+    @Test
+    public void test04FindAllByUserNo() {
         final Long userNo = 1L;
-        List<Orders> list = orderRepository.findAllByUserNo(userNo, new Sort(Sort.Direction.DESC, "regDate"));
+
+        List<Orders> list = ordersRepository.findAllByUserNo(userNo);
 
         assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
-        assertEquals(orderRepository.countAllByUserNo(userNo).longValue(), list.size());
+        assertEquals(ordersRepository.countAllByUserNo(userNo).longValue(), list.size());
     }
 
     @Test
-    public void test04FindAllByUserNo2() {
+    public void test05FindAllByUserNo() {
         final Long userNo = 1L;
-        List<Orders> list = orderRepository.findAllByUserNo2(userNo);
+        List<Orders> list = ordersRepository.findAllByUserNo(userNo, new Sort(Sort.Direction.DESC, "regDate"));
 
         assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
-        assertEquals(orderRepository.countAllByUserNo(userNo).longValue(), list.size());
-    }
-
-    @Test
-    public void test05FindAllByUserNo2() {
-        final Long userNo = 1L;
-        List<Orders> list = orderRepository.findAllByUserNo2(userNo, new Sort(Sort.Direction.DESC, "regDate").and(new Sort(Sort.Direction.DESC, "totalPrice")));
-
-        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
-        assertEquals(orderRepository.countAllByUserNo(userNo).longValue(), list.size());
+        assertEquals(ordersRepository.countAllByUserNo(userNo).longValue(), list.size());
     }
 
     @Test
     public void test06FindAllByUserNo2() {
+        final Long userNo = 1L;
+        List<Orders> list = ordersRepository.findAllByUserNo2(userNo);
+
+        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
+        assertEquals(ordersRepository.countAllByUserNo(userNo).longValue(), list.size());
+    }
+
+    @Test
+    public void test07FindAllByUserNo2() {
+        final Long userNo = 1L;
+        List<Orders> list = ordersRepository.findAllByUserNo2(userNo, new Sort(Sort.Direction.DESC, "regDate").and(new Sort(Sort.Direction.DESC, "totalPrice")));
+
+        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(list));
+        assertEquals(ordersRepository.countAllByUserNo(userNo).longValue(), list.size());
+    }
+
+    @Test
+    public void test08FindAllByUserNo2() {
         Integer page = 0;
         final Integer size = 3;
         final Long userNo = 1L;
 
-        List<Orders> list = orderRepository.findAllByUserNo2(userNo, PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
+        List<Orders> list = ordersRepository.findAllByUserNo2(userNo, PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
         assertEquals(3L, list.size());
 
-        list = orderRepository.findAllByUserNo2(userNo, PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
+        list = ordersRepository.findAllByUserNo2(userNo, PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
         assertEquals(2L, list.size());
 
-        list = orderRepository.findAllByUserNo2(userNo, PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
+        list = ordersRepository.findAllByUserNo2(userNo, PageRequest.of(page++, size, Sort.Direction.DESC, "regDate"));
         assertEquals(0L, list.size());
     }
 
     @Test
-    public void test07CountAllGroupByUser() {
+    public void test09CountAllGroupByUser() {
         Long totalOrdersCount = 0L;
-        final Long totalOrdersCountExpected = orderRepository.count();
+        final Long totalOrdersCountExpected = ordersRepository.count();
 
-        List<OrderCountOfUserDto> list = orderRepository.countAllGroupByUser();
+        List<OrderCountOfUserDto> list = ordersRepository.countAllGroupByUser();
         for(OrderCountOfUserDto dto: list){
             totalOrdersCount += dto.getOrderCount();
         }

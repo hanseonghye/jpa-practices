@@ -228,30 +228,52 @@
 4. __JpaOrdersRepositoryTest.java__
     1) test01Save()
         - 기본 메소드 CrudRepository.save(S) 테스트 및 테스트 데이터 생성
-    2) test02FindAllByUserNo
+    2) test02UpdateUser01()
+        - Orders의 User를 변경하는 테스트이다.
+        - ManyToOne뿐만 아니라 모든 양방향(Bidirectional)에서 주의할 것은 두 엔티티의 관계 필드에 대한 코드상 변경과 실제 외래키(user_no) 변경 여부다.
+        - Orders.user, User.orders 가 연관 관계 필드이고 실제로 외래키 관리는 관계주인 Orders.user이다. 그리고 테이블 외래키는 orders 테이블의 user_no이다.
+        - 변경은 관계주인 Orders.user만 가능하고 당연히 DB 업데이트도 관계주인 Orders.user가 변했을 때만 될 것이다.
+        - 따라서 이 테스트에서는 3L 사용자의 orders 개수가 하나 더 늘지 않을 것이다. 
+    3) test03UpdateUser02
+        - 이 테스트에서는 orders의 user 변경은 DB 업데이트로 반영될 것이다.
+        - 따라서 이 테스트에서는 3L 사용자의 orders 개수가 하나 더 늘어 난 것을 확인할 수 있다.
+        - 실제 업데이트 쿼리가 실행 되었다.
+            ```
+                update
+                    orders 
+                set
+                    address=?,
+                    name=?,
+                    reg_date=?,
+                    total_price=?,
+                    user_no=? 
+                where
+                    no=?          
+            ```
+    4) test04FindAllByUserNo
         - 쿼리메소드 findAllByUserNo(userNo)를 테스트 한다.
         - ManyToOne Fetch는 EAGER가 default이기 때문에 Orders들을 가져온 후, Orders의 user를 세팅하기 위해 select쿼리가 바로 실행된다.
         - Orders를 가져오는 데, outer join을 사용하지만 select에는 user가 없다.
         - PersistenceUnitUtil().isLoaded(Entity)로 영속 Entity 객체임이 바로 확인된다.
-    3) test03FindAllByUserNo
+    5) test05FindAllByUserNo
         - 쿼리메소드 findAllByUserNo(userNo, sort)를 테스트 한다.
         - test02와 같고 sorting(Order By) 여부만 테스트한다.
         - 테스트 통과 조건에 sorting을 넣지 않았다(쿼리 로그로 Order By절이 추가되었는 지 확인)
-    4) test04FindAllByUserNo2
+    6) test06FindAllByUserNo2
         - test03, test03의 2번 쿼리 실행을 해결한 QueryDSL로 작성한 findAllByUserNo2() 이다.
         - innerJoin()은 조인은 되지만 문제가 select에 User 필드를 포함하지 않는 것이다.
         - fetchJoin()을 함께 해야 한다.
         - 쿼리 확인 할 것
-    5) test05FindAllByUserNo2
+    7) test07FindAllByUserNo2
         - findAllByUserNo2()를 오버로딩해서 Sort를 받아 Order By를 하는 메소드 findAllByUserNo2(userNo, sort)를 테스트 한다.
         - QueryDSL에 Sort를 적용하는 방법 예시다.
         - Order By 필드를 여러 개 적용하는 방법도 테스트 코드에 있다.
         - 외부에서 sorting 필드를 세팅할 수 있는 장점이 있다.
-    6) test06FindAllByUserNo2    
+    8) test08FindAllByUserNo2    
         - findAllByUserNo2()를 오버로딩해서 Pageable를 받아 Order By와 limit을 함께 구현한 메소드 findAllByUserNo2(userNo, pageable)를 테스트 한다.
         - QueryDSL에 Pageable를 적용하는 방법 예시다.
         - 외부에서 Paging Size, Index, Sorting Field들을 세팅할 수 있는 장점이 있는 매우 유용한 방법이라 할 수 있다.
-    7) test07CountAllGroupByUser
+    9) test09CountAllGroupByUser
         - QueryDSL의 groupBy() 사용 예시 메소드 countAllGroupByUser()를 테스트 한다.
         - Group By뿐만 아니라 집계함수등이 사용되면(counting만 하는 것은 제외) 일단 Entity를 select에 올릴 수 없기 때문에 Projection과 DTO 사용을 먼저 생각해야 한다.
         - 테스트 통과 조건은 전체 Orders 수를 counting하고 사용자별 Orders 수를 저장한 DTO 들을 순회하면서 더한 값과 같은지 따져보는 것이다.
