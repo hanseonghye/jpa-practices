@@ -93,8 +93,8 @@
 
 #### 2-1. 요약: 다루는 기술적 내용
 1. QueryDSL 통합하는 Spring Data JPA 기반의 레포지토리 작성방법
-
-2. ManyToOne 양방향(Bidirection) 매핑에서 OneToMany 방향에서는 Collection(List)가 연관필드이기 때문에 Join에서 발생할 수 있는 문제점들...
+2. 양방향(Bidirectional)에서 관계 필드 변경과 Update 실행 여부
+3. ManyToOne 양방향(Bidirection) 매핑에서 OneToMany 방향에서는 Collection(List)가 연관필드이기 때문에 Join에서 발생할 수 있는 문제점
     1) OneToMany의 켈렉션 조인(inner join, outer join, fetch join)의 문제점 이해 및 해결방법 이해
     2) OneToMany의 Default Fetch Mode인 Lazy Loading 때문에 발생하는 N+1 문제 이해 및 해결방법 이해  
     3) 페이징 자체가 불가능 한 것을 이해하고 그 해결 방법
