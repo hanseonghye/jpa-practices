@@ -101,9 +101,8 @@
         ```
 
 #### 2-1. 요약: 다루는 기술적 내용
-1. OneToOne Bidirectional 단점 이해
-2. Order -> User Read Only 확인
-3. OneToMany 양방향(Bidirectioanal) 보다는 ManyToOne 양방향(Bidirectional) 사용 권고 
+1. 키본키 생성 전략(String 기본키 사용 시, 유의할 점) 
+2. Lazy Loading과 Proxy 객체 이해 
 
 
 #### 2-2. 테스트 환경
@@ -158,17 +157,17 @@
             ```
             1) insert 앞에 해당 user를 찾는 부분이 나온다.
             2) 이는 @GeneratedValue 생략 시, PK Unique를 위해 JPA가 영속화할 엔티티의 아이디로 미리 찾는 작업이다.
-            3) 참고로 @JoinColum의 nullable = false 가 기본이기 때문에 User.blog는 세팅안해도 정장하는 데는 문제가 없다.
-            4) 애플리케이션이 String PK 직접 할당하고 Unique하게 잘 유지하면 문제 없지만 툭별한 케이스가 아니면 @GeneratedValue와 DBMS에 맞는 생성전략을 사용할 것을 JPA는 권고한다.
+            3) 참고로 @JoinColum의 nullable = false 가 기본이기 때문에 User.blog는 세팅안해도 저장하는 데는 문제가 없다.
+            4) 애플리케이션이 String PK 직접 할당하고 Unique하게 잘 유지하면 문제 없지만, 툭별한 케이스가 아니면 @GeneratedValue와 DBMS에 맞는 생성전략을 사용할 것을 JPA는 권고한다.
              
     2) test02SaveBlog
         + Blog 엔티티 객체를 저장한다.
         + 이 블로그의 주인 user를 DB로 부터 영속화 시킨다. 
-        + user table의 FK blog_no을 업데이트 시키는 것을 로그를 통해 확인 가능하다.
+        + 쿼리 로그를 보면, user table의 FK blog_no을 업데이트 하고 있다.
     
     3) test03FindById
         + 영속화된 User 엔티티 객체로 부터 Blog 엔티티 객체를 가져오는 테스트이다.
-        + 글로벌 페치 전략 LAZY로 바꿨기 때문에 Proxy 객체 반환 확인 테스트를 한다.
+        + 글로벌 페치 전략 LAZY로 바꿨기 때문에 Proxy 객체 확인 테스트를 한다.
         + 기본 페치 전략 EAGER를 유지하고 있다면, blog 테이블과 outer join이 걸렸을 것이다(User.blog가 null를 허용하기 때문에)
-        + 테스트 코드를 보면 첫번째 Proxy 객체 확인에서는 초기화 되지 않은 Proxy객체로 지연로딩 중인 것을 확인할 수 있다. 
-        + 블로그의 이름을 반환한 다음부터는 Proxy객체가 초기화되어 로딩되었음을 확인할 수 있다.
+        + 테스트 코드를 보면, 첫번째 Proxy 객체 확인에서는 초기화 되지 않은 Proxy객체로 지연로딩 중인 것을 확인할 수 있다. 
+        + 블로그의 이름을 반환한 이후에는 Proxy객체가 초기화되어 있음을 확인할 수 있다.

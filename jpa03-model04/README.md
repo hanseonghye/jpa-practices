@@ -57,8 +57,8 @@
 #### 2-1. 요약: 다루는 기술적 내용
 1. OneToMany Unidirectional 단점 이해
 2. Global Fetch 전략 LAZY에 대한 이해
-3. OneToMany Unidirectional에 대해 관계 매핑과 객체 탐색, 컬렉션 조인 외에 크게 다룰 것은 없다.
-4. 기존 Board, User에서 Comment 엔티티가 추가되면서 약간 복잡성을 가졌기 때문에 성능 및 비지니스 요구 따른 레포지토리 메소드 최적화 하기
+3. OneToMany Unidirectional 관계 매핑, 객체 탐색, 컬렉션 조인
+4. 기존 Board, User 엔티티에 Comment 엔티티가 하나 더 추가되고 연관관계를 가지면서 약간 복잡해졌기 때문에 성능 및 비지니스 요구에 대한 레포지토리 최적화
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  
@@ -144,14 +144,14 @@
         - Comment 엔티티 저장에서 ManyToOne 기본 페치전략 EAGER의 문제점 테스트
         - 글로벌 Fecth 전략 - LAZY(지연로딩)
             1) JPA에서 기본 페치 전략은 EAGER(ManyToOne, OnetoOne), LAZY(OneToMany) 이다.
-            2) ManyToOne, OneToOne 에서는 츨로벌 페티 전략 Lazy로 변경하는 것이 보통이다.
-            3) 하지만 글로벌 페티 전략이 Lazy이지 꼭 강제 사항은 아니다. 비즈니스 로직과 상황에 따라 Eager도 적용할 수 있다.
+            2) ManyToOne, OneToOne 에서는 글로벌 페치 전략 Lazy로 변경하는 것을 권고한다.
+            3) 기본을 EAGER로 한 이유가 있을 것이다. 비즈니스 로직과 상황에 따라 EAGER도 적용할 수 있어야 한다.
         - 테스트 코드
             ```
                 Board board = em.find(Board.class, boardNo);    
             ```
             
-            Board 엔티티를 DB로부터 Fetch하여 영속화 시키기 위해 실행된 쿼리는,   
+            Board 엔티티를 DB로부터 Fetch하여 영속화 하기위해서 실행된 쿼리는,   
             
             ```
                 Hibernate: 
@@ -177,7 +177,7 @@
                         board0_.no=?            
             ```
             1) Board -> User(ManyToOne Unidirectional) 기본 Fetch 모드가 EAGER이기 때문에 User Entity와 Outer Join이 자동으로 실행된 것을 알 수 있다.
-            2) 이는 Comment에 FK세팅을 위해서 DB로 부터 Board 엔티티 객체를 가져오는데 실행하는 쿼리로는 조금은 부담스럽다.  
+            2) 이는 Comment에 FK 세팅을 위해서 DB로 부터 Board 엔티티 객체를 가져오는데 실행하는 쿼리로는 조금은 부담스럽다.  
             
         - LAZY로 바꾸고 실행된 쿼리 로그를 보자.
             1) Entity 매핑 수정
@@ -211,14 +211,14 @@
         - 쿼리메소드 JpaBoardRepository.findAllByOrderByRegDateDesc()를 사용해서 게시물 리스트를 가져오는 테스트이다. 
         - 테스트 코드는 LAZY로딩 시, 발생하는 Lazy의 N+1 문제를 확인해 본다.
         - 게시판 리스트를 가져오기 위한 쿼리(1) 그리고 게시글이 있는 User 이름을 가져오기 위한 쿼리(2 == N)이 실행됨을 알 수 있다.(쿼리 로그참고) 즉, LAZY로딩의 N+1 문제가 발생한다.  
-            1) EAGER -> LAZY로 페치전략 수정 후, 코멘트 저장시 발생한 성능 이슈 1개가 해결되었다고 성능이 개선되었을 것이라 기대하면 안된다. 
+            1) EAGER -> LAZY로 페치전략 수정 후, 코멘트 저장시 발생한 성능 이슈 1개가 해결되었다고 성능이 개선을 기대하면 안된다. 
             2) 페치전략 수정으로 발생할 수 있는 성능 이슈는 N+1 문제로 일어날 수 있는 게시판 리스트, 글보기 등 다른 비즈니스 로직에서 성능 문제가 발생할 수 있기 때문이다.
     4) test04BoardListLazyProblemSolved()
-        - N+1 문제를 해결하기 위한 **성능 및 비지니스 요구 따른 레포지토리 메소드 최적화 하기** 를 다루는 테스트이다.
+        - N+1 문제를 해결하기 위한 성능 및 비지니스 요구 따른 레포지토리 최적화를 다루는 테스트이다.
         - JpaBoardQryDslRepositoryImpl.findAll3(pageable) 메소드를 테스트한다.
-        - 해결을 위한 방법은 JPQL(QueryDSL)로 해결할 수 있다. 
+        - JPQL(QueryDSL)로 해결할 수 있다. 
             1) QueryDSL 경우에는 innerJoin(), fetchJoin()를 사용해 개선할 수 있다(jpa03-model02 참고)
-            2) 게시판 리스트에서는 User 정보가 다 필요없다. 이름과 번호 정도일 것이다. Projection과 DTO를 함께 고려하면 성능 향상에 더 좋을 수 있다.
+            2) 게시판 리스트에서는 User 엔티티의 전체 필드보다는 이름과 번호 정도의 필드만 필요 할 것이다. Projection과 DTO를 함께 고려하면 성능 향상에 더 좋을 수 있다.
             3) 문제는 Projection을 하면 Join Fetch를 할 수 없다는 점이다.
             4) 이유는 Fetch Join은 기본적으로 select에 1개 이상의 Entity가 올 수 없다.(Fetch Join 뒤의 Entity에 별칭을 줄 수 없는 이유이기도 하다)
             5) 하지만, QueryDSL에서는 innerJoin() 만으로도 Fetch Join으로 생성된 쿼리와 같은 쿼리 실행이 가능하다.(jpa03-model02 참고)
@@ -242,11 +242,11 @@
             ```
           
     5) test05BoardViewLazyProblem(01~02)
-        - 이 테스트도 **성능 및 비지니스 요구 따른 레포지토리 메소드 최적화 하기** 를 다루는 테스트이다.
-        - 이 테스트에서는 가능한 쿼리 1회로 게시글 보기 화면에 맞는 데이터를 다 가져오는 데 집중하는 것이지만, 성능과 최적화를 다룰때 유의할 점이 있다.
+        - 이 테스트도 성능 및 비지니스 요구 따른 레포지토리 최적화를 다루는 테스트이다.
+        - 이 테스트에서는 가능한 쿼리 1회로 게시글 보기 화면에 맞는 데이터를 가져오는 데 집중하는 것이지만, 성능과 최적화를 다룰 때는 유의할 점이 있다.
             1) 복잡한 조인 쿼리가 여러번 나눠서 가져오는 select(Lazy)보다 성능 향상을 늘 보장하지 않는다는 것이다.
-            2) 너무 View에 맞춘 Repository 메소드 작성은 Repository 계층과 Presentation(View) 계층의 결합도가 높아진다는 단점이 있다.
-            3) Service 계층에 적당한 Lazy를 사용해서 Presentation(View)에 맞는 DTO를 제공하는 것이 합리적인 경우가 경험에 의하면 더 많다.
+            2) 너무 View에 맞춘 Repository 메소드 작성은 Repository 계층과 Presentation(View) 계층의 결합도가 높아지는 단점이 있다.
+            3) Service 계층이 적당한 Lazy를 사용해서 Presentation(View)에 맞는 DTO를 제공하는 것이 더 합리적일 때가 많다.
         - JPA 이해와 QuryDSL 테크닉 연습을 위해 쿼리 1회로 모두 가져올 수 있도록 시도해 보고 위에서 제기한 문제는 케이스별로 개발시 고려해야 할 사항으로 남겨둔다.
             1) test05BoardViewLazyProblem01 - 기본메소드 findByID(no) 사용
             
@@ -324,9 +324,10 @@
                             where
                                 comments0_.board_no=?                          
                     ```
-                    1) Comment와 User entity를 ManyToOne Fecth.EAGER 기본 모드상태에서 테스트라 자동으로 Join이 걸렸다.      
-                    2) Service 계층은 @Transaction이 적용되는 계층(테스트 케이스와 같은 위치)으로 LAZY를 사용해서 데이터를 모아 DTO에 담아 Controller, View로 전달하는 것이 보통이다.
-                    3) 하지만 서비스에 문제가 발생되면 고쳐야 한다.(보통 JPA 개발에서 쿼리 로그, DBMS 로그 또는 메모리 모니터링을 통해 튜닝작업을 하는 것이 기본이다.)
+                    1) Comment와 User entity를 ManyToOne Fecth.EAGER 기본 상태의 테스트이기 때문에 자동으로 Join이 걸렸다.      
+                    2) Service 계층은 @Transactional이 적용되는 계층(테스트 케이스 실행타임과 유사)으로 LAZY를 사용해서 데이터를 모아 DTO에 담아 Controller, View로 전달하는 것이 보통이다.
+                    3) 성능이 더 나아질 것이라 보장은 못하지만, join을 사용해서 쿼리 실행 회수를 줄여보자. 
+                    4) JPA 개발에서 쿼리 로그, DBMS 로그 또는 메모리 모니터링을 통해 지속적인 튜닝작업을 한다.
         
             2) test06BoardViewLazyProblem02 - QueryDSL 통합 findById3(no) 사용
                 + 메소드 코드
@@ -403,7 +404,7 @@
                                 user0_.no=?
                     ```
                     1) Board, User(게시글 작성자), Comment 엔티티와 selectDistinct() 가 사용되어 게시글 번호에 맞는 Board 엔티티 객체가 Comment Collection(List) 까지 잘 Fecth 되었다.
-                    2) 문제는 List에 있는 Comment 엔티티 객체의 User를 EAGER로 가져올 때 발생한다. Comment 수(N) 만큼 쿼리가 실행되는 EAGER N+1 문제가 발생한다.
+                    2) 문제는 List에 있는 Comment 엔티티 객체의 User를 EAGER로 가져올 때 발생한다. Comment 수(N) 만큼 쿼리가 실행되는 EAGER N+1 문제가 발생한다.(댓글이 1000개 이상 달린 인기 있는 글이라 생각해보면...)
                     3) Comment 2개에 대한 User 엔티티를 가져오기 위해 select 쿼리 2번이 실행된 것을 확인 할 수 있다.
                       
     6) test07BoardViewLazySolved01
@@ -529,8 +530,7 @@
         - JpaBoardQryDslRepositoryImpl.findById3(no), JpaBoardQryDslRepositoryImpl.findCommentsByNo(no) 두 메소드의 QueryDSL를 합치는 것은 사실상 불가능하다.
             1) Projection 2개를 합치는 것은 사실상 from절에 두 메소드 결과중 하나가 있어야 하는 것인데, QueryDSL은 from절 서브쿼리를 지원하지 않는다.
             2) Distinct는 OneToMany findById3()에 한 번만 적용되는데, findCommentsByNo(no) 결과도 Board 엔티티로 Distinct를 해야 한다. 이는 불가능하다.
-            3) 위의 2가지 이유로 불가능하다.  
-        - 하지만, JpaBoardQryDslRepositoryImpl.findById(no)는 select에 영속엔티티만 사용했는데 이는 가능하다.
+        - 하지만, JpaBoardQryDslRepositoryImpl.findById(no)를 보면, Projection을 통한 DTO 객체대신 매핑 엔티티를 DB로부터 영속화 시키면 가능하다.(JPA가 해준다) 
             1) 구현코드
                 ```
                     return queryFactory
@@ -546,7 +546,7 @@
                             .fetchOne();               
                 ```
                 + 주의 할 것은 comment가 없는 게시글도 나와야 하기 때문에 innerJoin() 대신 leftJoin() Outer Join을 사용했다.
-                + 엔티티를 select에 올릴 때에는 Projection과 다르게 fetchJoin()를 사용해야 한다.
+                + Projection이 아니기 때문에 join()과 fetchJoin()를 함께 사용해야 한다.
             2) 실행쿼리
                 ```
                     select
@@ -588,21 +588,21 @@
                             where
                                 board0_.no=?                
                 ``` 
-                + Projection이 거의 모든 컬럼이 된 것이 불만이지만 쿼리 한 번으로 모든 엔티티를 로딩할 수 있다.
-            3) 테스트 통과 조건은 
+                + 모든 필드를 가져오는 것은 불만이지만 쿼리 1회로 모든 엔티티를 로딩할 수 있다.
+            3) 테스트 통과 조건 
                 + 4L번 글은 코멘트가 없어도 페치가 되어야 하기 때문에 null이 아니여야 한다.
                 + 1L번 글에 대해서 작성자및 코멘트등의 데이터 검증을 한다.
     8) 결론
-        - 다시 말하지만, LAZY로 select를 여러번 하는 것이 JOIN보다 빠른 것은 절대 아니다. 더 느릴 수 있다.
+        - 다시 말하지만, LAZY로 select를 여러번 하는 것보다 join으로 단순히 쿼리 횟수를 줄인 것이 성능과 속도면에서 반드시 좋은 것은 아니다.
         - 잘못된 EAGER 페치 전략으로 N+1 문제가 더 큰 문제다
-        - 하지만 LAZY가 만사일 순 없다. 게시판 리스트 같은 경우에는 LAZY가 더 문제일 수 있다.(이럴 때 Join을 사용한다.)
-        - JPA는 사전에 충분한 경험이 있는 팀이 수행해서 사전에 성능 이슈를 발견하고 최적화 작업을 하는 것이 중용하며 쿼리 로그를 계속 모니터링 하는 것도 언급할 필요없이 중요하다.
-        - 그리고 무엇보다 이런 이슈에 제대로 대처하기 위해서는 다음과 같은 지식과 경험이 축적되어야 한다.
-          1) 개별적 모델에 대한 전체적인 모델 매핑 지식
-          2) 다양한 객체지향쿼리 작성법 숙지
-          3) 영속성컨텍스트와 트랜잭션 개념
-          4) SQL에 대한 이해와 RDBMS 스키마 모델링 경험
-          5) 객체지향프로그래밍 경험
+        - 하지만 LAZY가 만사일 순 없다. 게시판 리스트 같은 경우에는 LAZY가 더 문제일 수 있다.(이럴 때 Join을 사용한다)
+        - JPA는 사전에 충분한 경험이 있는 팀이 수행해서 사전에 성능 이슈를 발견하고 최적화 작업을 하는 것이 중요하다.
+        - 이런 이슈에 제대로 대처하기 위해서는 다음과 같은 지식과 경험이 있어야 하는 것 같다.
+          1) 다양한 모델에 대한 기본적인 엔티티, 연관관계 매핑 지식
+          2) 다양한 객체지향쿼리 작성법을 숙지해야 한다. 특히, JPQL 기본지식은 반드시 있어야 하며 QueryDSL를 잘 다루어야 한다.
+          3) 영속성컨텍스트와 트랜잭션 개념 이해
+          4) SQL 작성과 RDBMS 스키마 모델링 경험도 당연히 있어야 한다.
+          5) 객체지향에대한 이해와 객체지향개발 그리고 디자인(설계) 경험이 필요한 것은 언급할 필요도 없다.
   
 #### 2-4. Spring Data JPA CommentRepository Test : Spring Data JPA 기반 Repository
 1. __다음과 같은 인터페이스와 클래스로 구현되어 있다__
@@ -611,6 +611,6 @@
     3) JpaCommentQryDslRepositoryImp.java
     4) JpaCommentRepositoryTest.java
 2. __OneToMany Unidirectional Many쪽은 별다른 메소드를 두지 않는다.__
-    1) 관계의 주인이 아니고 연관 필드가 때문에 객체 탐색이 기본적으로 힘들다.
+    1) 연관 필드가 없기 때문에 One쪽 엔티티 객체 탐색은 불가능하다.
     2) 저장, 삭제, 수정 정도의 메소드 구현이 가능하다.
     3) 앞의 예제 참고
