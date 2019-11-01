@@ -22,7 +22,7 @@ public class User {
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date joinDate = new Date();
 
-	@OneToOne(fetch=FetchType.EAGER)
+	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="blog_no")
 	private Blog blog;
 

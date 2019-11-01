@@ -147,14 +147,44 @@
         + 앞의 test02UpdateUser의 결과를 확인한다.
         + User를 통해 Blog를 탐색해보면 null이다.
         + blog_no(FK)가 update 안 되었다.
-    4) test02UpdateUser02
+    4) test04UpdateUser02
         + DB로 부터 Blog, User 엔티티 객체를 각각 영속화 시킨다.
         + 양방향(Bidirectional) 중 관계의 주인 쪽에서 연관관계 필드를 변경한다.  
             ```
                 user.setBlog(blog);
                     
             ```
-    5) test03VerifyUpdateUser02
+    5) test05VerifyUpdateUser02
         + 앞의 test02UpdateUser02의 결과를 확인한다.
         + User를 통해 Blog를 탐색해서 블로그 이름을 확인해 볼 수 있다.
         + blog_no(FK)가 정상적으로 update 되었다.
+        
+    6) test06findAllUser Vs test07findAll
+        + 주의할 점: mappedBy 선언된 연관 필드의 글로벌 페치 전략 LAZY는 무시된다.
+        + EAGER로 즉시 로딩을 하지만 Join도 되지 않는다. 따라서 N+1이 발생한다.
+        + 반대로 연관관계 주인 필드는 글로벌 페치 전략 LAZY는 지연로딩을 한다.
+        + test06findAllUser는 관계 주인 필드의 지연로딩을 테스트한다.
+        + test06findAllBlog는 지연로딩이 되지 않고 N+1이 발생하는 로그를 볼 수 있다.(@Transacational도 없다.)
+        + BlogRepository의 findAll은 사용하지 말고 개선된 메소드를 만들어야 한다.
+    
+    7) test08findAll2
+        + 앞의 test07findAll에서 문제가 되었던 기본메소드 findAll를 QueryDSL 통합방식으로 페치 조인한 findAll2()를 테스트한다.
+        + 쿼리 로그를 확인해 보면, 두 테이블에 inner join이 정상적으로 실행된 것을 알 수 있다.
+            ```
+                select
+                    blog0_.no as no1_0_0_,
+                    user1_.id as id1_1_1_,
+                    blog0_.name as name2_0_0_,
+                    user1_.blog_no as blog_no5_1_1_,
+                    user1_.join_date as join_dat2_1_1_,
+                    user1_.name as name3_1_1_,
+                    user1_.password as password4_1_1_ 
+                from
+                    blog blog0_ 
+                inner join
+                    user user1_ 
+                        on blog0_.no=user1_.blog_no          
+            ```
+    7) test09findAll3
+        + 페치 조인과 함께 BlogDto3 클래스 방식의 프로젝션을 하는 findAll3 메소드를 테스트 한다.
+        + @QueryProjection 사용하는 데, 앞에서 했던 방식과 다른 것은 Projections.constructor 이 함수를 쓰지 않아도 된다. 조금 간결해 졌다. 

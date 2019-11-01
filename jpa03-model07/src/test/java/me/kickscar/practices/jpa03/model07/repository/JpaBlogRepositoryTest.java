@@ -110,17 +110,24 @@ public class JpaBlogRepositoryTest {
 
     @Test
     @Transactional
-    public void test06findAll(){
-//        List<User> users = userRepository.findAll();
-//        for(User user : users){
-//            System.out.println(user.getBlog().getName());
-//        }
+    public void test06findAllUser(){
+        List<User> users = userRepository.findAll();
 
+        assertFalse(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(users.get(0).getBlog()));
+        System.out.println(users.get(0).getBlog().getName());
+        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(users.get(0).getBlog()));
+    }
 
+    @Test
+    public void test07findAll(){
         List<Blog> blogs = blogRepository.findAll();
-//        for(Blog blog : blogs){
-//            System.out.println(blog);
-//        }
+        assertEquals(3, blogs.size());
+    }
+
+    @Test
+    public void test08findAll2(){
+        List<Blog> blogs = blogRepository.findAll2();
+        assertEquals(3, blogs.size());
     }
 
 }
