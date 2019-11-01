@@ -4,17 +4,17 @@ package me.kickscar.practices.jpa03.model07.domain;
 import javax.persistence.*;
 
 @Entity
-@Table( name = "blog" )
+@Table(name = "blog")
 public class Blog {
     @Id
     @Column(name = "no")
-    @GeneratedValue( strategy = GenerationType.IDENTITY  )
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long no;
 
-    @Column(name = "name", nullable = false, length = 200)
+    @Column(name="name", nullable=false, length=200)
     private String name;
 
-    @OneToOne(mappedBy = "blog", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy="blog", fetch=FetchType.LAZY)
     private User user;
 
     public Long getNo() {

@@ -63,7 +63,7 @@
              .
             @Id
             @Column(name = "no")
-            @GeneratedValue( strategy = GenerationType.IDENTITY  )
+            @GeneratedValue(strategy=GenerationType.IDENTITY)
             private Long no;
              .
              .
@@ -73,8 +73,8 @@
              .
         ```
         + 양방향이므로 연관관계의 주인을 정해야 한다.
-        + User 테이블이 외래 키를 가지고 있으므로 User 엔티티에 있는 User.blog 가 연관관계의 주인이다
-        + 따라서 반대 매핑인 Blog의 Blog.user는 mappedBy 를 선언해서 연관관계의 주인이 아니라고 설정해야 한다.
+        + User 테이블이 FK를 가지고 있으므로 User 엔티티에 있는 User.blog가 연관관계의 주인이다
+        + 따라서 반대 매핑인 Blog의 Blog.user는 mappedBy를 선언해서 연관관계의 주인이 아니라고 설정해야 한다.
     
     3) 생성 스키마
     
@@ -107,8 +107,8 @@
         + 스키마 생성 DDL를 보면 OneToOne 단방향(Unidirectional)과 다르지 않다.
 
 #### 2-1. 요약: 다루는 기술적 내용
-1. 키본키 생성 전략(String 기본키 사용 시, 유의할 점) 
-2. Lazy Loading과 Proxy 객체 이해 
+1. 양방향(Bidirectional)에서 관계 필드 변경과 Update 실행 여부
+2. 
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  
@@ -132,47 +132,29 @@
     1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
     2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
 
-3. __JpaUserRepositoryTest.java__
+3. __JpaBlogRepositoryTest.java__
     1) test01Save
-        + 앞의 ManyToOne Many쪽 엔티티 저장과 같다.
-        + 차이점이 있다면, PK를 String 사용자 아이디로 매핑하였고 애플리케이션이 직접 할당하고 Unique하게 유지하겠다고 설정한 것이다.
-        + 따라서 @GeneratedValue 적용하지 않았다.(문자열 기본키는 적용해도 무시되거나 예외가 발생한다.)
-        + 당연히, DBMS에게 위임하는 @GeneratedValue(strategy=GenerationType.IDENTITY)도 무시된다.   
-        + 문제는 기본키 전략을 애플리케이션이 직접 할당으로 설정했을 때 JPA가 엔티티 객체를 저장할 때 실행하는 쿼리다.
-              
+        + 엔티티 객체 영속화
+        + 테스트 데이터 저장
+    2) test02UpdateUser
+        + DB로 부터 Blog, User 엔티티 객체를 각각 영속화 시킨다.
+        + 양방향(Bidirectional) 중 관계의 주인이 아닌 쪽에서 연관관계 필드를 변경한다.  
             ```
-                Hibernate: 
-                    select
-                        user0_.id as id1_1_0_,
-                        user0_.blog_no as blog_no5_1_0_,
-                        user0_.join_date as join_dat2_1_0_,
-                        user0_.name as name3_1_0_,
-                        user0_.password as password4_1_0_ 
-                    from
-                        user user0_ 
-                    where
-                        user0_.id=?
-                Hibernate: 
-                    insert 
-                        into
-                            user
-                            (blog_no, join_date, name, password, id) 
-                        values
-                            (?, ?, ?, ?, ?)
+                blog.setUser(user);
+                    
             ```
-            1) insert 앞에 해당 user를 찾는 부분이 나온다.
-            2) 이는 @GeneratedValue 생략 시, PK Unique를 위해 JPA가 영속화할 엔티티의 아이디로 미리 찾는 작업이다.
-            3) 참고로 @JoinColum의 nullable = false 가 기본이기 때문에 User.blog는 세팅안해도 정장하는 데는 문제가 없다.
-            4) 애플리케이션이 String PK 직접 할당하고 Unique하게 잘 유지하면 문제 없지만 툭별한 케이스가 아니면 @GeneratedValue와 DBMS에 맞는 생성전략을 사용할 것을 JPA는 권고한다.
-             
-    2) test02SaveBlog
-        + Blog 엔티티 객체를 저장한다.
-        + 이 블로그의 주인 user를 DB로 부터 영속화 시킨다. 
-        + user table의 FK blog_no을 업데이트 시키는 것을 로그를 통해 확인 가능하다.
-    
-    3) test03FindById
-        + 영속화된 User 엔티티 객체로 부터 Blog 엔티티 객체를 가져오는 테스트이다.
-        + 글로벌 페치 전략 LAZY로 바꿨기 때문에 Proxy 객체 반환 확인 테스트를 한다.
-        + 기본 페치 전략 EAGER를 유지하고 있다면, blog 테이블과 outer join이 걸렸을 것이다(User.blog가 null를 허용하기 때문에)
-        + 테스트 코드를 보면 첫번째 Proxy 객체 확인에서는 초기화 되지 않은 Proxy객체로 지연로딩 중인 것을 확인할 수 있다. 
-        + 블로그의 이름을 반환한 다음부터는 Proxy객체가 초기화되어 로딩되었음을 확인할 수 있다.
+    3) test03VerifyUpdateUser01
+        + 앞의 test02UpdateUser의 결과를 확인한다.
+        + User를 통해 Blog를 탐색해보면 null이다.
+        + blog_no(FK)가 update 안 되었다.
+    4) test02UpdateUser02
+        + DB로 부터 Blog, User 엔티티 객체를 각각 영속화 시킨다.
+        + 양방향(Bidirectional) 중 관계의 주인 쪽에서 연관관계 필드를 변경한다.  
+            ```
+                user.setBlog(blog);
+                    
+            ```
+    5) test03VerifyUpdateUser02
+        + 앞의 test02UpdateUser02의 결과를 확인한다.
+        + User를 통해 Blog를 탐색해서 블로그 이름을 확인해 볼 수 있다.
+        + blog_no(FK)가 정상적으로 update 되었다.
