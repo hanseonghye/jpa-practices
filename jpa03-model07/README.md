@@ -107,8 +107,8 @@
         + 스키마 생성 DDL를 보면 OneToOne 단방향(Unidirectional)과 다르지 않다.
 
 #### 2-1. 요약: 다루는 기술적 내용
-1. 양방향(Bidirectional)에서 관계 필드 변경과 Update 실행 여부
-2. 
+1. 양방향(Bidirectional)에서 관계 필드 변경과 Update 반영 여부
+2. Projection: @QueryProjection 사용법, Spring Data JPA 지원
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  

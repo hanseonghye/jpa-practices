@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.util.List;
+
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
@@ -104,6 +106,21 @@ public class JpaBlogRepositoryTest {
     public void test05VerifyUpdateUser02(){
         User user = userRepository.findById("michol").get();
         assertEquals("주인없는블로그", user.getBlog().getName());
+    }
+
+    @Test
+    @Transactional
+    public void test06findAll(){
+//        List<User> users = userRepository.findAll();
+//        for(User user : users){
+//            System.out.println(user.getBlog().getName());
+//        }
+
+
+        List<Blog> blogs = blogRepository.findAll();
+//        for(Blog blog : blogs){
+//            System.out.println(blog);
+//        }
     }
 
 }
