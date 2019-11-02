@@ -161,12 +161,12 @@
         + blog_no(FK)가 정상적으로 update 되었다.
         
     6) test06findAllUser Vs test07findAll
-        + 주의할 점: mappedBy 선언된 연관 필드의 글로벌 페치 전략 LAZY는 무시된다.
-        + EAGER로 즉시 로딩을 하지만 Join도 되지 않는다. 따라서 N+1이 발생한다.
-        + 반대로 연관관계 주인 필드는 글로벌 페치 전략 LAZY는 지연로딩을 한다.
-        + test06findAllUser는 관계 주인 필드의 지연로딩을 테스트한다.
-        + test06findAllBlog는 지연로딩이 되지 않고 N+1이 발생하는 로그를 볼 수 있다.(@Transacational도 없다.)
-        + BlogRepository의 findAll은 사용하지 말고 개선된 메소드를 만들어야 한다.
+        + test06findAllUser는 관계 주인 필드의 지연로딩을 테스트한다. 연관관계 주인 필드의 글로벌 페치 전략 LAZY는 잘 동작한다.
+        + test06findAll는 지연로딩이 되지 않고 N+1이 발생하는 로그를 볼 수 있다.(@Transacational도 없다)
+            1) OnetoOne Bidirectional 에서 mappedBy 선언된 연관 필드의 글로벌 페치 전략 LAZY는 무시된다.
+            2) 이는 Proxy의 한계 때문에 발생하는데 반드시 해결해야 하면, Proxy 대신 bytecode instrumentation을 사용하면 된다.
+            3) EAGER로 즉시 로딩을 하지만 Join도 되지 않는다. 따라서 N+1이 발생한다.
+            4) BlogRepository의 findAll은 사용하지 말고 개선된 메소드를 만들어야 한다.
     
     7) test08findAll2
         + 앞의 test07findAll에서 문제가 되었던 기본메소드 findAll를 QueryDSL 통합방식으로 페치 조인한 findAll2()를 테스트한다.
