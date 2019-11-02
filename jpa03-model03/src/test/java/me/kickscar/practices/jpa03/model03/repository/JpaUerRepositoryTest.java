@@ -47,31 +47,31 @@ public class JpaUerRepositoryTest {
         user1.setEmail("dooly@kickscar.me");
         user1.setGender(GenderType.MALE);
         user1.setRole(RoleType.USER);
-        userRepository.save(user1);
+        User user1Persisted = userRepository.save(user1);
 
         Orders orders1 = new Orders();
         orders1.setName("주문1");
-        orders1.setUser(user1);
+        orders1.setUser(user1Persisted);
         ordersRepository.save(orders1);
 
         Orders orders2 = new Orders();
         orders2.setName("주문2");
-        orders2.setUser(user1);
+        orders2.setUser(user1Persisted);
         ordersRepository.save(orders2);
 
         Orders orders3 = new Orders();
         orders3.setName("주문3");
-        orders3.setUser(user1);
+        orders3.setUser(user1Persisted);
         ordersRepository.save(orders3);
 
         Orders orders4 = new Orders();
         orders4.setName("주문4");
-        orders4.setUser(user1);
+        orders4.setUser(user1Persisted);
         ordersRepository.save(orders4);
 
         Orders orders5 = new Orders();
         orders5.setName("주문5");
-        orders5.setUser(user1);
+        orders5.setUser(user1Persisted);
         ordersRepository.save(orders5);
 
         //================================
@@ -82,16 +82,16 @@ public class JpaUerRepositoryTest {
         user2.setEmail("michol@kickscar.me");
         user2.setGender(GenderType.MALE);
         user2.setRole(RoleType.USER);
-        userRepository.save(user2);
+        User user2Persisted = userRepository.save(user2);
 
         Orders orders6 = new Orders();
         orders6.setName("주문6");
-        orders6.setUser(user2);
+        orders6.setUser(user2Persisted);
         ordersRepository.save(orders6);
 
         Orders orders7 = new Orders();
         orders7.setName("주문7");
-        orders7.setUser(user2);
+        orders7.setUser(user2Persisted);
         ordersRepository.save(orders7);
 
         //================================
@@ -102,11 +102,11 @@ public class JpaUerRepositoryTest {
         user3.setEmail("ddochi@kickscar.me");
         user3.setGender(GenderType.MALE);
         user3.setRole(RoleType.USER);
-        userRepository.save(user3);
+        User user3Persisted = userRepository.save(user3);
 
         Orders orders8 = new Orders();
         orders8.setName("주문8");
-        orders8.setUser(user3);
+        orders8.setUser(user3Persisted);
         ordersRepository.save(orders8);
 
         assertEquals(8L, ordersRepository.count());

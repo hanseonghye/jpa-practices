@@ -56,15 +56,13 @@
             private String id;       
             .
             .
-	        @OneToOne(fetch = FetchType.LAZY)
-	        @JoinColumn(name="blog_no")
-	        private Blog blog; 
+            @OneToOne(mappedBy="user", fetch=FetchType.LAZY)
+            private Blog blog;
             .
             .
         ```
         + OneToOne 에서는 Default Fetch Mode는 EAGER 이다. Global Fetch Mode LAZY로 수정했다. 
-        + ManyToOne 단방향(Bidirectional)과 유사하다.
-        + 일대일(OneToOne) 양방향(Bidirectional)에서는 양쪽 테이블에 외래키를 둘 수 있지만, Model07에서는 주테이블(User)에 외래키를 두었다.
+        + 외래키 관리를 대상 테이블이 하기 때문에 관계 주인이 아님을 mappedBy를 통해 선언하고 반대편 엔티티(Blog)의 연관관계 필드를 지정했다.
       
     2) OneToOne(Blog 엔티티, 대상테이블)  
         
@@ -72,19 +70,20 @@
              .
              .
             @Id
-            @Column(name = "no")
-            @GeneratedValue(strategy=GenerationType.IDENTITY)
-            private Long no;
+            @Column(name = "id")
+            private String id;
              .
              .
-            @OneToOne(mappedBy = "blog", fetch = FetchType.LAZY)
+            @MapsId
+            @OneToOne(fetch=FetchType.LAZY)
+            @JoinColumn(name="id")
             private User user;       
              .
              .
         ```
-        + 양방향이므로 연관관계의 주인을 정해야 한다.
-        + User 테이블이 FK를 가지고 있으므로 User 엔티티에 있는 User.blog가 연관관계의 주인이다
-        + 따라서 반대 매핑인 Blog의 Blog.user는 mappedBy를 선언해서 연관관계의 주인이 아니라고 설정해야 한다.
+        + @Id로 PK 설정을 했다. 식별관계로 부모테이블(User)의 PK를 사용할 것이기 때문에 String으로 타입을 바꿨다.
+        + 외래키 관리를 해야 하기때문에 @JoinColumn(name="id")를 통해 외래키 설정을 하였다. 식별관계 설정을 위해 PK와 필드 이름이 같다.
+        + 여기에 @MapsId를 통해 실제적인 PK 필드 id와 매핑을 해야 한다. 
     
     3) 생성 스키마
     
@@ -92,29 +91,28 @@
             Hibernate: 
                 
                 create table blog (
-                   no bigint not null auto_increment,
+                    id varchar(24) not null,
                     name varchar(200) not null,
-                    primary key (no)
-                ) engine=InnoDB
-            Hibernate: 
-                
-                create table user (
-                   id varchar(24) not null,
-                    join_date datetime not null,
-                    name varchar(24) not null,
-                    password varchar(64) not null,
-                    blog_no bigint,
                     primary key (id)
                 ) engine=InnoDB
             Hibernate: 
                 
-                alter table user 
-                   add constraint FK1g7a1d0no76mnqmr01ys1a40k 
-                   foreign key (blog_no) 
-                   references blog (no)       
+                create table user (
+                    id varchar(24) not null,
+                    join_date datetime not null,
+                    name varchar(24) not null,
+                    password varchar(64) not null,
+                    primary key (id)
+                ) engine=InnoDB
+            Hibernate: 
+                
+                alter table blog 
+                   add constraint FKqx432k8povl16musk8wt5cn7y 
+                   foreign key (id) 
+                   references user (id)       
        
         ```
-        + 스키마 생성 DDL를 보면 OneToOne 단방향(Unidirectional)과 다르지 않다.
+        + 두 테이블의 PK필드의 타입이 같고 FK설정을 통해 식별관계가 설정되어 있음을 알 수 있다.
 
 #### 2-1. 요약: 다루는 기술적 내용
 1. 양방향(Bidirectional)에서 관계 필드 변경과 Update 반영 여부

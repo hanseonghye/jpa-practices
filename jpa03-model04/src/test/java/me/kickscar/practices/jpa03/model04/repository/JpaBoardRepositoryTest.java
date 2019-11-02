@@ -49,18 +49,18 @@ public class JpaBoardRepositoryTest {
         user1.setEmail("dooly@kickscar.me");
         user1.setGender(GenderType.MALE);
         user1.setRole(RoleType.USER);
-        userRepository.save(user1);
+        User user1Persisted = userRepository.save(user1);
 
         Board board1 = new Board();
         board1.setTitle("제목1");
         board1.setContents("내용1");
-        board1.setUser(user1);
+        board1.setUser(user1Persisted);
         boardRepository.save(board1);
 
         Board board2 = new Board();
         board2.setTitle("제목2");
         board2.setContents("내용2");
-        board2.setUser(user1);
+        board2.setUser(user1Persisted);
         boardRepository.save(board2);
 
         //==============================================================
@@ -71,18 +71,18 @@ public class JpaBoardRepositoryTest {
         user2.setEmail("michol@kickscar.me");
         user2.setGender(GenderType.MALE);
         user2.setRole(RoleType.USER);
-        userRepository.save(user2);
+        User user2Persisted = userRepository.save(user2);
 
         Board board3 = new Board();
         board3.setTitle("제목3");
         board3.setContents("내용3");
-        board3.setUser(user2);
+        board3.setUser(user2Persisted);
         boardRepository.save(board3);
 
         Board board4 = new Board();
         board4.setTitle("제목4");
         board4.setContents("내용4");
-        board4.setUser(user2);
+        board4.setUser(user2Persisted);
         boardRepository.save(board4);
 
         //==============================================================
@@ -93,7 +93,7 @@ public class JpaBoardRepositoryTest {
         user3.setEmail("ddochi@kickscar.me");
         user3.setGender(GenderType.MALE);
         user3.setRole(RoleType.USER);
-        userRepository.save(user3);
+        User user3Persisted = userRepository.save(user3);
 
         User user4 = new User();
         user4.setName("도우넛");
@@ -103,9 +103,9 @@ public class JpaBoardRepositoryTest {
         user4.setRole(RoleType.USER);
         userRepository.save(user4);
 
-        commentRepository.save(1L, new Comment(user1, "댓글1"));
-        commentRepository.save(2L, new Comment(user1, "댓글2"), new Comment(user2, "댓글3"));
-        commentRepository.save(3L, new Comment(user1, "댓글4"), new Comment(user2, "댓글5"), new Comment(user3, "댓글6"));
+        commentRepository.save(1L, new Comment(user1Persisted, "댓글1"));
+        commentRepository.save(2L, new Comment(user1Persisted, "댓글2"), new Comment(user2Persisted, "댓글3"));
+        commentRepository.save(3L, new Comment(user1Persisted, "댓글4"), new Comment(user2Persisted, "댓글5"), new Comment(user3Persisted, "댓글6"));
 
         assertEquals(6L, commentRepository.count());
     }
@@ -114,8 +114,8 @@ public class JpaBoardRepositoryTest {
     @Transactional
     @Rollback(false)
     public void test02SaveEagerProblem01() {
-        User user = userRepository.findById(4L).get();
-        commentRepository.save(1L, new Comment(user, "댓글7"));
+        User userPersisted = userRepository.findById(4L).get();
+        commentRepository.save(1L, new Comment(userPersisted, "댓글7"));
         assertEquals(7L, commentRepository.count());
     }
 

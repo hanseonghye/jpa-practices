@@ -42,23 +42,23 @@ public class JpaBlogRepositoryTest {
     public void test01Save() {
         Blog blog1 = new Blog();
         blog1.setName("둘리의블로그");
-        blogRepository.save(blog1);
+        Blog blog1Persisted = blogRepository.save(blog1);
 
         User user1 = new User();
         user1.setId("dooly");
         user1.setName("둘리");
-        user1.setBlog(blog1);
+        user1.setBlog(blog1Persisted);
         user1.setPassword("1234");
         userRepository.save(user1);
 
         Blog blog2 = new Blog();
         blog2.setName("또치의블로그");
-        blogRepository.save(blog2);
+        Blog blog2Persisted = blogRepository.save(blog2);
 
         User user2 = new User();
         user2.setId("ddochi");
         user2.setName("또치");
-        user2.setBlog(blog2);
+        user2.setBlog(blog2Persisted);
         user2.setPassword("1234");
         userRepository.save(user2);
 

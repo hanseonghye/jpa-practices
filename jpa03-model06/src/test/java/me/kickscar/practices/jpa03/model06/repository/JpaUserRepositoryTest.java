@@ -54,10 +54,10 @@ public class JpaUserRepositoryTest {
     public void test02SaveBlog(){
         Blog blog = new Blog();
         blog.setName("둘리의블로그");
-        blogRepository.save(blog);
+        Blog blogPersisted = blogRepository.save(blog);
 
         User user = userRepository.findById("dooly").get();
-        user.setBlog(blog);
+        user.setBlog(blogPersisted);
 
         assertEquals(1L, blogRepository.count());
     }

@@ -50,24 +50,24 @@ public class JpaBoardRepositoryTest {
         user1.setEmail("dooly@kickscar.me");
         user1.setGender(GenderType.MALE);
         user1.setRole(RoleType.USER);
-        userRepository.save(user1);
+        User user1Persisted = userRepository.save(user1);
 
         Board board1 = new Board();
         board1.setTitle("제목1");
         board1.setContents("내용1");
-        board1.setUser(user1);
+        board1.setUser(user1Persisted);
         boardRepository.save(board1);
 
         Board board2 = new Board();
         board2.setTitle("제목2");
         board2.setContents("내용2");
-        board2.setUser(user1);
+        board2.setUser(user1Persisted);
         boardRepository.save(board2);
 
         Board board3 = new Board();
         board3.setTitle("제목3");
         board3.setContents("내용3");
-        board3.setUser(user1);
+        board3.setUser(user1Persisted);
         boardRepository.save(board3);
 
         User user2 = new User();
@@ -76,18 +76,18 @@ public class JpaBoardRepositoryTest {
         user2.setEmail("dooly@kickscar.me");
         user2.setGender(GenderType.MALE);
         user2.setRole(RoleType.USER);
-        userRepository.save(user2);
+        User user2Persisted = userRepository.save(user2);
 
         Board board4 = new Board();
         board4.setTitle("제목4");
         board4.setContents("내용4");
-        board4.setUser(user2);
+        board4.setUser(user2Persisted);
         boardRepository.save(board4);
 
         Board board5 = new Board();
         board5.setTitle("제목5");
         board5.setContents("내용5");
-        board5.setUser(user2);
+        board5.setUser(user2Persisted);
         boardRepository.save(board5);
 
         assertEquals(5L, boardRepository.count());
