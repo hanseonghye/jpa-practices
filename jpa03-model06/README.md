@@ -118,7 +118,7 @@
 10. __Gradle 5.4__    
 
 
-#### 2-3. Spring Data JPA OrderRepository Test : Spring Data JPA 기반 Repository
+#### 2-3. JpaUserRepository Test : Spring Data JPA 기반 Repository
 1. __JpaUserRepositry__
     1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
     2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.

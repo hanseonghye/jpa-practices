@@ -52,6 +52,7 @@ public class JpaBlogRepositoryTest {
         blog1.setUser(user1Persisted);
         blogRepository.save(blog1);
         System.out.println(em.contains(blog1));
+
         // =============================================
 
         User user2 = new User();

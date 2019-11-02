@@ -111,7 +111,7 @@
  9. __Spring Boot Starter Test 2.1.8.RELEASE (Spring Test 5.1.9.RELEASE)__   
 10. __Gradle 5.4__   
 
-#### 2-3. pring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
+#### 2-3. JpaUserRepository Test : Spring Data JPA 기반 Repository
 1. __JpaUserRepository.java__
     1) User 엔티티(user 테이블)의 CRUD관련 메소드를 사용할 수 있는 인터페이스다.
     2) 기본메소드
@@ -203,7 +203,7 @@
         - 결과를 유도하는 과정을 이해했으면 페이징 자체가 컬레션조인에서는 의미가 없고 가능하지 않을 것 같다는 느낌이 와야한다.(사실, 페이징 API를 사용하면 무시된다.) 
         - 페이징이 필요하면 반대편 ManyToOne Orders Repository에서 하는 것이 자연스럽고 구현도 가능하다.(Orders Repository에 구현해 놓았다.)
 
-#### 2-4. Spring Data JPA OrdersRepository Test : Spring Data JPA 기반 Repository
+#### 2-4. JpaOrdersRepository Test : Spring Data JPA 기반 Repository
 1. __JpaOrdersRepository.java__
     1) Orders 엔티티(orders 테이블)의 CRUD관련 메소드를 사용할 수 있는 인터페이스다.
     2) 기본메소드

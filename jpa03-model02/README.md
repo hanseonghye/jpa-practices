@@ -73,7 +73,7 @@
  9. __Spring Boot Starter Test 2.1.8.RELEASE (Spring Test 5.1.9.RELEASE)__   
 10. __Gradle 5.4__    
  
-#### 2-3. Jpql BoardRepository Test : JPQL 기반 Repository
+#### 2-3. JpqlBoardRepository Test : JPQL 기반 Repository
 1. __JpqlConfig.java__
     1) jpa03-model01 내용과 동일 
      
@@ -167,7 +167,7 @@
    14) JpqlUserRepository.count() 메소드
         - JPQL에서 통계함수 사용
 
-#### 2-4. QueryDSL BoardRepository Test : QueryDSL 기반 Repository
+#### 2-4. QueryDslBoardRepository Test : QueryDSL 기반 Repository
 1. __JpqlConfig.java__
     1) jpa03-model01 내용과 동일 
 
@@ -254,7 +254,7 @@
    16) QueryDslBoardRepository.count() 메소드
         - QueryDSL의 fetchCount() 사용방법   
 
-#### 2-4. Spring Data JPA BoardRepository Test : Spring Data JPA 기반 Repository
+#### 2-4. JpaBoardRepository Test : Spring Data JPA 기반 Repository
 1. __JpaConfig.java__
     1) jpa03-model01 내용과 동일
       
@@ -282,7 +282,8 @@
             2) update도 한다.
             3) insert가 일어나면 파라미터로 전달받은 엔티티 객체는 영속화가 된다.
             4) 하지만, update가 일어나면 파라미터로 전달받은 객체는 값만 복사하여 사용하기 때문에 영속화가 되지 않는다.
-            5) 따라서 save() 메소드 호출 후, 영속객체를 사용할 때는 반드시 반환되는 엔티티 객체를 사용하여야 한다.(반환하는 엔티티 객체는 영속화를 보장한다.)             
+            5) 따라서 save() 메소드 호출 후, 영속객체를 사용할 때는 반드시 반환되는 엔티티 객체를 사용하여야 한다.(반환하는 엔티티 객체는 영속화를 보장한다.)
+            6) 관련 테스트와 예제는 Model08 UserRepositoryTest에서 한다.             
     3) test02FindById
         - 기본 메소드 CrudRepository.findById()를 사용하면 Left Outer Join이 자동으로 걸린다.
         - JPQL(QueryDSL)를 사용해서 구현하는 것은 JPQL(QueryDSL) 기반 Repository Test에서 확인 한 것 처럼 Select 쿼리가 2번 실행하기 때문에 고려의 대상이 안된다.
@@ -352,7 +353,7 @@
    17) JpaBoardRepository.count() 메소드
         - 기본 메소드 CrudRepository.count()
        
-#### 2-6. Jpql UserRepository Test : JPQL 기반 Repository
+#### 2-6. JpqlUserRepository Test : JPQL 기반 Repository
 1. __JpqlConfig.java__
     1) jpa03-model01 내용과 동일 
 
@@ -392,7 +393,7 @@
     6) JpqlUserRepository.count() 메소드
         - JPQL에서 통계함수 사용
 
-#### 2-7. QueryDSL UserRepository Test : QueryDSL 기반 Repository
+#### 2-7. QueryDslUserRepository Test : QueryDSL 기반 Repository
 1. __JpqlConfig.java__
     1) jpa03-model01 내용과 동일 
      
@@ -433,7 +434,7 @@
     7) QueryDslUserRepository.count() 메소드
         - QueryDSL의 fetchCount() 사용방법
 
-#### 2-8. Spring Data JPA UserRepository Test : Spring Data JPA 기반 Repository
+#### 2-8. JpaUserRepository Test : Spring Data JPA 기반 Repository
 1. __JpaConfig.java__
     1) jpa03-model01 내용과 동일
       

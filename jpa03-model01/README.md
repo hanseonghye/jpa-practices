@@ -30,7 +30,7 @@
 10. __Gradle 5.4__  
 
 
-#### 2-3. Jpql GuestbookRepository Test : JPQL 기반 Repository
+#### 2-3. JpqlGuestbookRepository Test : JPQL 기반 Repository
 1. __JpqlConfig.java__
     1) Datasource Bean 설정  
     2) **TransactionManager 설정**
@@ -84,7 +84,7 @@
        - TypedQuery 객체 사용  
        - 이름 기반 파라미터 바인딩
 
-#### 2-4. QueryDSL GuestbookRepository Test : QueryDSL 기반 Repository
+#### 2-4. QueryDslGuestbookRepository Test : QueryDSL 기반 Repository
 1. __JpqlConfig.java__
     1) JPQL과 설정파일 동일
     2) QueryDSL은 JPQL을 사용하기 쉽게, 특히 Criteria 대용의 JPQL래퍼 라이브러리 이다.
@@ -208,7 +208,7 @@
         - fetchCount()
 
 
-#### 2-5. Spring Data JPA GuestbookRepository Test : Spring Data JPA 기반 Repository
+#### 2-5. JpaGuestbookRepository Test : Spring Data JPA 기반 Repository
 1. __JpaConfig.java__
     1) JPQL(QueryDSL포함) 설정 클래스인 JpqlConfig.java와 다르다.
     2) 설정 클래스에 @EnableJpaRepositories 어노테이션으로 JPA Repositories 활성화해야 한다.

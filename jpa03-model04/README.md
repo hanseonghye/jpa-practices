@@ -72,7 +72,7 @@
  9. __Spring Boot Starter Test 2.1.8.RELEASE (Spring Test 5.1.9.RELEASE)__   
 10. __Gradle 5.4__    
 
-#### 2-3. Spring Data JPA BoardRepository Test : Spring Data JPA 기반 Repository
+#### 2-3. JpaBoardRepository Test : Spring Data JPA 기반 Repository
 1. __JpaBoardRepository.java__
     1) 기본메소드와 쿼리메소드 
 
@@ -604,7 +604,7 @@
           4) SQL 작성과 RDBMS 스키마 모델링 경험도 당연히 있어야 한다.
           5) 객체지향에대한 이해와 객체지향개발 그리고 디자인(설계) 경험이 필요한 것은 언급할 필요도 없다.
   
-#### 2-4. Spring Data JPA CommentRepository Test : Spring Data JPA 기반 Repository
+#### 2-4. JpaCommentRepository Test : Spring Data JPA 기반 Repository
 1. __다음과 같은 인터페이스와 클래스로 구현되어 있다__
     1) JpaCommentRepository.java
     2) JpaCommentQryDslRepository.java
