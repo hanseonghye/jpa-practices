@@ -4,10 +4,10 @@
 
 #### 1-1. 테이블 연관관계 VS 객체 연관관계
 
-<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32001.png" width="400px" />
+<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32001.png" width="600px" />
 <br>
 
-<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32002.png" width="400px" />
+<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32002.png" width="600px" />
 <br>
    
 1. __엔티티의 연관관계를 매핑할 때는 다음의 세가지 조건을 기준으로 매핑한다.__
@@ -274,7 +274,15 @@
 3. __JpaBoardRepositoryTest.java__
     1) JpqlBoardRepositoryTest 쿼리로그 꼭 비교 분석할 것 (완전 일치)
     2) test01Save()
-        - 기본 메소드 CrudRepository.save(S)
+        - 기본 메소드 CrudRepository.save(s)
+        - CrudRepository.save(s) 에 대한 오해
+            <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32008.png" width="600px" />
+            <br>
+            1) insert만 하는 메소드가 아니다.
+            2) update도 한다.
+            3) insert가 일어나면 파라미터로 전달받은 엔티티 객체는 영속화가 된다.
+            4) 하지만, update가 일어나면 파라미터로 전달받은 객체는 값만 복사하여 사용하기 때문에 영속화가 되지 않는다.
+            5) 따라서 save() 메소드 호출 후, 영속객체를 사용할 때는 반드시 반환되는 엔티티 객체를 사용하여야 한다.(반환하는 엔티티 객체는 영속화를 보장한다.)             
     3) test02FindById
         - 기본 메소드 CrudRepository.findById()를 사용하면 Left Outer Join이 자동으로 걸린다.
         - JPQL(QueryDSL)를 사용해서 구현하는 것은 JPQL(QueryDSL) 기반 Repository Test에서 확인 한 것 처럼 Select 쿼리가 2번 실행하기 때문에 고려의 대상이 안된다.
