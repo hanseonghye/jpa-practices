@@ -18,8 +18,9 @@
     5) 따라서 양방향(Bidirectioanl)으로 결정한다. 
 
 2. __다중성은 방향성이 결정나면 쉽게 결정 할 수 있다.__
-    1) User(1) <-> Blog(1)
-    2) OneToOne 이다.
+    1) 이 블로그 서비스는 회원 한명에게 하나의 블로그만 개설할 수 있다.
+    2) User(1) <-> Blog(1)
+    3) OneToOne 이다.
        
 3. __OneToOne 에서 고려해야 하는 것은 와래키를 두는 엔티티(관계주인)가 주테이블 또는 대상테이블 일 수 있다.__
     1) 주테이블에 외래키를 두는 경우
@@ -260,5 +261,5 @@
                     List<BlogDto2> findAllByOrderByNoDesc();
                 }          
             ```
-        + DTO 인터페이스의 구현체 클래스는 org.springframework.data.jpa.repository.query.AbstractJpaQuery$TupleConverter$TupleBackedMap으로 JPA가 런타임에 객체로 생성한다.
+        + JPQL Projection에서는 기본적으로 반환하는 타입이 Tuple이다. DTO 인터페이스의 구현체 클래스를 찾아보면 org.springframework.data.jpa.repository.query.AbstractJpaQuery$TupleConverter$TupleBackedMap으로 JPA가 런타임에 객체로 생성되는 것을 알 수 있다.
         + DTO 인터페이스는 @QueryProjection를 사용한 클래스기반 Projection에서 필요하던 Q클래스 스캐닝이 필요없기 때문에 별다른 설정을 할 필요가 없다.
