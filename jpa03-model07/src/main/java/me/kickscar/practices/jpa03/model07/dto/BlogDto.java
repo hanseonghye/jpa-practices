@@ -1,17 +1,17 @@
-package me.kickscar.practices.jpa03.model07.domain;
+package me.kickscar.practices.jpa03.model07.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 
-public class BlogDto3 {
+public class BlogDto {
     private Long no;
     private String name;
     private String userId;
 
-    public BlogDto3(){
+    public BlogDto(){
     }
 
     @QueryProjection
-    public BlogDto3(Long no, String name, String userId){
+    public BlogDto(Long no, String name, String userId){
         this.no = no;
         this.name = name;
         this.userId = userId;

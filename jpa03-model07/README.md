@@ -185,6 +185,80 @@
                     user user1_ 
                         on blog0_.no=user1_.blog_no          
             ```
-    7) test09findAll3
+    8) test09findAll3
         + 페치 조인과 함께 BlogDto3 클래스 방식의 프로젝션을 하는 findAll3 메소드를 테스트 한다.
-        + @QueryProjection 사용하는 데, 앞에서 했던 방식과 다른 것은 Projections.constructor 이 함수를 쓰지 않아도 된다. 조금 간결해 졌다. 
+        + @QueryProjection 사용하는 데, 앞에서 했던 방식과 다른 것은 Projections.constructor, Projections.bean, Projections.field 이런 함수를 쓰지 않아도 된다.
+        + BlogDto3에 @QueryProjection 적용
+            ```
+                public class BlogDto3 {
+                    private Long no;
+                    private String name;
+                    private String userId;
+                    
+                          .
+                          .
+                          .
+                
+                    @QueryProjection
+                    public BlogDto3(Long no, String name, String userId){
+                        this.no = no;
+                        this.name = name;
+                        this.userId = userId;
+                    }
+                         .
+                         .
+                         .
+                }              
+            ```
+            1) Q클래스가 자동으로 생성해야한다.
+            2) JpaConfig.java 에 EntityManagerFactory Bean 설정에 정의한 DTO클래스가 스캐닝될 수 있도록 패키지를 추가해야 한다.
+                ```
+                    em.setPackagesToScan(new String[] { "me.kickscar.practices.jpa03.model07.domain", "me.kickscar.practices.jpa03.model07.dto" });
+               
+                ```
+            3) QBlogDto3.java 가 자동으로 생성되며 import를 통해 Projection에 사용하면 된다.
+                <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/37003.png" width="500px" />
+                <br>
+        + findAll3() 구현 코드
+            ```
+                return queryFactory
+                        .select(new QBlogDto3(blog.no, blog.name, blog.user.id.as("userId")))
+                        .from(blog)
+                        .innerJoin(blog.user)
+                        .fetch();          
+            ```
+            1) projection 이기 때문에 fetchJoin()를 사용하지 말아야 한다.
+            2) BlogDto3 클래스를 사용하면 안되고 자동으로 생성된 QBlogDto3 클래스로 projection을 해야 한다.
+            3) 비교적 레포지토리 코드가 간결해 졌다.
+        + 쿼리로그
+            ```
+                select
+                    blog0_.no as col_0_0_,
+                    blog0_.name as col_1_0_,
+                    user1_.id as col_2_0_ 
+                from
+                    blog blog0_ 
+                inner join
+                    user user1_ 
+                        on blog0_.no=user1_.blog_no          
+            ```
+            1) inner join과 projection이 적용된 SQL문 로그를 확인할 수 있다.
+    9) test09findAllByOrderByNoDesc
+        + Spring Data JPA에서 지원하는 방식은 쿼리 메소드 + DTO Interface 를 사용하는 방식이다.
+        + 단점이기도 하고 당연한 것이기도 하지만, 쿼리 메소드(Query Method)에만 사용할 수 있다는 것이다.
+        + DTO Interface 정의
+            ```
+                public interface BlogDto2 {
+                    Long getNo();
+                    String getName();
+                    String getUserId();
+                }
+            ```
+        + 쿼리 메소드 정의
+            ```
+                public interface JpaBlogRepository extends JpaRepository<Blog, Long>, JpaBlogQryDslRepository {
+                    List<BlogDto2> findAllByOrderByNoDesc();
+                }          
+            ```
+        + DTO 인터페이스의 구현체 클래스는 org.springframework.data.jpa.repository.query.AbstractJpaQuery$TupleConverter$TupleBackedMap으로 JPA가 런타임에 객체로 생성한다.
+        + DTO 인터페이스는 @QueryProjection를 사용한 클래스기반 Projection에서 필요하던 Q클래스 스캐닝이 필요없기 때문에 별다른 설정을 할 필요가 없다.

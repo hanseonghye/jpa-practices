@@ -2,7 +2,9 @@ package me.kickscar.practices.jpa03.model07.repository;
 
 import me.kickscar.practices.jpa03.model07.config.JpaConfig;
 import me.kickscar.practices.jpa03.model07.domain.Blog;
+import me.kickscar.practices.jpa03.model07.dto.BlogDto;
 import me.kickscar.practices.jpa03.model07.domain.User;
+import me.kickscar.practices.jpa03.model07.dto.BlogDto2;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -127,6 +129,18 @@ public class JpaBlogRepositoryTest {
     @Test
     public void test08findAll2(){
         List<Blog> blogs = blogRepository.findAll2();
+        assertEquals(3, blogs.size());
+    }
+
+    @Test
+    public void test08findAll3(){
+        List<BlogDto> blogs = blogRepository.findAll3();
+        assertEquals(3, blogs.size());
+    }
+
+    @Test
+    public void test09findAllByOrderByNoDesc(){
+        List<BlogDto2> blogs = blogRepository.findAllByOrderByNoDesc();
         assertEquals(3, blogs.size());
     }
 
