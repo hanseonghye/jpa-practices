@@ -22,19 +22,17 @@
 #### 2. 연관관계 모델
  1) 단일(One) - 방명록
  2) 다대일(ManyToOne) 단방향(Unidirectional) - 게시판  [Board -> User]
- 3) 다대일(ManyToOne) 양방향(Bidirectional)  - 쇼핑몰  [Order <-> User]
+ 3) 다대일(ManyToOne) 양방향(Bidirectional) - 쇼핑몰  [Order <-> User]
  4) 일대다(OneToMany) 단방향(Unidirectional) - 게시판  [Board -> Comment]
- 5) 일대다(OneToMany) 양방향(Bidirectional)  - 쇼핑몰  [User <->Order]
+ 5) 일대다(OneToMany) 양방향(Bidirectional) - 쇼핑몰  [User <->Order]
  6) 일대일(OneToOne) 단방향(Unidirectional), 주테이블 외래키 - JBlog [User -> Blog]
  7) 일대일(OneToOne) 양방향(Bidirectional), 주테이블 외래키 - JBlog [User <-> Blog]
- 8) 일대일(OneToOne) 양방향(Bidirectional), 대상테이블 외래키 - JBlog [User <-> Blog]
+ 8) 일대일(OneToOne) 양방향(Bidirectional), 대상테이블 외래키, 식별관계 - JBlog [User <-> Blog]
  9) 다대다(ManyToMany) 단방향(Unidirectional) - 음반검색 [Artist -> Album]
 10) 다대다(ManyToMany) 양방향(Bidirectional) - 음반검색 [Artis <-> Album ]
 11) 다대다(OneToMany + ManyToOne) - 쇼핑몰 [User -> Cart -> Product]
 12) 다대다(@neToMany + OneToMany) - 음반검색 [Artist -> Song <- Album]
 13) 복합키 - ?
-14) 식별관계 - JBlog
-
 
 ## 2. 프로젝트 로컬 클론 & 모듈 임포트 & 실행/테스트 환경 설정 (IntelliJ IDEA)
 #### 1. Git Repository URL 선택  - **Clone** 
