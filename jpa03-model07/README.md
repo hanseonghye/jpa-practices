@@ -261,5 +261,5 @@
                     List<BlogDto2> findAllByOrderByNoDesc();
                 }          
             ```
-        + JPQL Projection에서는 기본적으로 반환하는 타입이 Tuple이다. DTO 인터페이스의 구현체 클래스를 찾아보면 org.springframework.data.jpa.repository.query.AbstractJpaQuery$TupleConverter$TupleBackedMap으로 JPA가 런타임에 객체로 생성되는 것을 알 수 있다.
+        + JPQL Projection에서는 기본적으로 반환하는 타입이 Tuple이다. DTO 인터페이스의 구현체 클래스는 org.springframework.data.jpa.repository.query.AbstractJpaQuery$TupleConverter$TupleBackedMap 으로 JPA가 런타임에 객체로 생성한다.
         + DTO 인터페이스는 @QueryProjection를 사용한 클래스기반 Projection에서 필요하던 Q클래스 스캐닝이 필요없기 때문에 별다른 설정을 할 필요가 없다.
