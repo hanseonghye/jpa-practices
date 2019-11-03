@@ -62,7 +62,7 @@ public class JpaConfig {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 
         em.setDataSource(dataSource());
-        em.setPackagesToScan(new String[] { "me.kickscar.practices.jpa03.model08.domain" });
+        em.setPackagesToScan(new String[] { "me.kickscar.practices.jpa03.model08.domain", "me.kickscar.practices.jpa03.model08.dto" });
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         em.setJpaProperties(jpaProperties());

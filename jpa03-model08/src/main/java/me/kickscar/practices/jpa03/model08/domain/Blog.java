@@ -2,6 +2,7 @@ package me.kickscar.practices.jpa03.model08.domain;
 
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "blog")
@@ -12,6 +13,10 @@ public class Blog {
 
     @Column(name="name", nullable=false, length=200)
     private String name;
+
+    @Column(name = "open_date", nullable = false)
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date openDate = new Date();
 
     @MapsId
     @OneToOne(fetch=FetchType.LAZY)
@@ -34,6 +39,14 @@ public class Blog {
         this.name = name;
     }
 
+    public Date getOpenDate() {
+        return openDate;
+    }
+
+    public void setOpenDate(Date openDate) {
+        this.openDate = openDate;
+    }
+
     public User getUser() {
         return user;
     }
@@ -45,8 +58,10 @@ public class Blog {
     @Override
     public String toString() {
         return "Blog{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", openDate=" + openDate +
+                ", user=" + user +
                 '}';
     }
 }
