@@ -210,15 +210,15 @@
                         where
                             id=?              
             ```
-                1) update 퀄리가 실해되었음을 알 수 있다.
-                2) 두번째 쿼리를 보면 설정과 다르게 Lazy Loading을 하지 않고 EAGER로 즉시 로딩한 것을 발견할 수 있다.
-                        ```
-                            @OneToOne(mappedBy="user", fetch=FetchType.LAZY)
-                            private Blog blog;                        
-                        ```
-                        - 이는 OnetoOne Bidirectional 에서 mappedBy 선언된 연관 필드의 글로벌 페치 전략 LAZY는 무시된다.
-                        - 이는 Proxy의 한계 때문에 발생하는데 반드시 해결해야 하면, Proxy 대신 bytecode instrumentation을 사용하면 된다.
-                        - fetch join 하도록 QueryDSL로 작성해서 튜닝하는 방법도 있겠지만, OneToOne에서는 크게 문제되지 않을 것 같다.
+            1) update 퀄리가 실행되었음을 알 수 있다.
+            2) 두번째 쿼리를 보면 설정과 다르게 Lazy Loading을 하지 않고 EAGER로 즉시 로딩한 것을 발견할 수 있다.
+                ```
+                    @OneToOne(mappedBy="user", fetch=FetchType.LAZY)
+                    private Blog blog;                        
+                ```
+                - OnetoOne Bidirectional 에서 mappedBy 선언된 연관 필드의 글로벌 페치 전략 LAZY는 무시된다.
+                - 이는 Proxy의 한계 때문에 발생하는데 반드시 해결해야 하면, Proxy 대신 bytecode instrumentation을 사용하면 된다.
+                - fetch join 하도록 QueryDSL로 작성해서 튜닝하는 방법도 있겠지만, OneToOne에서는 크게 문제되지 않을 것 같다.
                         
 #### 2-4. JpaBlogRepository Test : Spring Data JPA 기반 Repository
 1. __JpaBlogRepository__
