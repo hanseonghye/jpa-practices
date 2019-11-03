@@ -1,5 +1,6 @@
 ## Model06 : 일대일(OneToOne) - 양방향(Bidirectional), 주테이블에 외래키, 식별관계
 
+
 ### 1. Domain
 
 #### 1-1. 테이블 연관관계 VS 객체 연관관계
@@ -41,6 +42,7 @@
             3) JPA는 @GenerateValue 를 통해 간편하게 대리 키를 생성할 수 있다. 그리고 식별자 컬럼이 하나여서 쉽게 매핑할 수 있다.
             4) 식별자의 데이터 타입은 Long을 추천
             5) 필수적 비식별 관계를 사용하는 것이 좋다. 선택적인 비식별 관계는 NULL 을 허용하므로 조인할 때에 외부 조인을 사용해야 한다. 반면에 필수적 관계는 NOT NULL 로 항상 관계가 있다는 것을 보장하므로 내부 조인만 사용해도 된다. 
+
     
 #### 1-2. Entity Class: User, Blog
 1. __User 엔티티 매핑 참고__
@@ -119,7 +121,7 @@
 ### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
-1. Model02[CrudRepository.save() 오해]와  Model06[키본키 생성 전략, String 기본키 사용 시, 유의할 점] 함께 이해하기
+1. Model02[CrudRepository.save() 오해]와  Model06[String 기본키 사용 시 유의할 점] 함께 이해하기
 2. Specification 이해와 사용법
 
 
@@ -141,11 +143,89 @@
     1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
     2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
 
-2. __JpaBlogRepository.java__
+2. __JpaUserRepositoryTest__
+    1) test01Save
+        + 순수객체(영속화되지 않은 객체, 엔티티매니저 관리 대상이 아닌 객체)를 save() 전달하여 영속화 시키는 테스트이다.
+        + CrudRepository.save(entity)호출 시, 외부에서 전달하는 entity 객체는 대부분 영속화되서 다음 코드에서 영속화 객체로 사용하면 된다.
+        + 대부분이 그렇고 아닌 경우도 있다. 다음 코드를 참고
+            <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32008.png" width="600px" />
+            <br>
+            ```
+                public boolean isNew(T entity) {
+                
+                    ID id = getId(entity);
+                    Class<ID> idType = getIdType();
+                
+                    if (!idType.isPrimitive()) {
+                        return id == null;
+                    }
+                
+                    if (id instanceof Number) {
+                        return ((Number) id).longValue() == 0L;
+                    }
+                
+                    throw new IllegalArgumentException(String.format("Unsupported primitive id type %s!", idType));
+                }          
+            ```    
+            1) entityInformation.isNew(entity)를 통해서 새롭게 영속화해야 할 엔티티 객체인지 아니면 준영속객체로 merge를 해야할 지 결정하는 코드가 핵심이다.
+            2) 앞의 대부분 Model들의 테스트에서는 "새롭게 영속화해야 객체"였기 때문에 그냥 파라미터로 전달된 엔티티 객체를 영속화 객체로 간주하고 다음 코드에서 사용해도 큰 문제가 없었을 것이다.
+            3) isNew() 함수를 보면, "새롭게 영속화해야 객체" 기준이 Id 타입임을 알 수 있고 그리고 기본 데이터 타입(Primitive, int, long, ...) 이다.
+            4) Model06, Model07, Model08은 Id(PK) 타입을 String을 쓰고 있기 때문에 "새롭게 영속화해야 객체" 로 인식하지 않는다.
+            5) merge 대상이 되어 merge() 메소드가 반환하는 새롭게 영속화 된 객체를 save() 메소드가 반환하기 때문에 외부에서는 save() 메소드가 반환하는 객체를 사용하는 것이 안전하다.
+        + 테스트에서는 save() 메소드에 파라미터로 전달되는 객체와 반환된느 객체의 영속화 유무를 확인하고 있다.       
+    2) test02Save
+        + save() 메소드가 insert SQL을 실행하는지 여부를 확인해 보는 테스트이다.
+        + test01Save에서 저장한 엔티티 객체와 같은 PK를 가지는 객체를 생성해 영속화 시켜본다.
+        + @GeneratedValue 정책을 사용하지 않기 때문에 save() 메소드를 호출하면 select 쿼리가 먼저 실행된다.
+        + 존재하지 않으면 insert 쿼리가 실행된다.
+        + 존재하면 페치하여 엔티티 객체로 영속화 시키고 파라미터로 넘어온 순수객체의 값들로 변경할 것이다.
+        + 변경여부가 탐지되면 update 쿼리가 실행된다. 로그를 확인해 보자.
+            ```
+                Hibernate: 
+                    /* load me.kickscar.practices.jpa03.model08.domain.User */ select
+                        user0_.id as id1_1_0_,
+                        user0_.join_date as join_dat2_1_0_,
+                        user0_.name as name3_1_0_,
+                        user0_.password as password4_1_0_ 
+                    from
+                        user user0_ 
+                    where
+                        user0_.id=?
+                Hibernate: 
+                    /* load me.kickscar.practices.jpa03.model08.domain.Blog */ select
+                        blog0_.id as id1_0_0_,
+                        blog0_.name as name2_0_0_ 
+                    from
+                        blog blog0_ 
+                    where
+                        blog0_.id=?
+                Hibernate: 
+                    /* update
+                        me.kickscar.practices.jpa03.model08.domain.User */ update
+                            user 
+                        set
+                            join_date=?,
+                            name=?,
+                            password=? 
+                        where
+                            id=?              
+            ```
+                1) update 퀄리가 실해되었음을 알 수 있다.
+                2) 두번째 쿼리를 보면 설정과 다르게 Lazy Loading을 하지 않고 EAGER로 즉시 로딩한 것을 발견할 수 있다.
+                        ```
+                            @OneToOne(mappedBy="user", fetch=FetchType.LAZY)
+                            private Blog blog;                        
+                        ```
+                        - 이는 OnetoOne Bidirectional 에서 mappedBy 선언된 연관 필드의 글로벌 페치 전략 LAZY는 무시된다.
+                        - 이는 Proxy의 한계 때문에 발생하는데 반드시 해결해야 하면, Proxy 대신 bytecode instrumentation을 사용하면 된다.
+                        - fetch join 하도록 QueryDSL로 작성해서 튜닝하는 방법도 있겠지만, OneToOne에서는 크게 문제되지 않을 것 같다.
+                        
+#### 2-4. JpaBlogRepository Test : Spring Data JPA 기반 Repository
+1. __JpaBlogRepository__
     1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
     2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
 
-3. __JpaBlogRepositoryTest.java__
+2. __JpaBlogRepositoryTest__
     1) test01Save
         + 엔티티 객체 영속화
         + 테스트 데이터 저장

@@ -57,5 +57,4 @@ public class JpaUserRepositoryTest {
         assertFalse(em.contains(user1));
         assertTrue(em.contains(user1Persisted));
     }
-
 }
