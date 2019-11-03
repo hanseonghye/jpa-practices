@@ -210,7 +210,7 @@
                         where
                             id=?              
             ```
-            1) update 퀄리가 실행되었음을 알 수 있다.
+            1) update 쿼리가 실행되었음을 알 수 있다.
             2) 두번째 쿼리를 보면 설정과 다르게 Lazy Loading을 하지 않고 EAGER로 즉시 로딩한 것을 발견할 수 있다.
                 ```
                     @OneToOne(mappedBy="user", fetch=FetchType.LAZY)
