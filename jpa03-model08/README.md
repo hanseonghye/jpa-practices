@@ -95,6 +95,7 @@
                 create table blog (
                     id varchar(24) not null,
                     name varchar(200) not null,
+                    open_date datetime not null,       
                     primary key (id)
                 ) engine=InnoDB
             Hibernate: 
@@ -115,14 +116,15 @@
        
         ```
         + 두 테이블의 PK필드의 타입이 같고 FK설정을 통해 식별관계가 설정되어 있음을 알 수 있다.
-
+        + Model07과 다르게 페이징을 위해 blog.openDate(컬럼 open_date)을 추가 하였다.
 
 
 ### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
 1. Model02[CrudRepository.save() 오해]와  Model06[String 기본키 사용 시 유의할 점] 함께 이해하기
-2. Specification 이해와 사용법
+2. Page<T> 를 반환하는 레포지토리 메소드 작성하기
+3. QueryDSL Dynamic 조건절 작성 방법 vs Spring Data JPA Specification(Criteria 기반)
 
 
 #### 2-2. 테스트 환경
@@ -223,16 +225,84 @@
 #### 2-4. JpaBlogRepository Test : Spring Data JPA 기반 Repository
 1. __JpaBlogRepository__
     1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
-    2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
+    2) 쿼리 메소드 Page<Blog> findAll(Specification<Blog> spec, Pageable pageable) 가 정의되어 있다.
+        + 쿼리 메소드는 함수 이름뿐만 아니라 반환타입 Page, 파라미터 Pageable 등을 유연하게 지원한다.
+        + Spring Data JPA에서 지원하는 Specification(명세) 파라미터로 받고 있다.
+            1) Specification
+                - 간단히 설명하면, where절의 다양한 제약 조건들을 쉽게 조합하여 사용할 수 있는 기능이다.
+                - POJO 클래스에 Specification 인터페이스를 구현한 객체를 반환하는 static 메소드를 적당한 이름으로 작성하면 Specification 구현은 끝난다.
+                - 사용하기 위해서는 예제처럼 쿼리 메소드의 파라미터로 static 메소드를 호출하기만 하면 된다.
+                - 문제는 쿼리 메소드 안에서 전달받은 Specification의 where(), and(), or()를 적절한 Criteria 함수 where(), and(), or()로 변한해야 한다.
+                - 이는 직접 구현하지 않고 JpaSpecificationExecutor<Entity> 인터페이스르 쿼리 메소드를 정의한 인터페이스에 상속하면 된다.
+                    ```
+                         public interface JpaBlogRepository extends JpaRepository<Blog, Long>, JpaBlogQryDslRepository, JpaSpecificationExecutor<Blog> {
+                             public Page<Blog> findAll(Specification<Blog> spec, Pageable pageable);
+                         }                 
+                    ```  
+            2) 구현 코드
+               ```
+                public static Specification<Blog> withNameContains(String keyword) {
+                    return new Specification<Blog>() {
+                        @Override
+                        public Predicate toPredicate(Root<Blog> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                            if(StringUtils.isEmpty(keyword)){
+                                return null;
+                            }
+            
+                            return criteriaBuilder.like(root.<String>get("name"), "%"+keyword+"%");
+                        }
+                    };
+                }               
+               ```
+               + Criteria 기반 like 검색 구현
+               + null를 리턴하면 where(), and(), or()는 무시한다.
+               + 사용법은 테스트 코드 참고
+            
+3. __JpaBlogQryDslRepository Interface, JpaBlogQryDslRepositoryImpl class__ 
+    1) findAll2(..), findAll3(...), findAll4(...) 메소드는 다음과 같은 것들이 구현되어 있다.
+        + Page 객체를 반환한다. fetch()결과 List를 Page객체로 변환한다.
+        + @QueryProjection을 사용하여 BlogDto로 Projection한다.
+        + 글로벌 페치 전략 Lazy을 적용하지 않으며, QueryDSL 기반의 inner join을 한다.
+        + Pageable를 사용하여 QueryDSL 페이징을 구현하고 있다.
+        + Optional 파라미터를 사용하여 QueryDSL 기반 동적 조건절이 구현되어 있다. 
+    2) 3개의 메소드가 다른 점은 QueryDSL기반 동적 조건절 작성에 다소 차이가 있다. 테스트에서 자세히 설명한다. 
 
 2. __JpaBlogRepositoryTest__
     1) test01Save
         + 엔티티 객체 영속화
+        + 외래키를 관리하는 Blog Entity의 user 필드를 User 엔티티 객체로 세팅해야 한다.(식별관계여서 PK필드를 세팅하는 것이 아니다. 착각금지. 예외 발생함) 
         + 테스트 데이터 저장
-    2) test02UpdateUser
-        + DB로 부터 Blog, User 엔티티 객체를 각각 영속화 시킨다.
-        + 양방향(Bidirectional) 중 관계의 주인이 아닌 쪽에서 연관관계 필드를 변경한다.  
+    2) test02findAll2
+        + QueryDSL 동적 쿼리 예제1
+        + findAll2(...) 메소드는 BooleanBuilder를 사용하고 where()에 파라미터로 BooleanBuilder 객체를 넘겨준다.
+        + 쉬운 방법이나 코드가 길고 지저분하다.
+        + name에 "블"이 있거나 블로그 주인이름에 "희"가 있는 블로그를 검색해서 첫페이지를 반환한다.
+    3) test03findAll3
+        + QueryDSL 동적 쿼리 예제2
+        + findAll3(...) 메소드는 QueryDSL where(Predicate..)을 사용한다. 가변 파라미터에 조건을 사용해주면 되는데 null이면 무시하기 때문에 삼한연산자를 사용하면 코드가 길어지고 지저분해 지는 것을 피할 수 있다.
+        + name에 "블"이 있는 블로그를 모두 검색해서 첫페이지를 반환한다. Optional.empty() 사용해서 userName에 null를 설정하는 테스트이다.
+    4) test04findAll4
+        + QueryDSL 동적 쿼리 예제2
+        + findAll4(...) 메소드는 QueryDSL where(Predicate..)을 사용한다. 가변 파라미터가 아니고 Predicate를 연결해서 사용한다. 마찬가지로 null이면 무시하지만 삼한연산자를 사용하면 가변 파라미터를 사용하는 것에 피해 복잡해 보인다.
+        + name에 "블"이 있는 블로그를 모두 검색해서 첫페이지를 반환한다. Optional.empty() 사용해서 userName에 null를 설정하는 테스트이다.
+    5) test04findAll5
+        + Spectification을 사용하는 퀄리 메소드 findAll(...)의 테스트이다.
             ```
-                blog.setUser(user);
+                import static me.kickscar.practices.jpa03.model08.domain.specs.BlogSpecs.withNameContains;
+                import static me.kickscar.practices.jpa03.model08.domain.specs.BlogSpecs.withUserNameContains;          
+            ```
                     
             ```
+                Page<Blog> pageBlogDto = blogRepository.findAll(
+                    where( withNameContains("블") ).and( withUserNameContains("희") ), 
+                    PageRequest.of(page++, size, Sort.Direction.DESC, "openDate"));
+            ```
+                1) Specification 클래스의 static 메소드를 static import하면 훨씬 더 편하고 이름만 잘 지으면 이해하기 편하게 사용할 수 있다.
+                2) null을 리턴하는 코드를 함수 안에 두면 메소드 호출 시 null체크를 하지 않아도 된다.
+                3) 전반적으로 이해하기 쉽고 깔끔하다.
+                
+        + 장점은 이해하기가 쉽고 조건을 Specification 클래스의 함수 이름으로 조금 유연하게 작성할 수 있다.
+        + 그리고 조합해서 사용할 수 있다는 점과 복잡성을 피할 수 있는 점도 장점이라 할 수 있다.
+        + 주로 쿼리 메소드로 사용할 수 있다. 만일 성능 또는 구현불가 이유로 QueryDSL 통합하여 메소드를 직접 구현해야 한다면, 불가능한 것은 아니지만 구현이 복잡해 질 것이다.
+        + 이런 점을 고려해서 Specification과 QueryDSL 동적 쿼리를 적절하게 혼용하면 된다.
+         

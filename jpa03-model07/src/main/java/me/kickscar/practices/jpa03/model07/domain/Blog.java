@@ -2,6 +2,7 @@ package me.kickscar.practices.jpa03.model07.domain;
 
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "blog")
@@ -46,6 +47,7 @@ public class Blog {
         return "Blog{" +
                 "no=" + no +
                 ", name='" + name + '\'' +
+                ", user=" + user +
                 '}';
     }
 }
