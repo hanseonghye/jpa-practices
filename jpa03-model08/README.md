@@ -114,9 +114,14 @@
         ```
         + 두 테이블의 PK필드의 타입이 같고 FK설정을 통해 식별관계가 설정되어 있음을 알 수 있다.
 
+
+
+### 2. Repository 작성 & Testing
+
 #### 2-1. 요약: 다루는 기술적 내용
-1. 양방향(Bidirectional)에서 관계 필드 변경과 Update 반영 여부
-2. Projection: @QueryProjection 사용법, Spring Data JPA 지원
+1. Model02[CrudRepository.save() 오해]와  Model06[키본키 생성 전략, String 기본키 사용 시, 유의할 점] 함께 이해하기
+2. Specification 이해와 사용법
+
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  

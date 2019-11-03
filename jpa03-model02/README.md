@@ -50,7 +50,7 @@
         - 엔티티 매핑에서도 마찬가지다. 다중성을 결정하는 어노테이션과 외래키(조인칼럼)을 @JoinColumn 어노테이션으로 지정해주면 끝이다.
 
 
-### 2. SpringBoot Test Case
+### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
 1. JPQL 그리고 QueryDSL, Spring Data JPA 기반의 각각의 레포지토리 구현 방법을 이해할 것

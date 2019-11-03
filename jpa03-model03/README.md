@@ -89,7 +89,7 @@
         ``` 
 
 
-### 2. SpringBoot Test Case
+### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
 1. QueryDSL 통합하는 Spring Data JPA 기반의 레포지토리 작성방법

@@ -52,7 +52,7 @@
         - **OneToMany Unidirectional을 써야 하다면 ManyToOne Bidirectional를 사용하는 것을 보통 추천한다**  
 
 
-### 2. SpringBoot Test Case
+### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
 1. OneToMany Unidirectional 단점 이해

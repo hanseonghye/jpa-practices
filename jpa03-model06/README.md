@@ -100,6 +100,9 @@
        
         ```
 
+
+### 2. Repository 작성 & Testing
+
 #### 2-1. 요약: 다루는 기술적 내용
 1. 키본키 생성 전략(String 기본키 사용 시, 유의할 점) 
 2. Lazy Loading과 Proxy 객체 이해 

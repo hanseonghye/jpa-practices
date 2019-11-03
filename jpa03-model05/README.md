@@ -79,6 +79,9 @@
         + OneToMany 단방향(Unidirectioanl)과는 다르게 양방향에서는 두 군데서 업데이트 인서트가 되지 못하도록 setUser setter에 Collection을 가져와 채우는 부분을 없애야 한다. 
 
 
+
+### 2. Repository 작성 & Testing
+
 #### 2-1. 요약: 다루는 기술적 내용
 1. OneToMany Bidirectional 단점 이해
 2. Order -> User Read Only 확인

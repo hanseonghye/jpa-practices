@@ -10,7 +10,8 @@
 1. me.kickscar.practices.jpa03.model01.domain.Guestbook.java 엔티티 매핑 참고  
 
 
-### 2. SpringBoot Test Case
+### 2. Repository 작성 & Testing
+
 #### 2-1. 요약: 다루는 기술적 내용
 1. JPQL 그리고 QueryDSL, Spring Data JPA 기반의 각각의 레포지토리 구현이 가능함을 이해할 것
 2. 각각의 레포지토리를 작성하기 위한 설정 방법들을 꼭 이해 할 것
