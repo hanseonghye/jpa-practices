@@ -148,7 +148,7 @@
         + 순수객체(영속화되지 않은 객체, 엔티티매니저 관리 대상이 아닌 객체)를 save() 전달하여 영속화 시키는 테스트이다.
         + CrudRepository.save(entity)호출 시, 외부에서 전달하는 entity 객체는 대부분 영속화되서 다음 코드에서 영속화 객체로 사용하면 된다.
         + 대부분이 그렇고 아닌 경우도 있다. 다음 코드를 참고
-            <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32008.png" width="600px" />
+            <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/32008.png" width="800px" />
             <br>
             ```
                 public boolean isNew(T entity) {
