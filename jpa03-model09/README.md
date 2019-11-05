@@ -25,7 +25,7 @@
 3. __다대다 연관관계의 관계형 데이터베이스와 JPA에서의 차이점__
     1) 관계형 데이터베이스는 정규화된 테이블 2개로 다대다 관계를 표현할 수 없다.
     2) 그래서 보통 다대다 관계 를 일대다, 다대일 관계로 풀어내는 연결 테이블을 사용한다.
-        <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/39003.png" width="500px" />
+        <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/39003.png" width="800px" />
         <br>    
     3) 객체는 테이블과 다르게 객체 2개로 다대다 관계를 만들 수 있다.
     4) Song 객체는 컬렉션을 사용해서 쟝르들을 참조하면 되고 반대로 쟝르들도 컬렉션을 사용해서 회원들을 참조하면 된다.

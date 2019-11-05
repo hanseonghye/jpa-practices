@@ -1,4 +1,4 @@
-## Model06 : 일대일(OneToOne) - 양방향(Bidirectional), 주테이블에 외래키
+## Model07 : 일대일(OneToOne) - 양방향(Bidirectional), 주테이블에 외래키
 
 ### 1. Domain
 
