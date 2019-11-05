@@ -16,8 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpaConfig.class})
@@ -36,14 +37,59 @@ public class JpaSongRepositoryTest {
     @Transactional
     @Rollback(false)
     public void test01Save() {
-        Genre genre = new Genre();
-        genre.setName("쟝르1");
-        genre.setAbbrName("쟝르1");
-        genreRepository.save(genre);
+        Genre genre1 = new Genre();
+        genre1.setName("쟝르1");
+        genre1.setAbbrName("쟝르1");
+        genreRepository.save(genre1);
 
-        Song song = new Song();
-        song.setTitle("노래1");
-        song.getGenres().add(genre);
-        songRepository.save(song);
-;    }
+        Genre genre2 = new Genre();
+        genre2.setName("쟝르2");
+        genre2.setAbbrName("쟝르2");
+        genreRepository.save(genre2);
+
+        Genre genre3 = new Genre();
+        genre3.setName("쟝르3");
+        genre3.setAbbrName("쟝르3");
+        genreRepository.save(genre3);
+
+        Genre genre4 = new Genre();
+        genre4.setName("쟝르4");
+        genre4.setAbbrName("쟝르4");
+        genreRepository.save(genre4);
+
+        Song song1 = new Song();
+        song1.setTitle("노래1");
+        song1.getGenres().add(genre1);
+        song1.getGenres().add(genre2);
+        songRepository.save(song1);
+
+        Song song2 = new Song();
+        song2.setTitle("노래2");
+        song2.getGenres().add(genre1);
+        song2.getGenres().add(genre4);
+        songRepository.save(song2);
+
+        assertEquals(4L, genreRepository.count());
+        assertEquals(2L, songRepository.count());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test02FindById() {
+        Song song = songRepository.findById(2L).get();
+        System.out.println(song);
+    }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test03FindAll() {
+        List<Song> songs = songRepository.findAll();
+
+        for(Song song : songs) {
+            System.out.println(song);
+        }
+    }
+
 }

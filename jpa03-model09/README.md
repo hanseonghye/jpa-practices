@@ -19,12 +19,13 @@
 
 2. __다중성은 방향성이 결정나면 쉽게 결정 할 수 있다.__
     1) Song은 다수의 쟝르에 포함될 수 있다. 쟝르도 해당 쟝르의 노래들이 많다.
-    2) Song(*) -> Genre(*)
+    2) Song(\*) -> Genre(\*)
     3) ManyToMany 이다.
        
 3. __다대다 연관관계의 관계형 데이터베이스와 JPA에서의 차이점__
     1) 관계형 데이터베이스는 정규화된 테이블 2개로 다대다 관계를 표현할 수 없다.
     2) 그래서 보통 다대다 관계 를 일대다, 다대일 관계로 풀어내는 연결 테이블을 사용한다.
+        
         <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/39003.png" width="800px" />
         <br>    
     3) 객체는 테이블과 다르게 객체 2개로 다대다 관계를 만들 수 있다.
@@ -53,6 +54,7 @@
         ```
         + @ManyToMany 와 @JoinTable 을 사용해서 연결 테이블을 바로 매핑한다.
         + 노래와 쟝르를 연결하는 노래_쟝르(Song_Genre)엔티티 없이 매핑을 완료할 수 있다.
+        + ManyToMany  기본 페치 전략은 LAZY 이다.
         + @JoinTable.name : 연결 테이블을 지정한다. 
         + @JoinTable.joinColumns : 현재 방향인 노래와 매핑할 조인 컬럼 정보를 지정한다. song_no로 지정
         + @JoinTable.inverseJoinColumns : 반대 방향인 쟝릐와 매핑할 조인 컬럼 정보를 지정한다. genre_no로 지정했다.

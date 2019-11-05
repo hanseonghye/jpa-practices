@@ -42,4 +42,14 @@ public class Song {
     public void setGenres(List<Genre> genres) {
         this.genres = genres;
     }
+
+    @Override
+    public String toString() {
+        return "Song{" +
+                "no=" + no +
+                ", title='" + title + '\'' +
+                // Test를 위해 주석처리(LAZY)
+                // ", genres=" + genres +
+                '}';
+    }
 }
