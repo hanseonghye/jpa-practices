@@ -94,9 +94,11 @@ public class JpaSongRepositoryTest {
     @Transactional
     public void test04FindAll() {
         List<Song> songs = songRepository.findAll();
-        for(Song song : songs) {
-            System.out.println(song);
-        }
+
+        assertEquals(2L, songs.size());
+        assertFalse(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(songs.get(1).getGenres()));
+        assertEquals(2L, songs.get(1).getGenres().size());
+        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(songs.get(1).getGenres()));
     }
 
     @Test
