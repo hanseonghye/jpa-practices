@@ -137,15 +137,93 @@
 10. __Gradle 5.4__    
 
 
-#### 2-3. JpaUserRepository Test : Spring Data JPA 기반 Repository
-1. __JpaSongRepositry__
+#### 2-3. JpaSongRepository Test : Spring Data JPA 기반 Repository
+1. __JpaGenreRepositry__
+    1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
+    2) 테스트를 위해 Genre 엔티티 영속화 목적이기 때문에 별다른 메소드 추가가 없다.
+
+2. __JpaSongRepositry__
     1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
     2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
 
-2. __JpaSongRepositoryTest__
+3. __JpaSongQryDslRepositry__
+    1) Lazy 로딩으로 Genre를 가져오지 않고 fetch join으로 Genre가 포함된 Song을 가져오는 메소드 2개를 정의
+    2) Song findById2(no) - no(PK)로 Genre가 포함된 Song 엔티티 객체 1개를 가져온다.
+    3) List<Song> c() - Genre가 포함된 Song 엔티티 객체 리스트를 가져온다. 
+
+4. __JpaSongQryDslRepositryImpl__
+    1) findById2, findById2의 구현
+    2) QueryDSL 통합 구현
+
+5. __JpaSongRepositoryTest__
     1) test01Save
-        + 순수객체(영속화되지 않은 객체, 엔티티매니저 관리 대상이 아닌 객체)를 save() 전달하여 영속화 시키는 테스트이다.
-        + CrudRepository.save(entity)호출 시, 외부에서 전달하는 entity 객체는 대부분 영속화되서 다음 코드에서 영속화 객체로 사용하면 된다.
+        + 쟝르1, 쟝르2와 노래1의 연관관계를 설정했다.
+        + 쟝르1, 쟝르4와 노래2의 연관관계를 설정했다.
+        + 노래1, 노래2를 각각 저장할 때 연결 테이블에도 값이 저장된다.
+        + 노래1이 저장될 때 실행된 SQL
+            ```
+                Hibernate: 
+                    /* insert me.kickscar.practices.jpa03.model09.domain.Song
+                        */ insert 
+                        into
+                            song
+                            (title) 
+                        values
+                            (?)
+
+                Hibernate: 
+                    /* insert collection
+                        row me.kickscar.practices.jpa03.model09.domain.Song.genres */ insert 
+                        into
+                            song_genre
+                            (song_no, genre_no) 
+                        values
+                            (?, ?)
+                Hibernate: 
+                    /* insert collection
+                        row me.kickscar.practices.jpa03.model09.domain.Song.genres */ insert 
+                        into
+                            song_genre
+                            (song_no, genre_no) 
+                        values
+                            (?, ?)                              
+            ```    
+    2) test02FindById
+        + 기본 메소드 findById(no) 테스트
+        + Lazy 로딩이기 때문에 Genre 객체를 탐색하기 전까지는 지연 로딩을 한다.
+            ```
+                Hibernate: 
+                    select
+                        song0_.no as no1_1_0_,
+                        song0_.title as title2_1_0_ 
+                    from
+                        song song0_ 
+                    where
+                        song0_.no=?          
+            ```
+        + genres의 size()를 호출하기 전까지는 프록시 객체 초기화가 되지 않았다.
+        + genres의 size()를 호출하면 genre 리스트를 가져오는 쿼리가 실행된다.
+            ```
+                Hibernate: 
+                    select
+                        genres0_.song_no as song_no1_2_0_,
+                        genres0_.genre_no as genre_no2_2_0_,
+                        genre1_.no as no1_0_1_,
+                        genre1_.abbr_name as abbr_nam2_0_1_,
+                        genre1_.name as name3_0_1_ 
+                    from
+                        song_genre genres0_ 
+                    inner join
+                        genre genre1_ 
+                            on genres0_.genre_no=genre1_.no 
+                    where
+                        genres0_.song_no=?          
+            ```
+         + 마지막에서 프록시 객체가 초기화되어 콜렉션이 채워져 있음을 알수 있다.
+        
+6. __JpaGenreRepositoryTest__
+    1) Song -> Genre 단방향이기 때문에  Genre쪽에서는 객체 탐색등이 불가능하다.
+    2) 저장, 삭제, 변경, 카운팅 정도의 기본 메소드 사용으로 충분하다.
 
 
          

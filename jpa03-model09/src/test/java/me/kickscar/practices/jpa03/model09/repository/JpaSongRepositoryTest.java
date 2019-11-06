@@ -18,6 +18,7 @@ import javax.persistence.PersistenceContext;
 
 import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -75,18 +76,32 @@ public class JpaSongRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback(false)
     public void test02FindById() {
         Song song = songRepository.findById(2L).get();
+
+        assertFalse(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(song.getGenres()));
+        assertEquals(2L, song.getGenres().size());
+        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(song.getGenres()));
+    }
+
+    @Test
+    public void test03FindById2() {
+        Song song = songRepository.findById2(2L);
         System.out.println(song);
     }
 
     @Test
     @Transactional
-    @Rollback(false)
-    public void test03FindAll() {
+    public void test04FindAll() {
         List<Song> songs = songRepository.findAll();
+        for(Song song : songs) {
+            System.out.println(song);
+        }
+    }
 
+    @Test
+    public void test05FindAll2() {
+        List<Song> songs = songRepository.findAll2();
         for(Song song : songs) {
             System.out.println(song);
         }
