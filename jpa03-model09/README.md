@@ -220,6 +220,57 @@
                         genres0_.song_no=?          
             ```
          + 마지막에서 프록시 객체가 초기화되어 콜렉션이 채워져 있음을 알수 있다.
+    3) test03FindById2
+        + test02FindById의 기본 메소드 findById()를 사용하여 Genre의 지연로딩이 필요할 때도 있겠지만 한 번에 Genre Collection을 가져와야 할 때도 있을 것이다.
+        + findById2는 QueryDSL를 사용하여 Collection fetch join을 한다.
+        + Collection Join은 Collection 필드를 가지고 있는 엔티티가 여러개 페치되는 문제가 있다.
+        + 이를 해결하는 방법으로 selectDistinct()를 사용한다.
+        + 쿼리 로그
+            ```
+                select
+                    distinct song0_.no as no1_1_0_,
+                    genre2_.no as no1_0_1_,
+                    song0_.title as title2_1_0_,
+                    genre2_.abbr_name as abbr_nam2_0_1_,
+                    genre2_.name as name3_0_1_,
+                    genres1_.song_no as song_no1_2_0__,
+                    genres1_.genre_no as genre_no2_2_0__ 
+                from
+                    song song0_ 
+                inner join
+                    song_genre genres1_ 
+                        on song0_.no=genres1_.song_no 
+                inner join
+                    genre genre2_ 
+                        on genres1_.genre_no=genre2_.no 
+                where
+                    song0_.no=?          
+            ```
+    4) test04FindAll
+        + 기본 메소드 findAll()를 사용하여 전체 노래를 가져온다.
+        + Lazy 로딩을 확인하는 테스트이다.
+    5) test05FindAll2
+        + test04FindAll의 지연로딩을 fetch join을 사용하여 1회에 가져오는 메소드 findAll2()에 대한 테스트 이다.
+        + QueryDSL로 구현하였다.
+        + 쿼리 로그
+            ```
+                select
+                    distinct song0_.no as no1_1_0_,
+                    genre2_.no as no1_0_1_,
+                    song0_.title as title2_1_0_,
+                    genre2_.abbr_name as abbr_nam2_0_1_,
+                    genre2_.name as name3_0_1_,
+                    genres1_.song_no as song_no1_2_0__,
+                    genres1_.genre_no as genre_no2_2_0__ 
+                from
+                    song song0_ 
+                inner join
+                    song_genre genres1_ 
+                        on song0_.no=genres1_.song_no 
+                inner join
+                    genre genre2_ 
+                        on genres1_.genre_no=genre2_.no          
+            ``` 
         
 6. __JpaGenreRepositoryTest__
     1) Song -> Genre 단방향이기 때문에  Genre쪽에서는 객체 탐색등이 불가능하다.
