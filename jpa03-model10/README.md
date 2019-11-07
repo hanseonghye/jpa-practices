@@ -1,32 +1,32 @@
-## Model09 : 다대다(ManyToMany) 단방향(Unidirectional)
+## Model10 : 다대다(ManyToMany) 양방향(Biidirectional)
 
 
 ### 1. Domain
 
 #### 1-1. 테이블 연관관계 VS 객체 연관관계
 
-<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/39001.png" width="500px" />
+<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/31001.png" width="500px" />
 <br>
 
-<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/39002.png" width="500px" />
+<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/31002.png" width="500px" />
 <br>
         
 1. __보통은 서비스에서 방향성을 찾는 경우가 많다.__
     1) 음반검색에서 노래와 쟝르의 관계이다.
     2) 노래 정보를 보여줄 때 그 노래의 쟝르가 필요한 경우다.
-    3) 쟝르 검색을 통해 해당 노래를 찾는 것도 필요하지만 이는 다대다 양방향(Bidirectional)에서 다룬다.
-    4) Model09에서는 Song -> Jenre로 참조가 이루어 지는 단방향(Unidirection)을 매핑한다.
+    3) 쟝르 검색을 통해 해당 노래를 찾는 등의 기능이 필요한 경우다.
+    4) Model10에서는 Song <-> Jenre로 양쪽에서 모두 참조가 이루어 지는 양방향(Biidirection)을 매핑한다.
 
 2. __다중성은 방향성이 결정나면 쉽게 결정 할 수 있다.__
     1) Song은 다수의 쟝르에 포함될 수 있다. 쟝르도 해당 쟝르의 노래들이 많다.
-    2) Song(\*) -> Genre(\*)
+    2) Song(\*) <-> Genre(\*)
     3) ManyToMany 이다.
        
 3. __다대다 연관관계의 관계형 데이터베이스와 JPA에서의 차이점__
     1) 관계형 데이터베이스는 정규화된 테이블 2개로 다대다 관계를 표현할 수 없다.
     2) 그래서 보통 다대다 관계 를 일대다, 다대일 관계로 풀어내는 연결 테이블을 사용한다.
         
-        <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/39003.png" width="800px" />
+        <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/31003.png" width="800px" />
         <br>    
     3) 객체는 테이블과 다르게 객체 2개로 다대다 관계를 만들 수 있다.
     4) Song 객체는 컬렉션을 사용해서 Genre들을 참조하면 되고 반대로 Genre들도 컬렉션을 사용해서 Song들을 참조하면 된다.
@@ -54,7 +54,7 @@
         ```
         + @ManyToMany 와 @JoinTable 을 사용해서 연결 테이블을 바로 매핑한다.
         + 노래와 쟝르를 연결하는 노래_쟝르(Song_Genre)엔티티 없이 매핑을 완료할 수 있다.
-        + ManyToMany  기본 페치 전략은 LAZY 이다.
+        + ManyToMany 기본 페치 전략은 LAZY 이다.
         + @JoinTable.name : 연결 테이블을 지정한다. 
         + @JoinTable.joinColumns : 현재 방향인 노래와 매핑할 조인 컬럼 정보를 지정한다. song_no로 지정
         + @JoinTable.inverseJoinColumns : 반대 방향인 쟝릐와 매핑할 조인 컬럼 정보를 지정한다. genre_no로 지정했다.
@@ -71,10 +71,21 @@
             private Long no;
              .
              .
+            @ManyToMany(mappedBy = "genres")
+            private List<Song> songs = new ArrayList<Song>();
+             .
+             .       
         ```
-        + ManyToMany 단방향에서는 관계주인이 아닌 엔티티는 별다른 설정을 하지 않아도 된다.
-    
-    3) 생성 스키마
+        + ManyToMany 양방향에서는 관계주인이 아닌 엔티티는 mappedBy를 통해 관계의 주인이 아님을 선언한다.
+        + 여기서는 Song이 관계의 주인이다.
+    3) Song 엔티티 클래스에 편의 메소드 추가
+        ```
+            public void addGenres(Genre genre){
+                genres.add(genre);
+                genre.getSongs().add(this);
+            }       
+        ```
+    4) 생성 스키마
     
         ```
             Hibernate: 
@@ -112,7 +123,7 @@
                    references song (no)     
        
         ```
-        + 세 개의 테이블을 생성한다.
+        + ManyToMany 단방향(Unidirectional)과 다른점이 없다. 세 개의 테이블을 생성한다.
         + 엔티티 테이블외에 song_genre 연결테이블이 생성 되었다.
         + song_genre 테이블은 다대다 관계를 일대다, 다대일 관계로 풀어내기 위해 필요한 연결 테이블이다.
 
