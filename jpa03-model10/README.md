@@ -78,6 +78,7 @@
         ```
         + ManyToMany 양방향에서는 관계주인이 아닌 엔티티는 mappedBy를 통해 관계의 주인이 아님을 선언한다.
         + 여기서는 Song이 관계의 주인이다.
+        
     3) Song 엔티티 클래스에 편의 메소드 추가
         ```
             public void addGenres(Genre genre){
@@ -85,6 +86,9 @@
                 genre.getSongs().add(this);
             }       
         ```
+        + 엔티티 양쪽에 연관필드가 있기 때문에 두 곳에 설정을 해주어야 한다.
+        + Song에 Genre를 추가할 때 Genre의 Song Collection에 자신을 추가해 준다.
+        
     4) 생성 스키마
     
         ```
@@ -281,8 +285,8 @@
                         on genres1_.genre_no=genre2_.no          
             ``` 
         
-6. __JpaGenreRepositoryTest__
-    1) Song -> Genre 단방향이기 때문에  Genre쪽에서는 객체 탐색등이 불가능하다.
+6. __JpaSongRepositoryTest__
+    1) Model09에 JpaSongReplsitoryTest 참고
     2) 저장, 삭제, 변경, 카운팅 정도의 기본 메소드 사용으로 충분하다.
 
 

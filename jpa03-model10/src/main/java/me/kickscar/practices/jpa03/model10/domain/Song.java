@@ -1,8 +1,7 @@
 package me.kickscar.practices.jpa03.model10.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "song")
@@ -15,9 +14,12 @@ public class Song {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @ManyToMany
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
     @JoinTable(name = "song_genre", joinColumns = @JoinColumn(name = "song_no"), inverseJoinColumns = @JoinColumn(name = "genre_no"))
-    private List<Genre> genres = new ArrayList<Genre>();
+    private List<Genre> genres = new ArrayList<>();
 
     public Long getNo() {
         return no;
@@ -47,6 +49,13 @@ public class Song {
         genres.add(genre);
         genre.getSongs().add(this);
     }
+
+    public void removeGenre(Genre genre){
+        genres.remove(genre);
+        genre.getSongs().remove(this);
+    }
+
+
 
     @Override
     public String toString() {

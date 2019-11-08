@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Set;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -74,39 +75,20 @@ public class JpaSongRepositoryTest {
         assertEquals(2L, songRepository.count());
     }
 
+
+
     @Test
     @Transactional
-    public void test02FindById() {
+    @Rollback(false)
+    public void test06Delete(){
         Song song = songRepository.findById(2L).get();
+        List<Genre> genres = song.getGenres();
 
-        assertFalse(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(song.getGenres()));
-        assertEquals(2L, song.getGenres().size());
-        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(song.getGenres()));
-    }
-
-    @Test
-    public void test03FindById2() {
-        Song song = songRepository.findById2(2L);
-
-        assertEquals(2L, song.getGenres().size());
-    }
-
-    @Test
-    @Transactional
-    public void test04FindAll() {
-        List<Song> songs = songRepository.findAll();
-
-        assertEquals(2L, songs.size());
-        assertFalse(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(songs.get(1).getGenres()));
-        assertEquals(2L, songs.get(1).getGenres().size());
-        assertTrue(em.getEntityManagerFactory().getPersistenceUnitUtil().isLoaded(songs.get(1).getGenres()));
-    }
-
-    @Test
-    public void test05FindAll2() {
-        List<Song> songs = songRepository.findAll2();
-
-        assertEquals(2L, songs.size());
-        assertEquals(2L, songs.get(1).getGenres().size());
+        // songRepository.deleteById(1L);
+        ///Genre genre = song.getGenres().get(0);
+        Genre genre = genreRepository.findById(1L).get();
+//        System.out.println(genre);
+//
+        song.removeGenre(genre);
     }
 }

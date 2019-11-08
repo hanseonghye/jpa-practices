@@ -87,7 +87,6 @@ public class JpaSongRepositoryTest {
     @Test
     public void test03FindById2() {
         Song song = songRepository.findById2(2L);
-
         assertEquals(2L, song.getGenres().size());
     }
 
@@ -108,5 +107,12 @@ public class JpaSongRepositoryTest {
 
         assertEquals(2L, songs.size());
         assertEquals(2L, songs.get(1).getGenres().size());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test06DeleteById(){
+        songRepository.deleteById(1L);
     }
 }

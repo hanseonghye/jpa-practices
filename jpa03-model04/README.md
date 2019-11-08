@@ -39,10 +39,9 @@
             .
         ```
     2) OneToMany 단방향의 특이점  
-        - 외래키 관리를 Many쪽(Comment)에서 해야하는데, 단방향이기 때문에 Comment에 매핑 필드가 없다는 것이다.  
-        - 그래도 관계 주인필드인 Board.comments가 외래키 관리를 해야 한다.     
-        - 그래서 @JoinColumn name에 Comment 엔티티의 FK(board_no)를 꼭 지정해야 한다.  
-        - 하지만, 스키마 생성 DDL를 보면, Many쪽인 Comment 테이블에 Board에 대한 FK를 둔다. 
+        - 외래키 관리를 Many쪽(Comment)에서 해야하는데, 단방향이기 때문에 Comment에 Board를 참조하는 매핑 필드가 없다는 것이다.  
+        - 관계 주인필드인 Board.comments가 외래키 관리를 해야하고 @JoinColumn name에 Comment 엔티티의 FK(board_no)를 꼭 지정해야 한다.  
+        - 하지만, 스키마 생성 DDL를 보면, Many쪽인 Comment 테이블에 Board에 대한 FK를 두는 것을 알수 있다. 
             <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/34004.png" width="500px" />
             <br>
         - @JoinColumn를 하지 않으면 JPA의 Join Table 전략이 적용되어 연결 테이블을 중간에 두고 연관관계를 관리한다.    

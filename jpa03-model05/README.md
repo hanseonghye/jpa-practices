@@ -156,7 +156,7 @@
         + OneToMany 양방향(Biidirectional)는 ManyToOne 양방향(Biidirectional)과 완전 동일한 연관관계 이다.
         + One쪽을 주인으로 보았지만, RDBMS의 특성상 주인의 관계설정 필드를 가지지 못하고 Many쪽에 두는 특이한 점이 OneToMany 단방향과 마찬가지로 가지고 있다.
         + Many쪽에서는 JoinColumn 설정을 정상적으로 할 수 있지만, 와래키 관리 포인트가 두군데가 되어 One쪽에 그 설정을 맡기고 ReadOnly 설정을 하게된다.
-        + 결론적으로 OnToMany 단방향에다가 반대편에 탐색을 위한 필드(User)를 하나 추가 한 형태로 그 연관관계가 존재하지 않느다 보는 것이 맞다.
+        + 결론적으로 OnToMany 단방향에다가 반대편에 탐색을 위한 필드(User)를 하나 추가 한 형태로 그 연관관계가 존재하지 않는다.
         + 전반적으로 부자연스러운 매핑 설정을 계속 해야한다.
         + ManyToOne 양방향(Bidirectional) 매핑을 사용하도록 하자.
         

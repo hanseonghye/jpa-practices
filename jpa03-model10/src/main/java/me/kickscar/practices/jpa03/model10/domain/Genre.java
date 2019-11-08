@@ -1,8 +1,7 @@
 package me.kickscar.practices.jpa03.model10.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "genre")
@@ -19,7 +18,7 @@ public class Genre {
     private String abbrName;
 
     @ManyToMany(mappedBy = "genres")
-    private List<Song> songs = new ArrayList<Song>();
+    private List<Song> songs = new ArrayList<>();
 
     public Long getNo() {
         return no;
@@ -52,6 +51,7 @@ public class Genre {
     public void setSongs(List<Song> songs) {
         this.songs = songs;
     }
+
 
     @Override
     public String toString() {
