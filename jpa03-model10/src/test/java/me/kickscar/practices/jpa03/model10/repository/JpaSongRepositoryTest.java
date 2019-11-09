@@ -75,20 +75,37 @@ public class JpaSongRepositoryTest {
         assertEquals(2L, songRepository.count());
     }
 
-
-
     @Test
     @Transactional
     @Rollback(false)
-    public void test06Delete(){
-        Song song = songRepository.findById(2L).get();
-        List<Genre> genres = song.getGenres();
-
-        // songRepository.deleteById(1L);
-        ///Genre genre = song.getGenres().get(0);
-        Genre genre = genreRepository.findById(1L).get();
-//        System.out.println(genre);
-//
+    public void test06DeleteById(){
+        Song song = songRepository.findById(1L).get();
+        Genre genre = song.getGenres().get(0);
         song.removeGenre(genre);
     }
+
+    @Test
+    @Transactional
+    public void test07DeleteByIdResult(){
+        Song song = songRepository.findById(2L).get();
+        List<Genre> genres = song.getGenres();
+        for(Genre genre : genres){
+            System.out.println(genre);
+        }
+    }
+
+//    @Test
+//    @Transactional
+//    @Rollback(false)
+//    public void test06Delete(){
+//        Song song = songRepository.findById(2L).get();
+//        List<Genre> genres = song.getGenres();
+//
+//        // songRepository.deleteById(1L);
+//        ///Genre genre = song.getGenres().get(0);
+//        Genre genre = genreRepository.findById(1L).get();
+////        System.out.println(genre);
+////
+//        song.removeGenre(genre);
+//    }
 }

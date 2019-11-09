@@ -39,4 +39,13 @@ public class Genre {
     public void setAbbrName(String abbrName) {
         this.abbrName = abbrName;
     }
+
+    @Override
+    public String toString() {
+        return "Genre{" +
+                "no=" + no +
+                ", name='" + name + '\'' +
+                ", abbrName='" + abbrName + '\'' +
+                '}';
+    }
 }

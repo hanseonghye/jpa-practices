@@ -31,6 +31,7 @@
             
     3) 객체는 테이블과 다르게 객체 2개로 다대다 관계를 만들 수 있다.
     4) Song 객체는 컬렉션을 사용해서 Genre들을 참조하면 되고 반대로 Genre들도 컬렉션을 사용해서 Song들을 참조하면 된다.
+    5) 하지만, 데이터베이스 내부적으로는 조인테이블을 두고 일대다, 다대일 관계로 풀어낸다. 
     
 #### 1-2. Entity Class: User, Blog
 1. __Song 엔티티 매핑 참고__
@@ -115,15 +116,14 @@
         ```
         + 세 개의 테이블을 생성한다.
         + 엔티티 테이블외에 song_genre 연결테이블이 생성 되었다.
-        + song_genre 테이블은 다대다 관계를 일대다, 다대일 관계로 풀어내기 위해 필요한 연결 테이블이다.
+        + song_genre 테이블은 다대다 관계를 일대다, 다대일 관계로 풀어내기 위해 필요한 조인(연결)테이블이다.
 
 
 ### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
 1. ManyToMany 단방향(Unidirectional) Collection Fetch QueryDSL 구현
-2. ManytoMany에서의 CascadeType.REMOVE 이슈
-3. 조인 테이블의 문제점 이해와 해결방법
+2. ManyToMany 조인테이블의 문제점 이해와 해결방법
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  
@@ -273,8 +273,11 @@
                         on genres1_.genre_no=genre2_.no          
             ``` 
     6) test06DeleteById
-        + 기본 메소드 deleteById(no) 테스트
-        + ManyToMany cascade=CascadeType.REMOVE 이슈를 테스트 한다.
+        + ManyToMany 에서 삭제시, 조인테이블의 문제점을 테스트한다.
+        + Song 엔티티 객체에서 Genre를 삭제하는 테스트 이다.
+        + song1는 genre1, grenre2가 추가되어 있다.
+        + song1에서 genre1를 삭제한다.
+        + 쿼리 로그  
             ```
                 Hibernate: 
                     select
@@ -285,34 +288,58 @@
                     where
                         song0_.no=?
                 Hibernate: 
+                    select
+                        genre0_.no as no1_0_0_,
+                        genre0_.abbr_name as abbr_nam2_0_0_,
+                        genre0_.name as name3_0_0_ 
+                    from
+                        genre genre0_ 
+                    where
+                        genre0_.no=?
+                Hibernate: 
+                    select
+                        genres0_.song_no as song_no1_2_0_,
+                        genres0_.genre_no as genre_no2_2_0_,
+                        genre1_.no as no1_0_1_,
+                        genre1_.abbr_name as abbr_nam2_0_1_,
+                        genre1_.name as name3_0_1_ 
+                    from
+                        song_genre genres0_ 
+                    inner join
+                        genre genre1_ 
+                            on genres0_.genre_no=genre1_.no 
+                    where
+                        genres0_.song_no=?
+                Hibernate: 
                     /* delete collection me.kickscar.practices.jpa03.model09.domain.Song.genres */ delete 
                         from
                             song_genre 
                         where
                             song_no=?
                 Hibernate: 
-                    /* delete me.kickscar.practices.jpa03.model09.domain.Song */ delete 
-                        from
-                            song 
-                        where
-                            no=?          
+                    /* insert collection
+                        row me.kickscar.practices.jpa03.model09.domain.Song.genres */ insert 
+                        into
+                            song_genre
+                            (song_no, genre_no) 
+                        values
+                            (?, ?)         
             ```    
-            + 삭제 쿼리이전에 해당 song 엔티티 객체를 영속화 하는 select 쿼리가 실행된다.
-            + song이 삭제되기 때문에 조인 테이블에서도 관계된 모든 row가 삭제된다.
-            + 보통 toMany delete은 cascade=CascadeType.REMOVE 가 기본이 아니고 FK Constraint로 예외가 발생하지 ManyToMany는 조인 테이블의 특수성으로 기본이다. 
-            + 이는 다음 그림과 같은 문제가 있다.
-                
-                <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/39004.png" width="600px" />
-                <br>
-                
-                1) song1이 genre1, genre2 이고, song2가 genre2, genre3 일 떄, song1을 삭제한다.
-                2) 조인 테이블에서 song1이 전부 삭제 되므로 의도하지 않은 song2와 genre2의 관계까지 사라진다.
-
+                1) 첫번째, 두번째 select 쿼리는 삭제 대상이 되는 song, genre 엔티티를 각각의 no(PK)로 찾아 영속화한다.
+                2) 세번째 join fetch는 삭제를 위해 해당 song의 genre 콜렉션을 지연 로딩한다.
+                3) 네번째는 조인테이블에서 해당 song을 모두 지운다.(지워야 할 genre의 관계만 삭제되는 것이 아니라 모든 관계가 삭제된다.) 
+                4) 다섯번째는 삭제하지 말아야 할 관계가 3)에서 삭제되었기 때문에 다시 복구를 위해 insert를 한다.
+                5) DB에 직접 SQL를 작성해서 이 작업을 한다면, delete from song_genre where song_no=? and genre_no=? 이렇게 쿼리를 작성했을 것이다.
+                6) JPA에서는 이런 쿼리 작성이 원칙적으로는 불가능하다.
+                    - ManyToMany 에서는 사실 조인테이블의 존재를 모르는 것이 객체지향적으로 맞다.
+                    - 그래서 객체 그래프 탐색을 통해 조인테이블에 접근할 수 없다.
+                    - 이는 JPQL로 작성할 수 없다는 뜻이다. 
+                    
                 
 
 #### 2-4. JpaGenreRepository Test : Spring Data JPA 기반 Repository
-    1) Song -> Genre 단방향이기 때문에  Genre쪽에서는 객체 탐색등이 불가능하다.
-    2) 저장, 삭제, 변경, 카운팅 정도의 기본 메소드 사용으로 충분하다.
+    1) Song -> Genre 단방향이기 때문에  Genre쪽에서는 객체 탐색은 불가능하다.
+    2) 저장, 삭제, 변경, 카운팅 정도의 기본 메소드 사용정도이기 때문에 테스트 생략.
 
 
          

@@ -17,7 +17,7 @@ public class Genre {
     @Column(name = "abbr_name", nullable = false, length = 5)
     private String abbrName;
 
-    @ManyToMany(mappedBy = "genres")
+    @ManyToMany(mappedBy = "genres", cascade = CascadeType.REMOVE)
     private List<Song> songs = new ArrayList<>();
 
     public Long getNo() {
