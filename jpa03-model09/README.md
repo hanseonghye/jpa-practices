@@ -151,10 +151,10 @@
 3. __JpaSongQryDslRepositry__
     1) Lazy 로딩으로 Genre를 가져오지 않고 fetch join으로 Genre가 포함된 Song을 가져오는 메소드 2개를 정의
     2) Song findById2(no) - no(PK)로 Genre가 포함된 Song 엔티티 객체 1개를 가져온다.
-    3) List<Song> c() - Genre가 포함된 Song 엔티티 객체 리스트를 가져온다. 
+    3) List<Song> findAll2() - Genre가 포함된 Song 엔티티 객체 리스트를 가져온다. 
 
 4. __JpaSongQryDslRepositryImpl__
-    1) findById2, findById2의 구현
+    1) findById2, findAll2의 구현
     2) QueryDSL 통합 구현
 
 5. __JpaSongRepositoryTest__

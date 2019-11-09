@@ -204,7 +204,7 @@
                             and genre_no=?
 
             ```
-            1) song_no와 genre_no를 사용하여 조인테이블의 하나의 row만 살제한다.
+            1) song_no와 genre_no를 사용하여 조인테이블의 하나의 row만 삭제한다.
             2) 이는 엔티티 클래스의 연관 매핑 필드에 컬렉션 타입을 List대신 Set을 사용하였기 때문이다.
 
 #### 2-4. JpaGernreRepository Test : Spring Data JPA 기반 Repository
