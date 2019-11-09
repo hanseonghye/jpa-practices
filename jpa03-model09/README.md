@@ -35,7 +35,7 @@
     
 #### 1-2. Entity Class: User, Blog
 1. __Song 엔티티 매핑 참고__
-2. __Jenre 엔티티 매핑 참고__
+2. __Genre 엔티티 매핑 참고__
 3. __연관관계 매핑__
     1) ManyToMany(Song 엔티티)
         
@@ -124,6 +124,7 @@
 #### 2-1. 요약: 다루는 기술적 내용
 1. ManyToMany 단방향(Unidirectional) Collection Fetch QueryDSL 구현
 2. ManyToMany 조인테이블의 문제점 이해와 해결방법
+3. Native SQL 사용법
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  
@@ -253,6 +254,17 @@
     5) test05FindAll2
         + test04FindAll의 지연로딩을 fetch join을 사용하여 1회에 가져오는 메소드 findAll2()에 대한 테스트 이다.
         + QueryDSL로 구현하였다.
+        + 주의할 것은 조인테이블에 genre가 없으면, join시 select되는 row가 없기 때문에 outer join을 사용해야 한다.
+            ```
+                return queryFactory
+                    .selectDistinct(song)
+                    .from(song)
+                    .leftJoin(song.genres, genre)
+                    .fetchJoin()
+                    .where(song.no.eq(no))
+                    .fetchOne();
+          
+            ```         
         + 쿼리 로그
             ```
                 select
@@ -272,12 +284,13 @@
                     genre genre2_ 
                         on genres1_.genre_no=genre2_.no          
             ``` 
-    6) test06DeleteById
+    6) test06DeleteGenre1
         + ManyToMany 에서 삭제시, 조인테이블의 문제점을 테스트한다.
         + Song 엔티티 객체에서 Genre를 삭제하는 테스트 이다.
         + song1는 genre1, grenre2가 추가되어 있다.
         + song1에서 genre1를 삭제한다.
-        + 쿼리 로그  
+        + 쿼리 로그
+          
             ```
                 Hibernate: 
                     select
@@ -325,17 +338,44 @@
                         values
                             (?, ?)         
             ```    
-                1) 첫번째, 두번째 select 쿼리는 삭제 대상이 되는 song, genre 엔티티를 각각의 no(PK)로 찾아 영속화한다.
-                2) 세번째 join fetch는 삭제를 위해 해당 song의 genre 콜렉션을 지연 로딩한다.
-                3) 네번째는 조인테이블에서 해당 song을 모두 지운다.(지워야 할 genre의 관계만 삭제되는 것이 아니라 모든 관계가 삭제된다.) 
-                4) 다섯번째는 삭제하지 말아야 할 관계가 3)에서 삭제되었기 때문에 다시 복구를 위해 insert를 한다.
-                5) DB에 직접 SQL를 작성해서 이 작업을 한다면, delete from song_genre where song_no=? and genre_no=? 이렇게 쿼리를 작성했을 것이다.
-                6) JPA에서는 이런 쿼리 작성이 원칙적으로는 불가능하다.
-                    - ManyToMany 에서는 사실 조인테이블의 존재를 모르는 것이 객체지향적으로 맞다.
-                    - 그래서 객체 그래프 탐색을 통해 조인테이블에 접근할 수 없다.
-                    - 이는 JPQL로 작성할 수 없다는 뜻이다. 
-                    
-                
+            
+            1) 첫번째, 두번째 select 쿼리는 삭제 대상이 되는 song, genre 엔티티를 각각의 no(PK)로 찾아 영속화한다.
+            2) 세번째 join fetch는 삭제를 위해 해당 song의 genre 콜렉션을 지연 로딩한다.
+            3) 네번째는 조인테이블에서 해당 song을 모두 지운다.(지워야 할 genre의 관계만 삭제되는 것이 아니라 모든 관계가 삭제된다.) 
+            4) 다섯번째는 삭제하지 말아야 할 관계가 3)에서 삭제되었기 때문에 다시 복구를 위해 insert를 한다.
+            5) DB에 직접 SQL를 작성해서 이 작업을 한다면, delete from song_genre where song_no=? and genre_no=? 이렇게 쿼리를 작성했을 것이다.
+            6) JPA에서는 이런 쿼리 작성이 객체(엔티티)를 통해서 원칙적으로는 불가능하다.
+                - 필드 연관관계 매핑을 통해 조인테이블을 지정하였고 조인테이블은 매핑된 엔티티 클래스가 없기 때문이다.
+                - 객체 그래프 탐색을 통해 조인테이블에는 접근할 수 없다.
+                - 즉, JPQL를 사용할 수 없다는 것이다.
+                - 대신, Native SQL를 사용할 수 있다.
+                - 가장 좋은 방법은 ManyToMany 보다는 조인테이블을 엔티티로 매핑하여 ManyToOne 두 개의 관계로 해결하는 것이다.(Model11, Model12) 
+    7) test06DeleteGenre2
+        + test06DeleteGenre1의 문제점을 Native SQL를 사용하여 해결하였다.
+        + Native SQL
+            1) 어떤 이유로 JPQL를 사용할 수 없을 때, SQL을 직접 사용하는 것이다.
+            2) JPQL를 작성하면 JPA가 JPQL를 SQL로 변환하는 데, Native SQL은 개발자가 직접 SQL를 작성하는 것이다.
+            3) Native SQL를 사용해도 앤티티 조회는 물론 JPA가 지원하는 영속성 컨텍스트를 그대로 사용할 수 있다.
+        + 작성 코드
+            ```
+                String sqlString = "DELETE from song_genre where song_no=? and genre_no=?";
+                Query query = getEntityManager().createNativeQuery(sqlString);
+        
+                query.setParameter(1, songNo);
+                query.setParameter(2, genreNo);
+        
+                query.executeUpdate();
+          
+            ```
+        + 쿼리 로그
+            ```
+                /* dynamic native SQL query */ DELETE 
+                    from
+                        song_genre 
+                    where
+                        song_no=? 
+                        and genre_no=?         
+            ```  
 
 #### 2-4. JpaGenreRepository Test : Spring Data JPA 기반 Repository
     1) Song -> Genre 단방향이기 때문에  Genre쪽에서는 객체 탐색은 불가능하다.

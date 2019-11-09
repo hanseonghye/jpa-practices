@@ -6,6 +6,7 @@ import me.kickscar.practices.jpa03.model09.domain.Song;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import javax.persistence.Query;
 import java.util.List;
 
 import static me.kickscar.practices.jpa03.model09.domain.QGenre.genre;
@@ -26,7 +27,7 @@ public class JpaSongQryDslRepositoryImpl extends QuerydslRepositorySupport imple
         return queryFactory
                 .selectDistinct(song)
                 .from(song)
-                .innerJoin(song.genres, genre)
+                .leftJoin(song.genres, genre)
                 .fetchJoin()
                 .where(song.no.eq(no))
                 .fetchOne();
@@ -37,9 +38,20 @@ public class JpaSongQryDslRepositoryImpl extends QuerydslRepositorySupport imple
         return queryFactory
                 .selectDistinct(song)
                 .from(song)
-                .innerJoin(song.genres, genre)
+                .leftJoin(song.genres, genre)
                 .fetchJoin()
                 .fetch();
+    }
+
+    @Override
+    public void deleteGenreByIdAndGenreId(Long songNo, Long genreNo) {
+        String sqlString = "DELETE from song_genre where song_no=? and genre_no=?";
+        Query query = getEntityManager().createNativeQuery(sqlString);
+
+        query.setParameter(1, songNo);
+        query.setParameter(2, genreNo);
+
+        query.executeUpdate();
     }
 
 }

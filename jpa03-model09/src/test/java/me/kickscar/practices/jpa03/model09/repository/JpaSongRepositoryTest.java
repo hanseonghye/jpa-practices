@@ -112,12 +112,21 @@ public class JpaSongRepositoryTest {
     @Test
     @Transactional
     @Rollback(false)
-    public void test06Delete(){
+    public void test06DeleteGenre1(){
         Song song = songRepository.findById(1L).get();
         Genre genre = genreRepository.findById(1L).get();
-
         song.getGenres().remove(genre);
+
+        assertEquals(1, song.getGenres().size());
     }
 
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void test07DeleteGenre2(){
+        songRepository.deleteGenreByIdAndGenreId(1L, 2L);
+
+        assertEquals(0, songRepository.findById2(1L).getGenres().size());
+    }
 
 }

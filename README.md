@@ -22,9 +22,9 @@
 #### 2. 연관관계 모델
  1) 단일(One) - 방명록
  2) 다대일(ManyToOne) 단방향(Unidirectional) - 게시판  [Board -> User]
- 3) 다대일(ManyToOne) 양방향(Bidirectional) - 쇼핑몰  [Order <-> User]
+ 3) 다대일(ManyToOne) 양방향(Bidirectional) - 온라인북몰  [Order <-> User]
  4) 일대다(OneToMany) 단방향(Unidirectional) - 게시판  [Board -> Comment]
- 5) 일대다(OneToMany) 양방향(Bidirectional) - 쇼핑몰  [User <->Order]
+ 5) 일대다(OneToMany) 양방향(Bidirectional) - 온라인북몰  [User <->Order]
  6) 일대일(OneToOne) 단방향(Unidirectional), 주테이블 외래키 - JBlog [User -> Blog]
  7) 일대일(OneToOne) 양방향(Bidirectional), 주테이블 외래키 - JBlog [User <-> Blog]
  8) 일대일(OneToOne) 양방향(Bidirectional), 대상테이블 외래키, 식별관계 - JBlog [User <-> Blog]
