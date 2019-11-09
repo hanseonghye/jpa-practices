@@ -48,17 +48,12 @@
             .
             @ManyToMany
             @JoinTable(name = "song_genre", joinColumns = @JoinColumn(name = "song_no"), inverseJoinColumns = @JoinColumn(name = "genre_no"))
-            private List<Genre> genres = new ArrayList<Genre>();
+            private Set<Genre> genres = new HashSet<Genre>();
             .
             .
         ```
         + @ManyToMany 와 @JoinTable 을 사용해서 연결 테이블을 바로 매핑한다.
-        + 노래와 쟝르를 연결하는 노래_쟝르(Song_Genre)엔티티 없이 매핑을 완료할 수 있다.
-        + ManyToMany 기본 페치 전략은 LAZY 이다.
-        + @JoinTable.name : 연결 테이블을 지정한다. 
-        + @JoinTable.joinColumns : 현재 방향인 노래와 매핑할 조인 컬럼 정보를 지정한다. song_no로 지정
-        + @JoinTable.inverseJoinColumns : 반대 방향인 쟝릐와 매핑할 조인 컬럼 정보를 지정한다. genre_no로 지정했다.
-        + @ManyToMany로 매핑한 덕분에 다대다 관계를 사용할 때는 이 연결 테이블을 신경쓰지 않아 도 된다.
+        + Model09와 다르게 Set를 사용하여 컬렉션 연관 필드를 정의했다.
       
     2) ManyToMany(Genre 엔티티)
         
@@ -78,16 +73,23 @@
         ```
         + ManyToMany 양방향에서는 관계주인이 아닌 엔티티는 mappedBy를 통해 관계의 주인이 아님을 선언한다.
         + 여기서는 Song이 관계의 주인이다.
+        + 마찬가지로 Set 타입으로 컬렉션 역관관계 필드를 설정했다.
         
     3) Song 엔티티 클래스에 편의 메소드 추가
         ```
             public void addGenres(Genre genre){
                 genres.add(genre);
                 genre.getSongs().add(this);
-            }       
+            }
+       
+            public void removeGenre(Genre genre){
+                genres.remove(genre);
+                genre.getSongs().remove(this);
+            }
         ```
         + 엔티티 양쪽에 연관필드가 있기 때문에 두 곳에 설정을 해주어야 한다.
         + Song에 Genre를 추가할 때 Genre의 Song Collection에 자신을 추가해 준다.
+        + 반대로, Song에 Genre를 삭제할 때 Genre의 Song Collection에 자신을 삭제한다.
         
     4) 생성 스키마
     
@@ -134,7 +136,7 @@
 ### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
-1. ManyToMany 단방향(Unidirectional) Collection Fetch QueryDSL 구현
+1. ManyToMany 컬렉션 연관 필드의 타입은 Set를 사용할 것
 
 
 #### 2-2. 테스트 환경
@@ -151,24 +153,11 @@
 
 
 #### 2-3. JpaSongRepository Test : Spring Data JPA 기반 Repository
-1. __JpaGenreRepositry__
-    1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
-    2) 테스트를 위해 Genre 엔티티 영속화 목적이기 때문에 별다른 메소드 추가가 없다.
-
-2. __JpaSongRepositry__
+1. __JpaSongRepositry__
     1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
     2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
 
-3. __JpaSongQryDslRepositry__
-    1) Lazy 로딩으로 Genre를 가져오지 않고 fetch join으로 Genre가 포함된 Song을 가져오는 메소드 2개를 정의
-    2) Song findById2(no) - no(PK)로 Genre가 포함된 Song 엔티티 객체 1개를 가져온다.
-    3) List<Song> c() - Genre가 포함된 Song 엔티티 객체 리스트를 가져온다. 
-
-4. __JpaSongQryDslRepositryImpl__
-    1) findById2, findById2의 구현
-    2) QueryDSL 통합 구현
-
-5. __JpaSongRepositoryTest__
+2. __JpaSongRepositoryTest__
     1) test01Save
         + 쟝르1, 쟝르2와 노래1의 연관관계를 설정했다.
         + 쟝르1, 쟝르4와 노래2의 연관관계를 설정했다.
@@ -201,93 +190,34 @@
                         values
                             (?, ?)                              
             ```    
-    2) test02FindById
-        + 기본 메소드 findById(no) 테스트
-        + Lazy 로딩이기 때문에 Genre 객체를 탐색하기 전까지는 지연 로딩을 한다.
+    2) test02DeleteGenre
+        + ManyToMany 에서 삭제시, 조인테이블의 문제점을 해결한 테스트이다.
+        + 조인테이블의 해당 song의 genre를 모두 삭제하고 사겢하려는 genre만 빼고 다시 insert하는 문제를 해결한다.
+        + 테스트에서 실행된 삭제 쿼리 로그를 보면,
             ```
                 Hibernate: 
-                    select
-                        song0_.no as no1_1_0_,
-                        song0_.title as title2_1_0_ 
-                    from
-                        song song0_ 
-                    where
-                        song0_.no=?          
-            ```
-        + genres의 size()를 호출하기 전까지는 프록시 객체 초기화가 되지 않았다.
-        + genres의 size()를 호출하면 genre 리스트를 가져오는 쿼리가 실행된다.
-            ```
-                Hibernate: 
-                    select
-                        genres0_.song_no as song_no1_2_0_,
-                        genres0_.genre_no as genre_no2_2_0_,
-                        genre1_.no as no1_0_1_,
-                        genre1_.abbr_name as abbr_nam2_0_1_,
-                        genre1_.name as name3_0_1_ 
-                    from
-                        song_genre genres0_ 
-                    inner join
-                        genre genre1_ 
-                            on genres0_.genre_no=genre1_.no 
-                    where
-                        genres0_.song_no=?          
-            ```
-         + 마지막에서 프록시 객체가 초기화되어 콜렉션이 채워져 있음을 알수 있다.
-    3) test03FindById2
-        + test02FindById의 기본 메소드 findById()를 사용하여 Genre의 지연로딩이 필요할 때도 있겠지만 한 번에 Genre Collection을 가져와야 할 때도 있을 것이다.
-        + findById2는 QueryDSL를 사용하여 Collection fetch join을 한다.
-        + Collection Join은 Collection 필드를 가지고 있는 엔티티가 여러개 페치되는 문제가 있다.
-        + 이를 해결하는 방법으로 selectDistinct()를 사용한다.
-        + 쿼리 로그
-            ```
-                select
-                    distinct song0_.no as no1_1_0_,
-                    genre2_.no as no1_0_1_,
-                    song0_.title as title2_1_0_,
-                    genre2_.abbr_name as abbr_nam2_0_1_,
-                    genre2_.name as name3_0_1_,
-                    genres1_.song_no as song_no1_2_0__,
-                    genres1_.genre_no as genre_no2_2_0__ 
-                from
-                    song song0_ 
-                inner join
-                    song_genre genres1_ 
-                        on song0_.no=genres1_.song_no 
-                inner join
-                    genre genre2_ 
-                        on genres1_.genre_no=genre2_.no 
-                where
-                    song0_.no=?          
-            ```
-    4) test04FindAll
-        + 기본 메소드 findAll()를 사용하여 전체 노래를 가져온다.
-        + Lazy 로딩을 확인하는 테스트이다.
-    5) test05FindAll2
-        + test04FindAll의 지연로딩을 fetch join을 사용하여 1회에 가져오는 메소드 findAll2()에 대한 테스트 이다.
-        + QueryDSL로 구현하였다.
-        + 쿼리 로그
-            ```
-                select
-                    distinct song0_.no as no1_1_0_,
-                    genre2_.no as no1_0_1_,
-                    song0_.title as title2_1_0_,
-                    genre2_.abbr_name as abbr_nam2_0_1_,
-                    genre2_.name as name3_0_1_,
-                    genres1_.song_no as song_no1_2_0__,
-                    genres1_.genre_no as genre_no2_2_0__ 
-                from
-                    song song0_ 
-                inner join
-                    song_genre genres1_ 
-                        on song0_.no=genres1_.song_no 
-                inner join
-                    genre genre2_ 
-                        on genres1_.genre_no=genre2_.no          
-            ``` 
-        
-6. __JpaSongRepositoryTest__
-    1) Model09에 JpaSongReplsitoryTest 참고
-    2) 저장, 삭제, 변경, 카운팅 정도의 기본 메소드 사용으로 충분하다.
+                    /* delete collection row me.kickscar.practices.jpa03.model10.domain.Song.genres */ delete 
+                        from
+                            song_genre 
+                        where
+                            song_no=? 
+                            and genre_no=?
 
+            ```
+            1) song_no와 genre_no를 사용하여 조인테이블의 하나의 row만 살제한다.
+            2) 이는 엔티티 클래스의 연관 매핑 필드에 컬렉션 타입을 List대신 Set을 사용하였기 때문이다.
 
+#### 2-4. JpaGernreRepository Test : Spring Data JPA 기반 Repository
          
+1. __JpaGenreRepositry__
+    1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
+    2) 테스트를 위해 Genre 엔티티 영속화 목적이기 때문에 별다른 메소드 추가가 없다.
+
+2. __JpaGenreQryDslRepositry__
+    1) Lazy 로딩으로 Genre를 가져오지 않고 fetch join으로 Genre가 포함된 Song을 가져오는 메소드 2개를 정의
+    2) Song findById2(no) - no(PK)로 Genre가 포함된 Song 엔티티 객체 1개를 가져온다.
+    3) List<Song> c() - Genre가 포함된 Song 엔티티 객체 리스트를 가져온다. 
+
+3. __JpaGenreQryDslRepositryImpl__
+    1) findById2, findById2의 구현
+    2) QueryDSL 통합 구현

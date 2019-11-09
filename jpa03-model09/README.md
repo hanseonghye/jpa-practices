@@ -348,8 +348,10 @@
                 - 필드 연관관계 매핑을 통해 조인테이블을 지정하였고 조인테이블은 매핑된 엔티티 클래스가 없기 때문이다.
                 - 객체 그래프 탐색을 통해 조인테이블에는 접근할 수 없다.
                 - 즉, JPQL를 사용할 수 없다는 것이다.
-                - 대신, Native SQL를 사용할 수 있다.
-                - 가장 좋은 방법은 ManyToMany 보다는 조인테이블을 엔티티로 매핑하여 ManyToOne 두 개의 관계로 해결하는 것이다.(Model11, Model12) 
+            7) 해결방법
+                - Native SQL를 사용할 수 있다.
+                - 쉬운방법은 컬렉션을 List보다 Set를 사용하는 것이다.(참고: Model10)
+                - 가장 좋은 방법은 ManyToMany 보다는 조인테이블에 해당하는 비지니스 엔티티가 있다면 엔티티로 매핑하여 ManyToOne 두 개의 관계로 해결하는 것이다.(참고: Model11, Model12) 
     7) test06DeleteGenre2
         + test06DeleteGenre1의 문제점을 Native SQL를 사용하여 해결하였다.
         + Native SQL

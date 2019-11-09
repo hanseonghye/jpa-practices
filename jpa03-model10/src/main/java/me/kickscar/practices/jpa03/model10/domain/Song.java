@@ -14,12 +14,9 @@ public class Song {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "song_genre", joinColumns = @JoinColumn(name = "song_no"), inverseJoinColumns = @JoinColumn(name = "genre_no"))
-    private List<Genre> genres = new ArrayList<>();
+    private Set<Genre> genres = new HashSet<>();
 
     public Long getNo() {
         return no;
@@ -37,11 +34,11 @@ public class Song {
         this.title = title;
     }
 
-    public List<Genre> getGenres() {
+    public Set<Genre> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<Genre> genres) {
+    public void setGenres(Set<Genre> genres) {
         this.genres = genres;
     }
 

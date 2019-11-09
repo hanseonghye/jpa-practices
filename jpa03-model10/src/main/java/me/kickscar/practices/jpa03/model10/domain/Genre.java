@@ -17,8 +17,8 @@ public class Genre {
     @Column(name = "abbr_name", nullable = false, length = 5)
     private String abbrName;
 
-    @ManyToMany(mappedBy = "genres", cascade = CascadeType.REMOVE)
-    private List<Song> songs = new ArrayList<>();
+    @ManyToMany(mappedBy = "genres")
+    private Set<Song> songs = new HashSet<>();
 
     public Long getNo() {
         return no;
@@ -44,11 +44,11 @@ public class Genre {
         this.abbrName = abbrName;
     }
 
-    public List<Song> getSongs() {
+    public Set<Song> getSongs() {
         return songs;
     }
 
-    public void setSongs(List<Song> songs) {
+    public void setSongs(Set<Song> songs) {
         this.songs = songs;
     }
 
