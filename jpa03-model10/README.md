@@ -240,11 +240,65 @@
     1) findById2, findAll2의 구현
     2) QueryDSL 통합 구현
     
-2. __JpaSongRepositoryTest__
-    1) test01Save
+4. __JpaSongRepositoryTest__
+    1) Model09 ManyToMany 단방향에서 했던 JpaSongRepository 테스트를 양방향이니깐 반대편 JpaGenreRepository에서도 똑같이 한다.  
+    2) test01Save
         + 쟝르1, 쟝르2와 노래1의 연관관계를 설정했다.
         + 쟝르1, 쟝르4와 노래2의 연관관계를 설정했다.
         + 쟝르1,2,4들을 각각 저장할 때 연결테이블에도 값이 저장된다.
         + ManyToMany 양방향에선 두 엔티티 어느쪽 컬렉션에 값을 담아도 실행 쿼리는 같다.
     
-    2)  
+    3) test02FindById
+        + 기본 메소드 findById(no) 테스트
+        + Lazy 로딩이기 때문에 Song객체를 탐색하기 전까지는 지연 로딩을 한다.
+        + 지연 로딩을 확인하는 테스트이다.
+
+    4) test03FindById2
+        + test02FindById의 기본 메소드 findById()를 사용하여 Genre의 지연로딩이 필요할 때도 있겠지만 한 번에 Song Collection을 가져와야 할 때도 있을 것이다.(쟝르검색)
+        + findById2는 QueryDSL를 사용하여 Collection fetch join을 한다.
+        + Collection Join은 Collection 필드를 가지고 있는 엔티티가 여러개 페치되는 문제가 있다.
+        + 이를 해결하는 방법으로 selectDistinct()를 사용한다.
+        + 주의할 것은 조인테이블에 연결된 song이 없으면, join시 select되는 row가 없기 때문에 outer join을 사용해야 한다.
+            ```
+                return queryFactory
+                        .selectDistinct(genre)
+                        .from(genre)
+                        .leftJoin(genre.songs, song)
+                        .fetchJoin()
+                        .where(genre.no.eq(no))
+                        .fetchOne();  
+            ```
+    5) test04FindAll
+        + 기본 메소드 findAll()를 사용하여 전체 노래를 가져온다.
+        + Lazy 로딩을 확인하는 테스트이다.
+    6) test05FindAll2
+        + test04FindAll의 지연로딩을 fetch join을 사용하여 한 번에 모두 가져오는 메소드 findAll2()에 대한 테스트 이다.
+        + QueryDSL로 구현하였다.
+        + 주의할 것은 조인테이블에 genre가 없으면, join시 select되는 row가 없기 때문에 outer join을 사용해야 한다.
+            ```
+                return queryFactory
+                        .selectDistinct(genre)
+                        .from(genre)
+                        .leftJoin(genre.songs, song)
+                        .fetchJoin()
+                        .fetch();  
+            ```    
+    7) test06RemoveSong
+        + ManyToMany 에서 삭제시, 조인테이블의 문제점을 해결을 확인하는 테스트이다.
+        + 쿼리로그
+            ```
+             Hibernate: 
+                 /* delete collection row me.kickscar.practices.jpa03.model10.domain.Song.genres */ delete 
+                     from
+                         song_genre 
+                     where
+                         song_no=? 
+                         and genre_no=?         
+            ```
+            1) song_no와 genre_no를 사용하여 조인테이블의 하나의 row만 삭제한다.
+            2) 이는 Genre 엔티티 클래스에도 연관 매핑 필드에 컬렉션 타입을 List대신 Set을 사용하였기 때문이다.
+                ```
+                    @ManyToMany(mappedBy = "genres")
+                    private Set<Song> songs = new HashSet<>();
+                   
+                ```  
