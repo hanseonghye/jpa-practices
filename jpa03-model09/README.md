@@ -227,6 +227,16 @@
         + findById2는 QueryDSL를 사용하여 Collection fetch join을 한다.
         + Collection Join은 Collection 필드를 가지고 있는 엔티티가 여러개 페치되는 문제가 있다.
         + 이를 해결하는 방법으로 selectDistinct()를 사용한다.
+        + 주의할 것은 조인테이블에 genre가 없으면, join시 select되는 row가 없기 때문에 outer join을 사용해야 한다.
+            ```
+                return queryFactory
+                    .selectDistinct(song)
+                    .from(song)
+                    .leftJoin(song.genres, genre)
+                    .fetchJoin()
+                    .where(song.no.eq(no))
+                    .fetchOne();          
+            ```
         + 쿼리 로그
             ```
                 select
@@ -239,10 +249,10 @@
                     genres1_.genre_no as genre_no2_2_0__ 
                 from
                     song song0_ 
-                inner join
+                left outer join
                     song_genre genres1_ 
                         on song0_.no=genres1_.song_no 
-                inner join
+                left outer join
                     genre genre2_ 
                         on genres1_.genre_no=genre2_.no 
                 where
@@ -252,7 +262,7 @@
         + 기본 메소드 findAll()를 사용하여 전체 노래를 가져온다.
         + Lazy 로딩을 확인하는 테스트이다.
     5) test05FindAll2
-        + test04FindAll의 지연로딩을 fetch join을 사용하여 1회에 가져오는 메소드 findAll2()에 대한 테스트 이다.
+        + test04FindAll의 지연로딩을 fetch join을 사용하여 한 번에 모두 가져오는 메소드 findAll2()에 대한 테스트 이다.
         + QueryDSL로 구현하였다.
         + 주의할 것은 조인테이블에 genre가 없으면, join시 select되는 row가 없기 때문에 outer join을 사용해야 한다.
             ```
@@ -284,7 +294,7 @@
                     genre genre2_ 
                         on genres1_.genre_no=genre2_.no          
             ``` 
-    6) test06DeleteGenre1
+    6) test06RemoveGenre1
         + ManyToMany 에서 삭제시, 조인테이블의 문제점을 테스트한다.
         + Song 엔티티 객체에서 Genre를 삭제하는 테스트 이다.
         + song1는 genre1, grenre2가 추가되어 있다.
@@ -352,7 +362,7 @@
                 - Native SQL를 사용할 수 있다.
                 - 쉬운방법은 컬렉션을 List보다 Set를 사용하는 것이다.(참고: Model10)
                 - 가장 좋은 방법은 ManyToMany 보다는 조인테이블에 해당하는 비지니스 엔티티가 있다면 엔티티로 매핑하여 ManyToOne 두 개의 관계로 해결하는 것이다.(참고: Model11, Model12) 
-    7) test06DeleteGenre2
+    7) test06RemoveGenre2
         + test06DeleteGenre1의 문제점을 Native SQL를 사용하여 해결하였다.
         + Native SQL
             1) 어떤 이유로 JPQL를 사용할 수 없을 때, SQL을 직접 사용하는 것이다.
