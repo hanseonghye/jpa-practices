@@ -52,6 +52,15 @@ public class Genre {
         this.songs = songs;
     }
 
+    public void addSong(Song song) {
+        songs.add(song);
+        song.getGenres().add(this);
+    }
+
+    public void removeSong(Song song){
+        song.getGenres().remove(this);
+        songs.remove(this);
+    }
 
     @Override
     public String toString() {

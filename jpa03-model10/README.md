@@ -90,8 +90,25 @@
         + 엔티티 양쪽에 연관필드가 있기 때문에 두 곳에 설정을 해주어야 한다.
         + Song에 Genre를 추가할 때 Genre의 Song Collection에 자신을 추가해 준다.
         + 반대로, Song에 Genre를 삭제할 때 Genre의 Song Collection에 자신을 삭제한다.
+
+    4) Genre 엔티티 클래스에 편의 메소드 추가
+        ```
+            public void addSong(Song song) {
+                songs.add(song);
+                song.getGenres().add(this);
+            }
         
-    4) 생성 스키마
+            public void removeSong(Song song){
+                song.getGenres().remove(this);
+                songs.remove(this);
+            }
+       
+        ```
+        + 엔티티 양쪽에 연관필드가 있기 때문에 두 곳에 설정을 해주어야 한다.
+        + Genre에 Song을 추가할 때 Song의 Genre Collection에 자신을 추가해 준다.
+        + 반대로, Genre에 Song을 삭제할 때 Song의 Genre Collection에서 자신을 삭제한다.
+        
+    5) 생성 스키마
     
         ```
             Hibernate: 
@@ -136,7 +153,7 @@
 ### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
-1. ManyToMany 컬렉션 연관 필드의 타입은 Set를 사용할 것
+1. ManyToMany 컬렉션 연관 필드의 타입은 Set를 사용해야 하는 이유 이해하기
 
 
 #### 2-2. 테스트 환경
@@ -192,7 +209,7 @@
             ```    
     2) test02DeleteGenre
         + ManyToMany 에서 삭제시, 조인테이블의 문제점을 해결한 테스트이다.
-        + 조인테이블의 해당 song의 genre를 모두 삭제하고 사겢하려는 genre만 빼고 다시 insert하는 문제를 해결한다.
+        + 조인테이블의 해당 song의 genre를 모두 삭제하고 삭제하려는 genre만 빼고 다시 insert하는 문제를 해결한다.
         + 테스트에서 실행된 삭제 쿼리 로그를 보면,
             ```
                 Hibernate: 
@@ -207,17 +224,27 @@
             1) song_no와 genre_no를 사용하여 조인테이블의 하나의 row만 삭제한다.
             2) 이는 엔티티 클래스의 연관 매핑 필드에 컬렉션 타입을 List대신 Set을 사용하였기 때문이다.
 
+
 #### 2-4. JpaGernreRepository Test : Spring Data JPA 기반 Repository
          
 1. __JpaGenreRepositry__
     1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
-    2) 테스트를 위해 Genre 엔티티 영속화 목적이기 때문에 별다른 메소드 추가가 없다.
+    2) 테스트를 위해 Genre 엔티티 영속화 목적이기 때문에 별다른 쿼리메소드 추가가 없다.
 
 2. __JpaGenreQryDslRepositry__
-    1) Lazy 로딩으로 Genre를 가져오지 않고 fetch join으로 Genre가 포함된 Song을 가져오는 메소드 2개를 정의
-    2) Song findById2(no) - no(PK)로 Genre가 포함된 Song 엔티티 객체 1개를 가져온다.
-    3) List<Song> c() - Genre가 포함된 Song 엔티티 객체 리스트를 가져온다. 
+    1) Lazy 로딩으로 Genre를 가져오지 않고 fetch join으로 Song이 포함된 Genre을 가져오는 메소드 2개를 정의
+    2) Genre findById2(no) - no(PK)로 Song이 포함된 Grenre 엔티티 객체 1개를 가져온다.
+    3) List<Song> findAll2() - Genre가 포함된 Song 엔티티 객체 리스트를 가져온다. 
 
 3. __JpaGenreQryDslRepositryImpl__
-    1) findById2, findById2의 구현
+    1) findById2, findAll2의 구현
     2) QueryDSL 통합 구현
+    
+2. __JpaSongRepositoryTest__
+    1) test01Save
+        + 쟝르1, 쟝르2와 노래1의 연관관계를 설정했다.
+        + 쟝르1, 쟝르4와 노래2의 연관관계를 설정했다.
+        + 쟝르1,2,4들을 각각 저장할 때 연결테이블에도 값이 저장된다.
+        + ManyToMany 양방향에선 두 엔티티 어느쪽 컬렉션에 값을 담아도 실행 쿼리는 같다.
+    
+    2)  
