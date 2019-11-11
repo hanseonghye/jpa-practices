@@ -1,9 +1,11 @@
 package me.kickscar.practices.jpa03.model02.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table( name = "User" )
+@Table( name = "user" )
 public class User {
 
 	@Id
