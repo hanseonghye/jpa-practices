@@ -1,9 +1,9 @@
-package me.kickscar.practices.jpa03.model12.repository;
+package me.kickscar.practices.jpa03.model11.repository;
 
-import me.kickscar.practices.jpa03.model12.config.JpaConfig;
-import me.kickscar.practices.jpa03.model12.domain.Book;
-import me.kickscar.practices.jpa03.model12.domain.CartItem;
-import me.kickscar.practices.jpa03.model12.domain.User;
+import me.kickscar.practices.jpa03.model11.config.JpaConfig;
+import me.kickscar.practices.jpa03.model11.domain.Book;
+import me.kickscar.practices.jpa03.model11.domain.CartItem;
+import me.kickscar.practices.jpa03.model11.domain.User;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
