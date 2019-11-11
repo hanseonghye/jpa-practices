@@ -1,4 +1,4 @@
-## 1. JPA 연관관계 모델과 JPQL(QueryDSL), Spring Data JPA 기반 Repository 작성방법 
+## 1. 연관관계 매핑과 JPQL(QueryDSL), Spring Data 기반 Repository 작성법 
 
 ### Module: jpa01-entity-mapping 
 #### 1. 다양한 엔티티 매핑 설명
