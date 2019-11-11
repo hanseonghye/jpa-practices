@@ -30,8 +30,9 @@
  8) 일대일(OneToOne) 양방향(Bidirectional), 대상테이블 외래키, 식별관계 - JBlog [User <-> Blog]
  9) 다대다(ManyToMany) 단방향(Unidirectional) - 음반검색 [노래 -> 쟝르]
 10) 다대다(ManyToMany) 양방향(Bidirectional) - 음반검색 [노래 <-> 쟝르]
-11) 혼합모델(다대다 문제해결, 연결엔티티, 복합키(PK), 식별관계) - 온라인북몰 [User <-> Cart -> Book]
-12) 혼합모델(다대다 문제해결, 연결엔티티, 새PK, 비식별관계) - 온라인북몰 [User <-> Cart -> Book]
+11) 혼합모델(다대다 문제해결, 연결엔티티, 복합키(PK), 식별관계, @EmbeddedId) - 온라인북몰 [User <-> CartItem -> Book]
+12) 혼합모델(다대다 문제해결, 연결엔티티, 복합키(PK), 식별관계, @IdClass) - 온라인북몰 [User <-> CartItem -> Book]
+13) 혼합모델(다대다 문제해결, 연결엔티티, 새PK, 비식별관계) - 온라인북몰 [User <-> CartItem -> Book]
 
 ## 2. 프로젝트 로컬 클론 & 모듈 임포트 & 실행/테스트 환경 설정 (IntelliJ IDEA)
 #### 1. Git Repository URL 선택  - **Clone** 
@@ -109,7 +110,7 @@
 
 
 ## 3. 프로젝트 로컬 클론 & 모듈 임포트 & 실행/테스트 환경 설정 (Eclipse)
-    할 맘과 필요성이 아직 안생김....
+
 
 
 
