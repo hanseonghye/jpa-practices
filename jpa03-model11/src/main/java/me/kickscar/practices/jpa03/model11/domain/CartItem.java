@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "cartitem")
 public class CartItem {
     @EmbeddedId
-    private CartItemId cartItemId;
+    public CartItemId catrtItemId = new CartItemId();
 
     @MapsId("bookNo")
     @ManyToOne
@@ -20,14 +20,6 @@ public class CartItem {
 
     @Column(name = "amount", nullable = false)
     private Integer amount;
-
-    public CartItemId getCartItemId() {
-        return cartItemId;
-    }
-
-    public void setCartItemId(CartItemId cartItemId) {
-        this.cartItemId = cartItemId;
-    }
 
     public User getUser() {
         return user;

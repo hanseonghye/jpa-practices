@@ -1,6 +1,8 @@
 package me.kickscar.practices.jpa03.model11.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "book")
@@ -15,6 +17,9 @@ public class Book {
 
     @Column(name = "price", nullable = false)
     private Integer price;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY )
+    private List<CartItem> cart = new ArrayList<CartItem>();
 
     public Long getNo() {
         return no;
@@ -38,6 +43,14 @@ public class Book {
 
     public void setPrice(Integer price) {
         this.price = price;
+    }
+
+    public List<CartItem> getCart() {
+        return cart;
+    }
+
+    public void setCart(List<CartItem> cart) {
+        this.cart = cart;
     }
 
     @Override

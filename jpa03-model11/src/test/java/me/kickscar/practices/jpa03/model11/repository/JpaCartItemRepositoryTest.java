@@ -66,6 +66,8 @@ public class JpaCartItemRepositoryTest {
         book3.setPrice(1000);
         bookRepository.save(book3);
 
+        System.out.println(book3);
+
         CartItem cartItem1 = new CartItem();
         cartItem1.setUser(user1);
         cartItem1.setBook(book1);
