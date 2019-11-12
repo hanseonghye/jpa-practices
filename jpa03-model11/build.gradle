@@ -4,7 +4,7 @@ plugins {
     id 'java'
 }
 
-group 'me.kickscar.practices.jpa'
+group 'me.kickscr.practices.jpa'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
