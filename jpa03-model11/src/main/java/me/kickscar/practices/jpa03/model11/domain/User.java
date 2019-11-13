@@ -57,6 +57,14 @@ public class User {
 		this.password = password;
 	}
 
+	public List<CartItem> getCart() {
+		return cart;
+	}
+
+	public void setCart(List<CartItem> cart) {
+		this.cart = cart;
+	}
+
 	@Override
 	public String toString() {
 		return "User{" +
@@ -64,7 +72,7 @@ public class User {
 				", name='" + name + '\'' +
 				", email='" + email + '\'' +
 				", password='" + password + '\'' +
-				// for debuging
+				// for debugging
 				// ", cart=" + cart +
 				'}';
 	}

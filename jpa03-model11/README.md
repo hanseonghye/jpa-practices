@@ -5,10 +5,10 @@
 
 #### 1-1. 다대다 매핑의 문제 해결, 조인테이블 대신 연결 엔티티 사용
 
-<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/31101.png" width="600px" />
+<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/31101.png" width="800px" />
 <br>
 
-<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/31102.png" width="600px" />
+<img src="http://assets.kickscar.me:8080/markdown/jpa-practices/31102.png" width="800px" />
 <br>
         
 1. __보통은 서비스에서 방향성을 찾는 경우가 많다.__
@@ -169,8 +169,9 @@
 ### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
-1. 
-
+1. ManyToMany 조인테이블 보다 실무에서는 연결엔티티를 사용한 혼합모델을 더 선호하고 사용해야 한다. 
+1. 연결엔티티(CartItem)의 CRUD 작성방법
+2. 혼합모델에서의 QueryDsl 통합과 기본메소드 및 쿼리메소드와의 성능 비교
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  
@@ -184,5 +185,46 @@
  9. __Spring Boot Starter Test 2.1.8.RELEASE (Spring Test 5.1.9.RELEASE)__   
 10. __Gradle 5.4__    
 
-
 #### 2-3. JpaCartItemRepository Test : Spring Data JPA 기반 Repository
+1. __JpaCartItemRepositry__
+    1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
+    2) ManyToMany 조인테이블 대신 연결엔티티로 매핑하였기 때문에 편리한 두 엔티티(User, Book)간의 관계에 쿼리메소드를 사용할 수 있다.
+    3) findAllByUserNo(userNo) 사용자 번호로 장바구니 리스트를 가져올 수 있다.
+    4) deleteByUserNoAndBookNo(userNo, bookNo) 사용자 번호와 도서번호로 장바구니에서 삭제를 한다.
+    5) 편리하긴 하지만, 테스트와 퉈리 로그를 보면 성능에 문제점이 있기 때문에 QueryDsl를 사용한 메소드를 만드는 것이 보통이다.
+
+2. __JpaCartItemQryDslRepositry__
+    1) 성능에 문제가 있는 기본메소드, 쿼리메소드를 대체할 메소드를 정의한다.
+       + findAllByUserNo2(userNo)
+       + findAllByUserNo3(userNo)
+       + deleteByUserNoAndBookNo2(userNo, bookNo)
+
+3. __JpaCartItemQryDslRepositryImpl__
+    1) findAllByUserNo2, findAllByUserNo3, deleteByUserNoAndBookNo2 구현
+    2) QueryDSL 통합 구현
+    
+4. __JpaCartItemRepositoryTest__
+    1) test01Save
+        + 테스트를 위한 User, Book, CartItem 데이터를 저장한다.
+        + ManyToMant 조인테이블 대신 연결엔티티(CartItem)을 사용하기 때문에 CartItemRepository를 통해 쉽게 관계를 설정할 수 있다.
+        
+            ```
+                .
+                .
+                CartItem cartItem = new CartItem();
+                cartItem.setUser(user);
+                cartItem.setBook(book);
+                cartItem.setAmount(1);
+                cartItemRepository.save(cartItem);
+                .
+                .   
+            ```
+    2) test02FindAllByUserNo
+        + 특정 사용자의 번호로 장바구니(cart)안의 항목(CartItem) 리스트를 가져온다.
+        + 2가지 방식으로 가져 올 수 있다.
+            1) User 객체 그래프 탐색 지연로딩을 사용해 가져오기(UserRepositoryTest test02FindById 참고)
+                - UserRepositoryTest.test02FindById
+                    ```
+                  
+                    ```  
+            2) CartItemRepository 쿼리메소드를 사용해서 User의 번호를 파라미터로 전달하여 가져오기(이 테스트에 해당된다.)
