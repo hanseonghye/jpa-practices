@@ -37,7 +37,7 @@
 3. __CartItem 엔티티 매핑 참고__
 4. __연관관계 매핑__
     1) 복합키를 지원하기 위해 JPA에서는 복합키를 Id(PK)로 잡기 때문에 복합키가 되는 1개 이상의 필드를 가지고 있는 식별자(Id)클래스를 따로 작성해주어야 한다.
-    2) CartItemId가 식별자 클래스
+    2) CartItemId 식별자 클래스
         ```
             public class CartItemId implements Serializable {
                 private Long user;
