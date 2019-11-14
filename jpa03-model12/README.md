@@ -91,7 +91,7 @@
         + book, user가 관계주인 필드이다. 따라서 @JoinColumn를 지정하였으며 @ManyToOne으로 다중성도 지정했다.
         + 중요한 것은 관계필드의 이름과 IdClass의 필드 이름이 같아야 하며 타입은 관계필드의 엔티티 객체의 @Id필드의 타입과 같아야 한다.
       
-    2) OneToMany(User 엔티티)
+    4) OneToMany(User 엔티티)
         
         ```
              .
@@ -111,9 +111,9 @@
         + 여기서는 CartItem.user 필드가 관계의 주인이다.
         + toMany 참조를 위해 컬렉션 매핑을 했다.
         
-    3) Book 엔티티는 ManyToOne 단방향 반대편 엔티티기 때문에 연관관계 매핑은 별도로 없다.
+    5) Book 엔티티는 ManyToOne 단방향 반대편 엔티티기 때문에 연관관계 매핑은 별도로 없다.
     
-    4) 생성 스키마
+    6) 생성 스키마
     
         ```
             Hibernate: 
@@ -159,7 +159,7 @@
         + 연결 엔티티에 매핑된 cartitem 테이블을 보면 user, book 테이블을 참조하는 두개의 FK가 복합키로 PK로 세팅된 것을 볼 수 있다.
         + 그리고 추가 컬럼 amount가 있는 것을 볼 수 있다.
     
-    5) @IdClass 와 @Embedded 차이점
+    7) @IdClass 와 @Embedded 차이점
         + @IdClass 와 @EmbeddedId 는 각각 장단점이 있으므로 본인의 취향에 맞는 것을 사용하면 된다.
         + @EmbeddedId 가 @IdClass 와 비교해서 더 객체 지향적이고 중복도 없어서 좋아보인다.
         + 하지만, JPQL 이 @EmbeddedId 방식이 조금 더 길어진다.

@@ -98,7 +98,7 @@
         + book, user가 관계주인 필드이다. 따라서 @JoinColumn를 지정하였으며 @ManyToOne으로 다중성도 지정했다.
         + @MapsId를 지정하여 실제 컬럼값이 저장되는 객체의 필드와 매핑해야 한다. 코드상으로는  @EmbeddedId 달려 있는 catrtItemId의 userNo, bookNo가 된다.
       
-    2) OneToMany(User 엔티티)
+    4) OneToMany(User 엔티티)
         
         ```
              .
@@ -118,9 +118,9 @@
         + 여기서는 CartItem.user 필드가 관계의 주인이다.
         + toMany 참조를 위해 컬렉션 매핑을 했다.
         
-    3) Book 엔티티는 ManyToOne 단방향 반대편 엔티티기 때문에 연관관계 매핑은 별도로 없다.
+    5) Book 엔티티는 ManyToOne 단방향 반대편 엔티티기 때문에 연관관계 매핑은 별도로 없다.
     
-    4) 생성 스키마
+    6) 생성 스키마
     
         ```
             Hibernate: 
