@@ -41,25 +41,28 @@ public class JpaCartItemRepositoryTest {
     @Test
     public void test02FindAllByUserNo(){
         List<CartItem> cart = cartItemRepository.findAllByUserNo(1L);
-        for(CartItem cartItem : cart){
-            System.out.println(cartItem);
-        }
+
+        assertEquals(2, cart.size());
+        assertEquals("둘리", cart.get(0).getUser().getName());
+        assertEquals("책2", cart.get(1).getBook().getTitle());
     }
 
     @Test
     public void test03FindAllByUserNo2(){
         List<CartItem> cart = cartItemRepository.findAllByUserNo2(1L);
-        for(CartItem cartItem : cart){
-            System.out.println(cartItem);
-        }
+
+        assertEquals(2, cart.size());
+        assertEquals("둘리", cart.get(0).getUser().getName());
+        assertEquals("책2", cart.get(1).getBook().getTitle());
     }
 
     @Test
     public void test04FindAllByUserNo3(){
         List<CartItemDto> cart = cartItemRepository.findAllByUserNo3(1L);
-        for(CartItemDto cartItem : cart){
-            System.out.println(cartItem);
-        }
+
+        assertEquals(2, cart.size());
+        assertEquals("책1", cart.get(0).getBookTitle());
+        assertEquals("책2", cart.get(1).getBookTitle());
     }
 
     @Test

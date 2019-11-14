@@ -225,6 +225,254 @@
             1) User 객체 그래프 탐색 지연로딩을 사용해 가져오기(UserRepositoryTest test02FindById 참고)
                 - UserRepositoryTest.test02FindById
                     ```
-                  
-                    ```  
+                        User user = userRepository.findById(1L).get();
+                        List<CartItem> cart = user.getCart();
+                    ```
+                - CartItem을 가져오기 위해 실행된 쿼리 로그
+                    ```
+                         Hibernate: 
+                             select
+                                 cart0_.user_no as user_no2_1_0_,
+                                 cart0_.book_no as book_no1_1_0_,
+                                 cart0_.book_no as book_no1_1_1_,
+                                 cart0_.user_no as user_no2_1_1_,
+                                 cart0_.amount as amount3_1_1_,
+                                 book1_.no as no1_0_2_,
+                                 book1_.price as price2_0_2_,
+                                 book1_.title as title3_0_2_ 
+                             from
+                                 cartitem cart0_ 
+                             inner join
+                                 book book1_ 
+                                     on cart0_.book_no=book1_.no 
+                             where
+                                 cart0_.user_no=?                 
+                    ```
+                    1) 조인 쿼리가 실행되어 CartItem 콜렉션을 별문제 없이 받아 올수 있다.
+                    2) 문제는 CartItem 콜렉션(cart) 내용이다.
+                    
+                    ```
+                        CartItem{user=User{no=1, name='둘리', email='dooly@gmail.com', password='1234'}, book=Book{no=1, title='책1', price=1000}, amount=1}
+                        CartItem{user=User{no=1, name='둘리', email='dooly@gmail.com', password='1234'}, book=Book{no=2, title='책2', price=1000}, amount=2}
+                       
+                    ```
+                    3) 크게 문제 될 것은 없지만 장바구니 내용을 구성하기에 필요없는 User 내용이 전부 있는 것이 불만이다.
+                    
             2) CartItemRepository 쿼리메소드를 사용해서 User의 번호를 파라미터로 전달하여 가져오기(이 테스트에 해당된다.)
+                - 쿼리메소드 findAllByUserNo(no)를 사용했다
+                - 실행된 쿼리 로그
+                    ```
+                        Hibernate: 
+                                select
+                                    cartitem0_.book_no as book_no1_1_,
+                                    cartitem0_.user_no as user_no2_1_,
+                                    cartitem0_.amount as amount3_1_ 
+                                from
+                                    cartitem cartitem0_ 
+                                left outer join
+                                    user user1_ 
+                                        on cartitem0_.user_no=user1_.no 
+                                where
+                                    user1_.no=?
+                        Hibernate: 
+                            select
+                                book0_.no as no1_0_0_,
+                                book0_.price as price2_0_0_,
+                                book0_.title as title3_0_0_ 
+                            from
+                                book book0_ 
+                            where
+                                book0_.no=?
+                        Hibernate: 
+                            select
+                                user0_.no as no1_2_0_,
+                                user0_.email as email2_2_0_,
+                                user0_.name as name3_2_0_,
+                                user0_.password as password4_2_0_ 
+                            from
+                                user user0_ 
+                            where
+                                user0_.no=?
+                        Hibernate: 
+                            select
+                                book0_.no as no1_0_0_,
+                                book0_.price as price2_0_0_,
+                                book0_.title as title3_0_0_ 
+                            from
+                                book book0_ 
+                            where
+                                book0_.no=?                  
+                    ```
+                    1) 최악이다. 일단 CartItem을 가져오기 위해 User와 조인을 한 쿼리가 실행된다.
+                    2) CartItem 내용(엔티티 객체)을 채우기 위해 개별적 User, Book 쿼리가 실행됨을 알 수 있다.
+                    
+        + 결론은 사용자의 번호로 장바구니(cart)안의 항목(CartItem) 리스트를 가져오기 위해 QueryDSL을 사용하지 않고 기본메소드, 쿼리메소드만 사용할 생각이면 User 엔티티 객체를 통한 그래프 탐색이 좋다.
+
+    3) test03FindAllByUserNo2
+        + 사용자의 번호로 장바구니(cart)안의 항목(CartItem) 리스트를 가져오기 위해 QueryDSL로 작성한 JpaCartItemQryDslRepository.findAllByUserNo2(userNo) 테스트이다.
+        + QueryDSL 코드
+            ```
+                return  queryFactory
+                        .select(cartItem)
+                        .from(cartItem)
+                        .innerJoin(cartItem.user)
+                        .fetchJoin()
+                        .innerJoin(cartItem.book)
+                        .fetchJoin()
+                        .where(cartItem.user.no.eq(userNo))
+                        .fetch();          
+            ```
+            innerJoin과 fetchJoin을 사용한다.  
+            
+        + 실행된 쿼리
+            ```
+                 Hibernate: 
+                         select
+                             cartitem0_.book_no as book_no1_1_0_,
+                             cartitem0_.user_no as user_no2_1_0_,
+                             user1_.no as no1_2_1_,
+                             book2_.no as no1_0_2_,
+                             cartitem0_.amount as amount3_1_0_,
+                             user1_.email as email2_2_1_,
+                             user1_.name as name3_2_1_,
+                             user1_.password as password4_2_1_,
+                             book2_.price as price2_0_2_,
+                             book2_.title as title3_0_2_ 
+                         from
+                             cartitem cartitem0_ 
+                         inner join
+                             user user1_ 
+                                 on cartitem0_.user_no=user1_.no 
+                         inner join
+                             book book2_ 
+                                 on cartitem0_.book_no=book2_.no 
+                         where
+                             cartitem0_.user_no=?         
+            ```    
+            1) CartItem, User, Book 세 테이블에 조인 쿼리가 실행되었음을 알 수가 있다.
+            2) 주의할 것은 조인쿼리가 개별적으로 나눠서 실행하는 select쿼리 보다 성능이 반드시 좋다고 볼 수는 없다.
+            3) 성능(시간)에 큰 영향을 주는 것은 오히려 projection일 수 있다.
+            
+    4) test04FindAllByUserNo3
+        + 세 테이블에 대한 조인과 프로젝션을 적용한 findAllByUserNo3(no)의 테스트이다.
+        + QueryDSL 코드
+            ```
+                return  queryFactory
+                        .select(new QCartItemDto(cartItem.book.no, cartItem.book.title, cartItem.book.price, cartItem.amount))
+                        .from(cartItem)
+                        .innerJoin(cartItem.user)
+                        .innerJoin(cartItem.book)
+                        .where(cartItem.user.no.eq(userNo))
+                        .fetch();          
+            ```    
+            1) 프로젝션에서는 fetchJoin()을 사용할 수 없다.
+            2) @QueryProjection 를 사용한 DTO 클래스를 사용했다. Q클래스 생성 필요
+            
+        + 실행된 쿼리
+            ```
+                select
+                    cartitem0_.book_no as col_0_0_,
+                    book2_.title as col_1_0_,
+                    book2_.price as col_2_0_,
+                    cartitem0_.amount as col_3_0_ 
+                from
+                    cartitem cartitem0_ 
+                inner join
+                    user user1_ 
+                        on cartitem0_.user_no=user1_.no 
+                inner join
+                    book book2_ 
+                        on cartitem0_.book_no=book2_.no 
+                where
+                    cartitem0_.user_no=?         
+            ```
+            세 테이블에 조인과 프로젝션이 적용된 쿼리가 실행됨을 알 수 있다.  
+            
+        + 결과 CartItem Collection(cart) 내용
+            ```
+                CartItemDto{bookNo=1, bookTitle='책1', bookPrice=1000, amount=1}
+                CartItemDto{bookNo=2, bookTitle='책2', bookPrice=1000, amount=2}          
+            ```    
+        + 성능(시간) 비교
+            <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/31103.png" width="800px" />
+            <br>            
+          
+            test02FindAllByUserNo, test03FindAllByUserNo2, test04FindAllByUserNo3 테스트의 실행 시간을 보면, 프로젝션과 조인을 함께 실행한 test04FindAllByUserNo3이 확연히 빠름을 알 수 있다.  
+    
+    5) test05DeleteByUserNoAndBookNo
+        + 쿼리메소드 JpaCartItemRepository.deleteByUserNoAndBookNo(userNo, bookNo)의 테스트이다.
+        + Model10 ManyToMany 조인테이블과 달리, 연결엔티티의 레포지토리의 쿼리메소드로 편리하게 삭제를 할 수 있다.
+        + 하지만, 쿼리 로그를 보면 생각보다 많은 쿼리가 실행됨을 알 수 있다.
+            ```
+                Hibernate: 
+                    select
+                        cartitem0_.book_no as book_no1_1_,
+                        cartitem0_.user_no as user_no2_1_,
+                        cartitem0_.amount as amount3_1_ 
+                    from
+                        cartitem cartitem0_ 
+                    left outer join
+                        user user1_ 
+                            on cartitem0_.user_no=user1_.no 
+                    left outer join
+                        book book2_ 
+                            on cartitem0_.book_no=book2_.no 
+                    where
+                        user1_.no=? 
+                        and book2_.no=?
+                Hibernate: 
+                    select
+                        book0_.no as no1_0_0_,
+                        book0_.price as price2_0_0_,
+                        book0_.title as title3_0_0_ 
+                    from
+                        book book0_ 
+                    where
+                        book0_.no=?
+                Hibernate: 
+                    select
+                        user0_.no as no1_2_0_,
+                        user0_.email as email2_2_0_,
+                        user0_.name as name3_2_0_,
+                        user0_.password as password4_2_0_ 
+                    from
+                        user user0_ 
+                    where
+                        user0_.no=?
+                Hibernate: 
+                    /* delete me.kickscar.practices.jpa03.model11.domain.CartItem */ delete 
+                        from
+                            cartitem 
+                        where
+                            book_no=? 
+                            and user_no=?          
+            ```
+            1) 삭제하기 전, 삭제 대상이 되는 CartItem의 연관필드 엔티티 객체 User, Book을 영속화 시키기 위해 쿼리가 부수적으로 실행된 모습이다.
+            2) 쿼리 자체로 보면 큰 부담이 없고 삭제 대상은 아니지만 연관된 두 엔티티 객체를 영속화 하는 것이 필요한 경우도 있을 것이다.
+            3) 2)의 경우가 아니라면 바로 삭제 쿼리가 실행되는 것이 불만이 없을 것이다.
+
+    5) test06DeleteByUserNoAndBookNo2
+        + QueryDSL를 사용해서 바로 삭제 쿼리가 실행될 수 있도록 작성한 deleteByUserNoAndBookNo2 메소드 테스트이다.
+        + QueryDSL 코드
+            ```
+                queryFactory
+                        .delete(cartItem)
+                        .where(cartItem.user.no.eq(userNo).and(cartItem.book.no.eq(bookNo)))
+                        .execute();          
+            ```
+        + 실행된 쿼리
+            ```
+            Hibernate: 
+                delete 
+                    from
+                        cartitem 
+                where
+                    user_no=? 
+                    and book_no=?          
+            ```
+        + 성능(시간) 비교
+            <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/31104.png" width="800px" />
+            <br>            
+          
+        + 시간상 큰 차이는 없지만, 캐쉬, 메모리 등을 비교해 보면 더 차이가 있을 수 있으며 많은 수의 삭제에는 문제의 소지가 충분히 있다.
+        + 연관된 엔티티의 영속화가 필요없거나 또는 드문드문 적은 수로 삭제를 하는 경우를 제외하고 QueryDSL를 사용해 삭제 쿼리만 실행하는 것이 좋을 것이다. 
