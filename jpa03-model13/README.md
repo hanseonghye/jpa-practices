@@ -141,8 +141,8 @@
 ### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
-1.
-2.
+1. 복합키를 사용한 연결엔티티 레포지토리 메소드들과 구현과 실행쿼리가 별차이가 없다. 
+2. 단지, 조인에 기본메소드와 쿼리메소드가 outer join이 걸리기 때문에 성능 이슈 및 이상 데이터 발생 가능성 테스트
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  
@@ -156,4 +156,52 @@
  9. __Spring Boot Starter Test 2.1.8.RELEASE (Spring Test 5.1.9.RELEASE)__   
 10. __Gradle 5.4__    
 
-#### 2-3. JpaCartItemRepository Test : Spring Data JPA 기반 Repository
+#### 2-3. Repository Test : Spring Data JPA 기반 Repository
+1. Model11/12 복합키 연결엔티티 CartItem의 Repository와 코드 구현이 모두 같다.
+2. 모두 정상적으로 같은 JPQL과 SQL를 생성해서 잘 작동하는 것을 알 수 있다.
+3. __JpaUserRepositoryTest__
+    1) test02FindById
+        + 특정 사용자의 번호로 장바구니(cart)안의 항목(CartItem) 리스트를 가져온다.
+        + User 객체 그래프 탐색 지연로딩을 사용해 가져온다.
+        + CartItem을 가져오기 위해 실행된 쿼리 로그
+            ```
+                 select
+                     cart0_.user_no as user_no4_1_0_,
+                     cart0_.no as no1_1_0_,
+                     cart0_.no as no1_1_1_,
+                     cart0_.amount as amount2_1_1_,
+                     cart0_.book_no as book_no3_1_1_,
+                     cart0_.user_no as user_no4_1_1_,
+                     book1_.no as no1_0_2_,
+                     book1_.price as price2_0_2_,
+                     book1_.title as title3_0_2_ 
+                 from
+                     cartitem cart0_ 
+                 left outer join
+                     book book1_ 
+                         on cart0_.book_no=book1_.no 
+                 where
+                     cart0_.user_no=?         
+            ```
+            + 연결엔티티 CartItem과 Book 엔티티가 Outer 조인이 걸리는 것을 볼수 있다.(복합키 연결 엔티티에서는 inner join이다)
+            + book 테이블에서 삭제된 참조도 CartItem 객체로 생성될 수 있기 때문에 각별히 유의해서 연결테이블의 참조관리를 해야 하고 book 삭제을 해야 한다.
+
+3. __JpaBookRepositoryTest__
+    1) test02DeleteById
+        + CartIetm에 Book에 대한 참조가 있는 경우, Book 삭제 시 외래키 참조 제약조건을 테스트 한다.
+        + 앞의 Outer Join에서 이상테이터 발생 가능성을 테스트한다.
+        + 테스트 코드
+            ```
+                thrown.expect(DataIntegrityViolationException.class);
+                bookRepository.deleteById(1L);          
+            ```
+            + DataIntegrityViolationException을 받는 것이 테스트 통과조건 이다.
+            + 데이터 무결성 예외가 발생해서 삭제를 하지 못하게 하고 있다.
+            + 따라서 연결 테이블(CartItem)에는 참조가 깨질 가능성이 없고 Outer Join에서도 이상 데이터가 발생할 수 없다.
+            + 참고로 ManyToMany 연결테이블은 예외가 발생하지 않고 연결테이블의 참조도 모두 삭제한다.(그러니 사용하지 않는 것이 좋다)
+
+4. __JpaCartItemRepositoryTest__
+    1) 장바구니(cart)에 CartItem을 가져오는 기본메소드, 쿼리메소드의 쿼리와 성능을 알아보고 QueryDSL 통합으로 대안을 제시하는 테스트이다.
+    2) Model11/12와 구현과 결과가 완전 동일하다.(따라서 생략)
+    
+     

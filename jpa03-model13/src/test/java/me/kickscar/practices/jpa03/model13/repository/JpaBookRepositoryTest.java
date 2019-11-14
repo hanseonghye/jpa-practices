@@ -4,26 +4,32 @@ import me.kickscar.practices.jpa03.model13.config.JpaConfig;
 import me.kickscar.practices.jpa03.model13.domain.Book;
 import me.kickscar.practices.jpa03.model13.domain.CartItem;
 import me.kickscar.practices.jpa03.model13.domain.User;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.FixMethodOrder;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpaConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class JpaUserRepositoryTest {
+public class JpaBookRepositoryTest {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @PersistenceContext
     private EntityManager em;
 
@@ -38,13 +44,10 @@ public class JpaUserRepositoryTest {
 
     @Test
     @Transactional
-    public void test02FindById() {
-        User user = userRepository.findById(3L).get();
-        List<CartItem> cart = user.getCart();
-
-        assertEquals(2, cart.size());
-        assertEquals("둘리", cart.get(0).getUser().getName());
-        assertEquals("책2", cart.get(1).getBook().getTitle());
+    @Rollback(false)
+    public void test02DeleteById() throws Throwable {
+        thrown.expect(DataIntegrityViolationException.class);
+        bookRepository.deleteById(1L);
     }
 
     @Test
