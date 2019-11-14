@@ -71,10 +71,12 @@
             @IdClass(CartItemId.class)
             @Table(name = "cartitem")
             public class CartItem {
+                @Id
                 @ManyToOne
                 @JoinColumn(name="book_no")
                 private Book book;
-            
+                
+                @Id
                 @ManyToOne
                 @JoinColumn(name="user_no")
                 private User user;
@@ -87,7 +89,8 @@
             }       
         ```
         + @IdClass(CartItemId.class)를 사용하여 Id(PK)의 복합키 클래스를 지정한다.
-        + CartItem 엔티티는 User 엔티티, Book 엔티티와 ManyToOne 관계를 맺기 때문에 관계주인 필드를 가진다.
+        + 복합(Composite)키 임을 설정하기 위해 관계 필드 book, user에 @Id 어노테이션을 붙혔다.
+        + CartItem 엔티티는 User 엔티티, Book 엔티티와 ManyToOne 관계를 맺기 때문에 관계 주인 필드를 가진다.
         + book, user가 관계주인 필드이다. 따라서 @JoinColumn를 지정하였으며 @ManyToOne으로 다중성도 지정했다.
         + 중요한 것은 관계필드의 이름과 IdClass의 필드 이름이 같아야 하며 타입은 관계필드의 엔티티 객체의 @Id필드의 타입과 같아야 한다.
       
