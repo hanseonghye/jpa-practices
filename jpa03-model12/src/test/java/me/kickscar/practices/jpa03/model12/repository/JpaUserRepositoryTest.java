@@ -4,7 +4,6 @@ import me.kickscar.practices.jpa03.model12.config.JpaConfig;
 import me.kickscar.practices.jpa03.model12.domain.Book;
 import me.kickscar.practices.jpa03.model12.domain.CartItem;
 import me.kickscar.practices.jpa03.model12.domain.User;
-import me.kickscar.practices.jpa03.model12.dto.CartItemDto;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpaConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class JpaCartItemRepositoryTest {
+public class JpaUserRepositoryTest {
     @PersistenceContext
     private EntityManager em;
 
@@ -38,46 +37,14 @@ public class JpaCartItemRepositoryTest {
     private JpaCartItemRepository cartItemRepository;
 
     @Test
-    public void test02FindAllByUserNo(){
-        List<CartItem> cart = cartItemRepository.findAllByUserNo(1L);
+    @Transactional
+    public void test02FindById() {
+        User user = userRepository.findById(1L).get();
+        List<CartItem> cart = user.getCart();
 
         assertEquals(2, cart.size());
         assertEquals("둘리", cart.get(0).getUser().getName());
         assertEquals("책2", cart.get(1).getBook().getTitle());
-    }
-
-    @Test
-    public void test03FindAllByUserNo2(){
-        List<CartItem> cart = cartItemRepository.findAllByUserNo2(1L);
-
-        assertEquals(2, cart.size());
-        assertEquals("둘리", cart.get(0).getUser().getName());
-        assertEquals("책2", cart.get(1).getBook().getTitle());
-    }
-
-    @Test
-    public void test04FindAllByUserNo3(){
-        List<CartItemDto> cart = cartItemRepository.findAllByUserNo3(1L);
-
-        assertEquals(2, cart.size());
-        assertEquals("책1", cart.get(0).getBookTitle());
-        assertEquals("책2", cart.get(1).getBookTitle());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(false)
-    public void test05DeleteByUserNoAndBookNo(){
-        cartItemRepository.deleteByUserNoAndBookNo(1L, 1L);
-        assertEquals(4, cartItemRepository.count());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(false)
-    public void test06DeleteByUserNoAndBookNo2(){
-        cartItemRepository.deleteByUserNoAndBookNo2(2L, 1L);
-        assertEquals(3, cartItemRepository.count());
     }
 
     @Test
