@@ -8,7 +8,7 @@ import javax.persistence.*;
 public class CartItem {
 
     @Id
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name="user_no")
     private User user;
 
