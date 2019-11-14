@@ -1,4 +1,4 @@
-## Model11 : 혼합모델(ManyToMany 문제해결, 연결엔티티, 복합키(PK), 식별관계, @IdClass)
+## Model12 : 혼합모델(ManyToMany 문제해결, 연결엔티티, 복합키(PK), 식별관계, @IdClass)
 
 
 ### 1. Domain
