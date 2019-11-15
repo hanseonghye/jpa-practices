@@ -13,10 +13,10 @@
 ### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
-1. JPQL 그리고 QueryDSL, Spring Data JPA 기반의 각각의 레포지토리 구현이 가능함을 이해할 것
-2. 각각의 레포지토리를 작성하기 위한 설정 방법들을 꼭 이해 할 것
-3. 레포지토리에서 영속객체를 다루는 방법과 트랜잭션과의 관계 이해할 것
-4. 연관관계가 없는 단일 엔티티 레포지토리 구현 방법이기 때문에 CRUD 메소드 작성 방법을 각각의 레포지토리 별로 이해 할 것
+1. JPQL 그리고 QueryDSL, Spring Data JPA 기반의 각각의 레포지토리 구현을 이해한다.
+2. 각각의 레포지토리를 작성하기 위한 설정 방법을 이해한다.
+3. 레포지토리에서 영속객체를 다루는 방법과 트랜잭션과의 관계를 이해한다.
+4. 연관관계가 없는 단일 엔티티 레포지토리 구현이기 때문에 CRUD 메소드 작성 방법을 각각의 레포지토리 별로 이해한다.
   
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  
@@ -38,7 +38,7 @@
     3) PersistenceExceptionTranslationPostProcessor JPA 예외 전환 설정  
     4) LocalContainerEntityManagerFactoryBean 엔티티매니저팩토리 설정 (Repository에서 엔티티매니저 빈을 주입받기 위해)  
     5) EntityManager 빈 등록(Repository 빈에 주입)
-    6) JPA Properties (jpa02-persistence-context 모듈의 appication.yml의 JPA 섹션과 비교해 보자)  
+    6) JPA Properties (jpa02-persistence-context 모듈의 appication.yml의 JPA 섹션과 비교해 보면 이해가 쉽다.)  
 
 2. __JPA 트랜잭션 관리에 관해서...(중요개념)__
     1) 트랜잭션과 영속성켄텍스트
@@ -58,7 +58,7 @@
     1) JPQL 기반으로 작성
         - 객체지향쿼리의 핵심은 JPQL이다. JPQL이 **가장 기본**이고 **제일 중요**하다 
         - Criteria, QueryDSL은 문자열 쿼리 기반의 JPQL를 객체지향쿼리로 쓰기 위한 일종의 Helper Wrapping 라이브러리이다.
-        - 쿼리 로그를 보면 JPQL과 SQL이 나오는데, 이는 JPQL로 변환된 것이 최종적으로 SQL로 변환되기 때문이다.     
+        - 쿼리로그를 보면 JPQL과 SQL이 나오는데, 이는 JPQL로 변환된 것이 최종적으로 SQL로 변환되기 때문이다.     
     2) 영속화 
     3) TypedQuery 객체 사용
     4) Projection 및 Order by 지원
@@ -108,7 +108,7 @@
 
 2. __QueryDslGuestbookRepository.java__  
     1) QueryDSL를 편하게 쓰기 위해 JPAQueryFactory Bean을 주입 받는다.
-    2) 영속화 관리를 위해 EntityManager 주입 받을 필요가 없다. 부모 클래스 QuerydslRepositorySupport의 getEntityManager()를 사용한다.
+    2) 영속화 관리를 위해 EntityManager 주입 받을 필요는 없다. 부모 클래스 QuerydslRepositorySupport의 getEntityManager()를 사용한다.
     3) **컴파일 오류**
        
         ```
@@ -176,7 +176,7 @@
                  file(querydslGenDirectory).deleteDir()
               }  
             ```
-            설정은 gradle 버젼에 매우 민감하다(gradle 5.4 기준임. 이 프로젝트의 gradle wrapper를 빌드에 사용하면 큰 문제가 없다)   
+            설정은 gradle 버젼에 매우 민감하다(gradle 5.4 기준이다. 프로젝트의 gradle wrapper를 빌드에 사용하면 큰 문제가 없다.)   
      
     3) Build Task의 build 또는 Other Task의 compileJava 함수 실행  
   
@@ -186,7 +186,7 @@
         생성되었다!!!  
         <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/30003.png" width="400px" />
   
-    + Build Task clean 함수 실행으로 삭제할 수 있다.
+        - Build Task clean 함수 실행으로 삭제할 수 있다.
      
 4. __QueryDSLGuestbookRepositoryTest.java__  
     1) test01Save
@@ -213,7 +213,7 @@
 1. __JpaConfig.java__
     1) JPQL(QueryDSL포함) 설정 클래스인 JpqlConfig.java와 다르다.
     2) 설정 클래스에 @EnableJpaRepositories 어노테이션으로 JPA Repositories 활성화해야 한다.
-    3) JPA Repositories 활성화: JpaRepository 인터페이스를 상속받은 Repository Interface 에 대한 구현체 생성을 애플리케이션 실행 처음에 Spring Data JPA가 자동으로 한다.
+    3) JPA Repositories 활성화: JpaRepository 인터페이스를 상속받은 Repository Interface 에 대한 구현체 생성을 애플리케이션 실행 처음에 Spring Data JPA가 자동으로 하는 것
 
         ```
           @Configuration
@@ -231,7 +231,7 @@
 2. __JpaGuestbookRepository.java__
     
     1) JpaRepository Interface 
-        - Spring Data JPA에서 제공하는 인테페이스로 상속받은 Repoitory Interface 에 기본적인 CRUD 메서드를 제공한다.         
+        - Spring Data JPA에서 제공하는 인테페이스로 상속받은 Repoitory Interface에 기본적인 CRUD 메서드를 제공한다.         
         - 구현체는 애플리케이션 처음 시작 시, Spring Data JPA가 생성해서 제공해 준다.  
         - 즉, **데이터 접근 계층(DAO, Repository) 개발할 떄 구현 클래스 없이 인터페이스만 작성해도 개발을 완료할 수 있다.**  
      

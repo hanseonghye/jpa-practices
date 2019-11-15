@@ -56,10 +56,10 @@
 1. JPQL 그리고 QueryDSL, Spring Data JPA 기반의 각각의 레포지토리 구현 방법을 이해할 것
 2. 특히, JPQL를 QueryDSL과 비교하고 QueryDSL이 JPQL로 변환되는 것을 이해할 것
 3. JPQL 기본의 중요성 그리고 QueryDSL 사용성을 이해할 것
-4. ManyToOne(단방향)에서 left outer join, inner join, join fetch 등의 차이점 그리고 성능 이슈들을 인지 할 것
-5. ManyToOne(단방향)이 가장 기본이 되는 연관관계 매핑이기 때문에 반드시 숙지할 것
-6. 프로젝션, 페이징, 소팅, Like 검색 등의 무척 다양한 쿼리 기법을 세 종류(총 6개)의 레포지토리에서 확인할 것
-7. Spring Data JPA 기반의 기본 메소드들과 이름 기반의 쿼리 메소드들이 만들어 내는 SQL들을 검증해보고 왜 QueryDSL과 통합해야 하는가? 이해할 것 
+4. ManyToOne(단방향)에서 left outer join, inner join, join fetch 등의 차이점 그리고 주요 성능이슈들을 반드시 이해할 것
+5. ManyToOne(단방향)은 가장 기본이 되는 연관관계 매핑이다. 따라서 반드시 숙지할 것.
+6. 프로젝션, 페이징, 소팅, Like 검색 등의 다양한 쿼리 기법을 세 종류(총 6개)의 레포지토리에서 확인하고 이해할 것.
+7. Spring Data JPA가 제공하는 기본메소드들과 이름 기반의 쿼리 메소드들이 생성하는 SQL들을 검증해보고 왜 QueryDSL과 통합해야 하는가?(사용성)를 이해할 것. 
 
 #### 2-2. 테스트 환경
  1. __Java SE 1.8__  
@@ -131,7 +131,7 @@
                 select b from Board b join fetch b.user orders by b.regDate desc
             ```
         - fetch b.user 에서 엔티티에 별칭(alias)를 쓸 수 없는 것이 원칙이다. (Hibernate는 허용)
-        - 따라서 fecth join에서는 프로젝션을 시도하면 예외가 발생한다. (별칭을 허용하는 Hibernate도 마찬가지다. 별칭만 허용하는 것이다)
+        - 따라서 fecth join에서는 프로젝션을 시도하면 예외가 발생한다. (별칭을 허용하는 Hibernate도 마찬가지다. 별칭만 허용하는 것이다.)
     7) test07FindAll3
         - JpqlBoardRepository.findAll4(page)
         - Fetch Join 적용
