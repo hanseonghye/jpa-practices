@@ -22,8 +22,8 @@
 2. __다중성은 방향성이 결정나면 쉽게 결정 할 수 있다.__
     1) User는 다수의 책을 저장할 수 있기 때문에 User(1) <-> CartItem(\*) 관계다.
     2) OneToMany 이지만 ManyToOne을 많이 선호하기 때문에 CartItem <-> User ManyToOne 양방향을 결정한다.
-    2) Book 엔티티와의 관계에서도 다수의 User가 Book 한 권을 장바구니에 담을 수 있기 때문에 CartItem(\*) -> Book(1) 관계다. 
-    3) Book에서 User쪽을 탐색하는 드문 경우이기 때문에 CartItem -> Book ManyToOne 단방향으로 결정한다. 
+    3) Book 엔티티와의 관계에서도 다수의 User가 Book 한 권을 장바구니에 담을 수 있기 때문에 CartItem(\*) -> Book(1) 관계다. 
+    4) Book에서 User쪽을 탐색하는 드문 경우이기 때문에 CartItem -> Book ManyToOne 단방향으로 결정한다. 
        
 3. __새로운 PK를 사용한 비식별관계__
     1) CartItem은 User, Book 엔티티와 각각의 관계에 두 개의 연관필드를 가지게 된다. 
