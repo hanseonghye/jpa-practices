@@ -13,29 +13,29 @@
 1. __OneToMany 양방향(Bidirectioanl)은 존재하지 않는다__
     1) OneToMany 양방향(Bidirectinal)은 ManyToOne 양방향(Bidirectional)과 완전 동일하다. 
     2) ManyToOne 양방향(Bidirectional)을 사용해야 한다.
-    3) 보통은 앞에를 연관관계의 주인으로 인지들 하기 때문에 OneToMany 양방향(Bidirectinal)에서는 One쪽이 주인이 되어야 하는데 이는 RDBMS 특성상 불가능하기 때문에 존재하지 않는다.
-    4) 존재하지 않는 이유는 보통 외래키를 관리하는 곳이 연관관계의 주인인데 외래키는 Many쪽에 있기 때문이다.
+    3) 연관관계의 방향에서 주인을 좌측으로 인지하기 때문에 OneToMany 양방향에서는 One쪽이 주인이 되어야 하는데 이는 RDBMS 특성상 불가능하기 때문에 존재하지 않는다.
+    4) 왜냐믄, 보통 외래키를 관리하는 곳이 연관관계의 주인인데 외래키는 Many쪽에 있기 때문이다.
+    5) 데이터베이스에서 존재할 수 없지만 JPA 관계 매핑은 가능하다.
         
 2. __보통은 서비스에서 방향성을 찾는 경우가 많다.__
     1) 회원의 경우, 마이페이지에서 자신의 주문리스트를 확인해 보는 서비스의 비지니스 로직이 필요하다. (User -> Orders, Navigational Association) 
-    2) 반대방향을 보면, User <- Orders 도 당연히 탐색(Navigational)이 가능해야 한다. 
-    3) 따라서 양방향(Bidirectioanl)이다.
+    2) 반대 방향 User <- Orders 도 당연히 탐색(Navigational)이 가능해야 한다. 따라서 양방향(Bidirectioanl)이다.
    
 3. __양방향에서는 연관관계의 주인을 따져야 한다.__
     1) user 필드(FK)가 있는 Orders 엔티티가 이 관계의 주인이 된다.
-    2) 하지만 OneToMany 양방향(Bidirectional)에서는 User 엔티티가 중인이 되어야 하지만 RDBMS와 특성과의 차이로 주인이 될 수 없다.
-    3) 대신, 양쪽에 @JoinColumn의 이름을 같게 하고 Many쪽의 관계 필드(user)는 읽기 전용으로 한다.(양쪽에서 관계를 컨트롤하는 것은 복잡하니깐...)
-    4) **OneToMany 단방향(Unidirectional)에 반대편 Many에 읽기전용 연관 필드를 하나더 두는 관계** 라 볼수 있다.
-    5) OneToMany Unidirectional의 저장 문제점을 그대로 가지고 있어 추천하지 않는다.
-    6) 사용하는 경우를 억지로 찾자면, OSIV에서 주문 조회 페이지 같은 View에서 주문자 변경 가능성을 차단할 수는 있겠다.
-    7) 그런데, ManyToOne 양방향에서도 설정할 수 있기 때문에 그렇게 꼭 OneToMany 양방향만의 장점이라 볼 수 없다.
-    8) **반드시 OneToMany 양방향(Bidirectioanal) 보다는 ManyToOne 양방향(Bidirectional) 사용을 권고한다.**
+    2) 하지만 OneToMany 양방향(Bidirectional)에서는 User 엔티티가 주인이 되어야 하지만 RDBMS와 특성상 주인이 될 수 없다.
+    3) 대신, 양쪽에 @JoinColumn의 이름을 같게 하고 Many쪽의 관계 필드(user)는 읽기 전용이 되어야 한다. 양쪽에서 관계를 컨트롤하는 것은 복잡하고 피해야한다.(이런 이유로 관계 주인을 세우는 것이다.)
+    4) 쉽게 생각해보면, OneToMany 단방향(Unidirectional)에 반대편 Many에 읽기전용 연관 필드를 하나더 두는 관계매핑이라 보면 된다.
+    5) OneToMany Unidirectional의 저장 문제점을 그대로 가지고 있다.(이런 이유로 비추천)
+    6) 사용하는 경우를 실무에서 찾아보면, OSIV에서 주문 조회 페이지 같은 View에서 사용할 수 있다. 주문자 변경을 하지 못하기 때문에 OSIV의 보안 취약점을 해결하는 데 사용할 수 있다.
+    7) 하지만 6)은 ManyToOne 양방향에서도 설정할 수 있기 때문에 OneToMany 양방향만의 장점이라 볼 수 없다.
+    8) 반드시 OneToMany 양방향(Bidirectioanal) 보다는 ManyToOne 양방향(Bidirectional) 사용을 권장한다.
     
 4. __생성 스키마 DDL__    
     <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/35003.png" width="600px" />
     <br>
     1) OneToMany 단방향과 같다.
-    2) Many쪽에 지정한 이름으로 FK가 설정되어 있음을 알 수 있다.
+    2) Many쪽에 지정한 이름으로 외래키(FK)가 설정되어 있음을 알 수 있다.
 
 #### 1-2. Entity Class: User, Orders
 1. __User 엔티티 매핑 참고__
@@ -76,8 +76,7 @@
         + ManytoOne, OneToOne에서 Default Fetch Mode는 EAGER (Global Fetch 전략 LAZY) 로 수정
         + insertable = false, updatable = false를 두어 ReadOnly 필드로 세팅했다. User 변경을 하지 못한다(FK변경 금지)
         + 하지만 User 조회는 가능하다.
-        + OneToMany 단방향(Unidirectioanl)과는 다르게 양방향에서는 두 군데서 업데이트 인서트가 되지 못하도록 setUser setter에 Collection을 가져와 채우는 부분을 없애야 한다. 
-
+        + OneToMany 단방향(Unidirectioanl)과는 다르게 양방향에서는 두 군데서 insert, update 되지 못하도록 setUser setter에 Collection을 가져와 채우는 부분을 없애야 한다. 
 
 
 ### 2. Repository 작성 & Testing
@@ -112,17 +111,17 @@
 
 3. __JpaOrdersQryDslRepository__
     1) QueryDSL 통합 인터페이스 이다.
-    2) Orders(주문) 저장 편의 메소드 save(Long userNo, Orders ...orders)를 정의 하였다.
+    2) Orders(주문) 저장을 위한 편의메소드 save(Long userNo, Orders ...orders)를 정의하였다.
 
 4. __JpaOrdersQryDslRepositoryImpl__
-    1) QueryDSL 통합 인터페이스 구현 클래스이다.
-    2) Orders(주문) 저장 편의 메소드 save(Long userNo, Orders ...orders)를 구현 하였다.
+    1) QueryDSL 인터페이스 구현 클래스이다.
+    2) Orders(주문) 저장을 위한 편의메소드 save(Long userNo, Orders ...orders)를 구현하였다.
 
 5. __JpaOrdersRepositoryTest.java__
     1) test01Save
-        + 테스트를 위해 2개 User와 3개 주문를 1개의 User로 세팅하여 저장한다.
-        + OneToMany 단방향(Unidirectional) 에서 다루었지만 저장 후, 업데이트 쿼리가 한 번 더 실행되는 단점을 OneToMany 양방향(Biidirectional)에서도 그대로 가지고 있다.
-        + 쿼리 로그를 보면 Insert(Save)후, FK Update 쿼리가 실행된 것을 볼 수 있다.
+        + 테스트를 위해 2개 User와 3개 Orders를 생성하였으며 1개의 User에 Orders 3개를 세팅하여 저장한다.
+        + OneToMany 단방향(Unidirectional) 에서 다루었지만 저장 후, 업데이트 쿼리가 한 번 더 실행되는 단점을 OneToMany 양방향(Bidirectional)에서도 그대로 가지고 있다.
+        + 쿼리로그를 보면 insert 쿼리가 실행된 후, 외래키(FK) Update 쿼리가 실행된 것을 볼 수 있다.
               
             ```
                 Hibernate: 
@@ -142,21 +141,21 @@
                         no=?            
             ```
     2) test02UpdateUser
-        + PK 1L인 Orders를 가져와 영속화 시킨다.
-        + PK 2L("마이콜") 인 User를 가져와 영속화 시킨다.
+        + 기본키(PK)가 1L인 Orders를 가져와 영속화 시킨다.
+        + 기본키(PK)가 2L인("마이콜")인 User를 가져와 영속화 시킨다.
         + Orders에 영속화된 User 엔티티 객체를 세팅하여 업데이트 시킨다.
     
     3) test03UpdateUserResultFails
         + OneToMany 양방향(Biidirectional)에서는 외래키 관리를 두 군데서 하기 때문에 Many(Orders)에서 User(FK)를 변경하는 것을 금지 시키고 One(관계주인, User)에서만 가능하도록 했다.
-        + test02UpdateUser에서는 Many(Orders)에 User 엔티티 객체를 세팅하여 업데이트 시켰는데 그 결과를 확인하는 테스트 이다.
+        + test02에서는 Many(Orders)에 User 엔티티 객체를 세팅하여 업데이트 시켰는데 그 결과를 확인하는 테스트 이다.
         + 테스트 통과 조건은 2L("마이콜")로 변경되지 않아야 한다.
-        + 변경 되지 않았다. ReadOnly 설정이 정상적으로 작동하는 것을 알 수 있다.
+        + 변경되지 않았다. ReadOnly 설정이 정상적으로 작동하는 것을 알 수 있다.
     
     4) 결론
-        + OneToMany 양방향(Biidirectional)는 ManyToOne 양방향(Biidirectional)과 완전 동일한 연관관계 이다.
-        + One쪽을 주인으로 보았지만, RDBMS의 특성상 주인의 관계설정 필드를 가지지 못하고 Many쪽에 두는 특이한 점이 OneToMany 단방향과 마찬가지로 가지고 있다.
+        + OneToMany 양방향(Bidirectional)는 ManyToOne 양방향(Biidirectional)과 완전 동일한 연관관계 이다.
+        + OneToMany 단방향과 마찬가지로 One쪽을 주인으로 보지만 RDBMS의 특성상 주인의 관계설정 필드를 갖지 못하고 Many쪽에 두는 특이한 점을 그대로 가진다.
         + Many쪽에서는 JoinColumn 설정을 정상적으로 할 수 있지만, 와래키 관리 포인트가 두군데가 되어 One쪽에 그 설정을 맡기고 ReadOnly 설정을 하게된다.
-        + 결론적으로 OnToMany 단방향에다가 반대편에 탐색을 위한 필드(User)를 하나 추가 한 형태로 그 연관관계가 존재하지 않는다.
+        + 결론은 OnToMany 단방향에다가 반대편에 탐색을 위한 필드(User)를 하나 추가 한 형태가 되며 그 연관관계는 원칙적으로 존재하지 않는다 보는 것이 맞다.
         + 전반적으로 부자연스러운 매핑 설정을 계속 해야한다.
         + ManyToOne 양방향(Bidirectional) 매핑을 사용하도록 하자.
         
