@@ -15,7 +15,7 @@
     1) 음반검색에서 노래와 쟝르의 관계이다.
     2) 노래 정보를 보여줄 때 그 노래의 쟝르가 필요한 경우다.
     3) 쟝르 검색을 통해 해당 노래를 찾는 것도 필요하지만 이는 다대다 양방향(Bidirectional)에서 다룬다.
-    4) Model09에서는 Song -> Jenre로 참조가 이루어 지는 단방향(Unidirection)을 매핑한다.
+    4) Model09에서는 Song -> Genre로 참조가 이루어 지는 단방향(Unidirection)을 매핑한다.
 
 2. __다중성은 방향성이 결정나면 쉽게 결정 할 수 있다.__
     1) Song은 다수의 쟝르에 포함될 수 있다. 쟝르도 해당 쟝르의 노래들이 많다.
@@ -24,14 +24,14 @@
        
 3. __다대다 연관관계의 관계형 데이터베이스와 JPA에서의 차이점__
     1) 관계형 데이터베이스는 정규화된 테이블 2개로 다대다 관계를 표현할 수 없다.
-    2) 그래서 보통 다대다 관계 를 일대다, 다대일 관계로 풀어내는 연결 테이블을 사용한다.
+    2) 그래서 다대다 관계를 일대다, 다대일 관계로 풀어내는 연결테이블을 사용한다.
         
         <img src="http://assets.kickscar.me:8080/markdown/jpa-practices/39003.png" width="800px" />
         <br>
             
     3) 객체는 테이블과 다르게 객체 2개로 다대다 관계를 만들 수 있다.
     4) Song 객체는 컬렉션을 사용해서 Genre들을 참조하면 되고 반대로 Genre들도 컬렉션을 사용해서 Song들을 참조하면 된다.
-    5) 하지만, 데이터베이스 내부적으로는 조인테이블을 두고 일대다, 다대일 관계로 풀어낸다. 
+    5) 내부적으로는 데이터베이스에서는 조인테이블을 두고 일대다, 다대일 관계로 풀어낸다. 
     
 #### 1-2. Entity Class: User, Blog
 1. __Song 엔티티 매핑 참고__
@@ -56,11 +56,11 @@
         ```
         + @ManyToMany 와 @JoinTable 을 사용해서 연결 테이블을 바로 매핑한다.
         + 노래와 쟝르를 연결하는 노래_쟝르(Song_Genre)엔티티 없이 매핑을 완료할 수 있다.
-        + ManyToMany  기본 페치 전략은 LAZY 이다.
+        + ManyToMany 기본 페치 전략은 LAZY 이다.
         + @JoinTable.name : 연결 테이블을 지정한다. 
         + @JoinTable.joinColumns : 현재 방향인 노래와 매핑할 조인 컬럼 정보를 지정한다. song_no로 지정
         + @JoinTable.inverseJoinColumns : 반대 방향인 쟝릐와 매핑할 조인 컬럼 정보를 지정한다. genre_no로 지정했다.
-        + @ManyToMany로 매핑한 덕분에 다대다 관계를 사용할 때는 이 연결 테이블을 신경쓰지 않아 도 된다.
+        + @ManyToMany로 매핑한 덕분에 다대다 관계를 사용할 때는 이 연결테이블을 신경쓰지 않아도 된다.
       
     2) ManyToMany(Genre 엔티티)
         
@@ -74,7 +74,7 @@
              .
              .
         ```
-        + ManyToMany 단방향에서는 관계주인이 아닌 엔티티는 별다른 설정을 하지 않아도 된다.
+        + ManyToMany 단방향에서는 관계주인이 아닌 엔티티는 어떤 설정도 없다.
     
     3) 생성 스키마
     
@@ -116,13 +116,13 @@
         ```
         + 세 개의 테이블을 생성한다.
         + 엔티티 테이블외에 song_genre 연결테이블이 생성 되었다.
-        + song_genre 테이블은 다대다 관계를 일대다, 다대일 관계로 풀어내기 위해 필요한 조인(연결)테이블이다.
+        + song_genre 테이블은 다대다 관계를 일대다, 다대일 관계로 풀어내기 위해 필요한 연결(조인)테이블이다.
 
 
 ### 2. Repository 작성 & Testing
 
 #### 2-1. 요약: 다루는 기술적 내용
-1. ManyToMany 단방향(Unidirectional) Collection Fetch QueryDSL 구현
+1. ManyToMany 단방향(Unidirectional)의 Collection Fetch QueryDSL 구현
 2. ManyToMany 조인테이블의 문제점 이해와 해결방법
 3. Native SQL 사용법
 
@@ -141,17 +141,17 @@
 
 #### 2-3. JpaSongRepository Test : Spring Data JPA 기반 Repository
 1. __JpaGenreRepositry__
-    1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
-    2) 테스트를 위해 Genre 엔티티 영속화 목적이기 때문에 별다른 메소드 추가가 없다.
+    1) 기본 Spring Data JPA 기본 레포지토리 인터페이스
+    2) 테스트를 위한 Genre 엔티티 영속화 목적이기 때문에 별다른 메소드 추가가 없다.
 
 2. __JpaSongRepositry__
-    1) 기본 Spring Data JPA 기본 레포지토리 인터페이스이다.
+    1) 기본 Spring Data JPA 기본 레포지토리 인터페이스
     2) 테스트를 위한 목적이기 때문에 별다른 메소드 추가가 없다.
 
 3. __JpaSongQryDslRepositry__
     1) Lazy 로딩으로 Genre를 가져오지 않고 fetch join으로 Genre가 포함된 Song을 가져오는 메소드 2개를 정의
-    2) Song findById2(no) - no(PK)로 Genre가 포함된 Song 엔티티 객체 1개를 가져온다.
-    3) List<Song> findAll2() - Genre가 포함된 Song 엔티티 객체 리스트를 가져온다. 
+        + Song findById2(no) : no(PK)로 Genre가 포함된 Song 객체 한 개를 가져온다.
+        + List<Song> findAll2() : Genre가 포함된 Song 객체 리스트를 가져온다. 
 
 4. __JpaSongQryDslRepositryImpl__
     1) findById2, findAll2의 구현
@@ -262,7 +262,7 @@
         + 기본 메소드 findAll()를 사용하여 전체 노래를 가져온다.
         + Lazy 로딩을 확인하는 테스트이다.
     5) test05FindAll2
-        + test04FindAll의 지연로딩을 fetch join을 사용하여 한 번에 모두 가져오는 메소드 findAll2()에 대한 테스트 이다.
+        + fetch join을 사용하여 한 번에 모두 가져오는 메소드 findAll2()에 대한 테스트 이다.
         + QueryDSL로 구현하였다.
         + 주의할 것은 조인테이블에 genre가 없으면, join시 select되는 row가 없기 때문에 outer join을 사용해야 한다.
             ```
@@ -351,17 +351,17 @@
             
             1) 첫번째, 두번째 select 쿼리는 삭제 대상이 되는 song, genre 엔티티를 각각의 no(PK)로 찾아 영속화한다.
             2) 세번째 join fetch는 삭제를 위해 해당 song의 genre 콜렉션을 지연 로딩한다.
-            3) 네번째는 조인테이블에서 해당 song을 모두 지운다.(지워야 할 genre의 관계만 삭제되는 것이 아니라 모든 관계가 삭제된다.) 
+            3) 네번째는 조인테이블에서 해당 song을 모두 지운다. 주목할 것은 지워야 할 genre의 관계만 삭제되는 것이 아니라 모든 관계가 삭제된다는 것이다. 
             4) 다섯번째는 삭제하지 말아야 할 관계가 3)에서 삭제되었기 때문에 다시 복구를 위해 insert를 한다.
-            5) DB에 직접 SQL를 작성해서 이 작업을 한다면, delete from song_genre where song_no=? and genre_no=? 이렇게 쿼리를 작성했을 것이다.
-            6) JPA에서는 이런 쿼리 작성이 객체(엔티티)를 통해서 원칙적으로는 불가능하다.
-                - 필드 연관관계 매핑을 통해 조인테이블을 지정하였고 조인테이블은 매핑된 엔티티 클래스가 없기 때문이다.
-                - 객체 그래프 탐색을 통해 조인테이블에는 접근할 수 없다.
+            5) 직접 SQL를 작성해서 이 작업을 한다면, delete from song_genre where song_no=? and genre_no=? 이런 쿼리를 작성했을 것이다.
+            6) JPA에서는 이런 쿼리 작성이 객체(엔티티)를 통해서는 원칙적으로 불가능하다.
+                - 필드 연관관계 매핑을 통해 연결(조인)테이블을 지정하였고 연결(조인)테이블은 매핑된 엔티티 클래스가 없기 때문이다.
+                - 객체 그래프 탐색을 통해 연결(조인)테이블에는 접근할 수 없다.
                 - 즉, JPQL를 사용할 수 없다는 것이다.
             7) 해결방법
                 - Native SQL를 사용할 수 있다.
-                - 쉬운방법은 컬렉션을 List보다 Set를 사용하는 것이다.(참고: Model10)
-                - 가장 좋은 방법은 ManyToMany 보다는 조인테이블에 해당하는 비지니스 엔티티가 있다면 엔티티로 매핑하여 ManyToOne 두 개의 관계로 해결하는 것이다.(참고: Model11, Model12) 
+                - 쉬운 방법은 컬렉션을 List보다 Set를 사용하는 것이다.(Model10에서 구현하고 테스트 한다.)
+                - 가장 좋은 방법은 ManyToMany 보다는 조인테이블에 해당하는 비지니스 엔티티가 있다면 엔티티로 매핑하여 ManyToOne 두 개의 관계로 해결하는 것이다.(Model11, Model12에서 구현하였고 테스트 한다.) 
     7) test06RemoveGenre2
         + test06DeleteGenre1의 문제점을 Native SQL를 사용하여 해결하였다.
         + Native SQL
@@ -390,8 +390,8 @@
             ```  
 
 #### 2-4. JpaGenreRepository Test : Spring Data JPA 기반 Repository
-    1) Song -> Genre 단방향이기 때문에  Genre쪽에서는 객체 탐색은 불가능하다.
-    2) 저장, 삭제, 변경, 카운팅 정도의 기본 메소드 사용정도이기 때문에 테스트 생략.
+1. __Song -> Genre 단방향이기 때문에  Genre쪽에서는 객체 탐색은 불가능하다.__
+2. __저장, 삭제, 변경, 카운팅 정도의 기본 메소드 사용정도이기 때문에 테스트 생략__
 
 
          
