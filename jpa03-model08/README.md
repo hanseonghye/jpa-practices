@@ -1,4 +1,4 @@
-## Model08 : 일대일(OneToOne) - 양방향(Bidirectional), 주테이블에 외래키, 식별관계
+## Model08 : 일대일(OneToOne) - 양방향(Bidirectional), 대상테이블에 외래키, 식별관계
 
 
 ### 1. Domain
@@ -64,7 +64,7 @@
             .
         ```
         + OneToOne 에서는 Default Fetch Mode는 EAGER 이다. Global Fetch Mode LAZY로 수정했다. 
-        + 외래키 관리를 대상 테이블이 하기 때문에 관계 주인이 아님을 mappedBy를 통해 선언하고 반대편 엔티티(Blog)의 연관관계 필드를 지정했다.
+        + 외래키 관리를 대상테이블이 하기 때문에 관계 주인이 아님을 mappedBy를 통해 선언하고 반대편 엔티티(Blog)의 연관관계 필드를 지정했다.
       
     2) OneToOne(Blog 엔티티, 대상테이블)  
         
