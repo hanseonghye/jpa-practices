@@ -13,20 +13,21 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.*;
-
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpqlConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)  // JUnit4.11 부터 지원
-@Transactional
 public class JpqlGuestbookRepositoryTest {
 
     @Autowired
-    private JpqlGuestbookRepository guestbookRepository;
+    private JpqlGuestbookRepository  guestbookRepository;
 
     @Test
+    @Transactional
     @Rollback(false)
     public void test01Save() {
         Guestbook gb1 = new Guestbook();
@@ -51,13 +52,15 @@ public class JpqlGuestbookRepositoryTest {
     }
 
     @Test
-    public void test03FindAll2() {
-        List<GuestbookDto> list = guestbookRepository.findAll2();
-        assertEquals(2, list.size());
+    @Transactional
+    @Rollback(false)
+    public void test03Delete() {
+        assertTrue(guestbookRepository.delete(1L, "1234"));
     }
 
     @Test
-    public void test04Delete() {
-        assertTrue(guestbookRepository.delete(1L, "1234"));
+    public void test04FindAll2() {
+        List<GuestbookDto> list = guestbookRepository.findAll2();
+        assertEquals(1, list.size());
     }
 }

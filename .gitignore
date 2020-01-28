@@ -4,3 +4,9 @@
 */build/
 */settings.gradle
 */out
+**/*.project
+**/*.classpath
+**/.settings/*
+**/*.class
+**/.vscode/*
+**/bin/*
