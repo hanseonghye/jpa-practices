@@ -65,4 +65,9 @@ public class JpaUserRepositoryTest02 {
     public void test03OneToManyCollectionJoinProblem() {
         assertEquals(ordersRepository.count(), userRepository.findAllCollectionJoinProblem().size());
     }
+
+
+    public void test04() {
+        userRepository.findAllCollectionJoinProblemSolved().size();
+    }
 }
